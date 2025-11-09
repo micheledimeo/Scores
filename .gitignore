@@ -48,3 +48,7 @@ DEPLOY_CHECKLIST.md
 WORKFLOW.md
 GITHUB_SETUP.md
 INSTALL.md
+
+# Code signing
+appinfo/signature.json
+sign-app.sh
