@@ -1,0 +1,318 @@
+<template>
+	<div class="music-viewer">
+		<div class="playback-controls">
+			<NcButton
+				type="primary"
+				:disabled="!isLoaded"
+				@click="togglePlayback">
+				<template #icon>
+					<Play v-if="!isPlaying" :size="20" />
+					<Pause v-else :size="20" />
+				</template>
+				{{ isPlaying ? t('musicxmlviewer', 'Pause') : t('musicxmlviewer', 'Play') }}
+			</NcButton>
+
+			<NcButton
+				:disabled="!isLoaded"
+				@click="stop">
+				<template #icon>
+					<Stop :size="20" />
+				</template>
+				{{ t('musicxmlviewer', 'Stop') }}
+			</NcButton>
+
+			<div class="tempo-control">
+				<span>{{ t('musicxmlviewer', 'Tempo:') }}</span>
+				<input
+					v-model.number="tempo"
+					type="range"
+					min="40"
+					max="240"
+					step="1"
+					class="tempo-slider"
+					:disabled="!isLoaded">
+				<span>{{ tempo }} BPM</span>
+			</div>
+
+			<NcButton
+				:disabled="!isLoaded"
+				@click="transpose(-1)">
+				<template #icon>
+					<Minus :size="20" />
+				</template>
+				{{ t('musicxmlviewer', 'Transpose Down') }}
+			</NcButton>
+
+			<NcButton
+				:disabled="!isLoaded"
+				@click="transpose(1)">
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				{{ t('musicxmlviewer', 'Transpose Up') }}
+			</NcButton>
+		</div>
+
+		<div class="viewer-toolbar">
+			<NcButton @click="zoomIn" :disabled="!isLoaded">
+				<template #icon>
+					<MagnifyPlusOutline :size="20" />
+				</template>
+			</NcButton>
+
+			<NcButton @click="zoomOut" :disabled="!isLoaded">
+				<template #icon>
+					<MagnifyMinusOutline :size="20" />
+				</template>
+			</NcButton>
+
+			<NcButton @click="print" :disabled="!isLoaded">
+				<template #icon>
+					<Printer :size="20" />
+				</template>
+				{{ t('musicxmlviewer', 'Print') }}
+			</NcButton>
+		</div>
+
+		<div class="sheet-viewer">
+			<div v-if="loading" class="loading-spinner">
+				<NcLoadingIcon :size="64" />
+			</div>
+			<div v-show="!loading" ref="osmdContainer" class="osmd-container" />
+		</div>
+	</div>
+</template>
+
+<script>
+import { ref, onMounted, watch } from 'vue'
+import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay'
+import { translate as t } from '@nextcloud/l10n'
+import { showError } from '@nextcloud/dialogs'
+
+import { NcButton, NcLoadingIcon } from '@nextcloud/vue'
+
+import Play from 'vue-material-design-icons/Play.vue'
+import Pause from 'vue-material-design-icons/Pause.vue'
+import Stop from 'vue-material-design-icons/Stop.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Minus from 'vue-material-design-icons/Minus.vue'
+import MagnifyPlusOutline from 'vue-material-design-icons/MagnifyPlusOutline.vue'
+import MagnifyMinusOutline from 'vue-material-design-icons/MagnifyMinusOutline.vue'
+import Printer from 'vue-material-design-icons/Printer.vue'
+
+export default {
+	name: 'MusicViewer',
+	components: {
+		NcButton,
+		NcLoadingIcon,
+		Play,
+		Pause,
+		Stop,
+		Plus,
+		Minus,
+		MagnifyPlusOutline,
+		MagnifyMinusOutline,
+		Printer,
+	},
+	props: {
+		fileContent: {
+			type: String,
+			required: true,
+		},
+		fileName: {
+			type: String,
+			required: true,
+		},
+	},
+	setup(props) {
+		const osmdContainer = ref(null)
+		const osmd = ref(null)
+		const loading = ref(true)
+		const isLoaded = ref(false)
+		const isPlaying = ref(false)
+		const tempo = ref(120)
+		const zoomLevel = ref(1.0)
+
+		const loadScore = async () => {
+			try {
+				loading.value = true
+				
+				if (!osmdContainer.value) {
+					console.error('OSMD container not found')
+					return
+				}
+
+				// Inizializza OSMD
+				osmd.value = new OpenSheetMusicDisplay(osmdContainer.value, {
+					autoResize: true,
+					backend: 'svg',
+					drawTitle: true,
+					drawComposer: true,
+					drawLyricist: true,
+					drawCredits: true,
+					drawPartNames: true,
+					drawFingerings: true,
+					drawMeasureNumbers: true,
+					measureNumberInterval: 5,
+					useXMLMeasureNumbers: true,
+				})
+
+				// Decodifica il contenuto base64
+				const xmlContent = atob(props.fileContent)
+				
+				// Carica lo spartito
+				await osmd.value.load(xmlContent)
+				await osmd.value.render()
+				
+				isLoaded.value = true
+				loading.value = false
+			} catch (error) {
+				console.error('Error loading score:', error)
+				showError(t('musicxmlviewer', 'Failed to load the music score'))
+				loading.value = false
+			}
+		}
+
+		const togglePlayback = () => {
+			if (!osmd.value) return
+			
+			if (isPlaying.value) {
+				isPlaying.value = false
+			} else {
+				isPlaying.value = true
+			}
+		}
+
+		const stop = () => {
+			if (!osmd.value) return
+			isPlaying.value = false
+		}
+
+		const transpose = (semitones) => {
+			if (!osmd.value) return
+			
+			try {
+				osmd.value.TransposeCalculator.transposeSemitones(semitones)
+				osmd.value.render()
+			} catch (error) {
+				showError(t('musicxmlviewer', 'Failed to transpose'))
+			}
+		}
+
+		const zoomIn = () => {
+			if (!osmd.value) return
+			zoomLevel.value = Math.min(zoomLevel.value + 0.1, 3.0)
+			osmd.value.zoom = zoomLevel.value
+			osmd.value.render()
+		}
+
+		const zoomOut = () => {
+			if (!osmd.value) return
+			zoomLevel.value = Math.max(zoomLevel.value - 0.1, 0.5)
+			osmd.value.zoom = zoomLevel.value
+			osmd.value.render()
+		}
+
+		const print = () => {
+			window.print()
+		}
+
+		watch(() => props.fileContent, () => {
+			if (props.fileContent) {
+				loadScore()
+			}
+		})
+
+		onMounted(() => {
+			if (props.fileContent) {
+				loadScore()
+			}
+		})
+
+		return {
+			osmdContainer,
+			loading,
+			isLoaded,
+			isPlaying,
+			tempo,
+			togglePlayback,
+			stop,
+			transpose,
+			zoomIn,
+			zoomOut,
+			print,
+			t,
+		}
+	},
+}
+</script>
+
+<style scoped lang="scss">
+.music-viewer {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.playback-controls {
+	display: flex;
+	gap: 8px;
+	padding: 12px;
+	border-bottom: 1px solid var(--color-border);
+	background-color: var(--color-background-dark);
+	flex-wrap: wrap;
+}
+
+.viewer-toolbar {
+	display: flex;
+	gap: 8px;
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--color-border);
+	background-color: var(--color-background-hover);
+}
+
+.tempo-control {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+
+	span {
+		white-space: nowrap;
+	}
+}
+
+.tempo-slider {
+	width: 120px;
+}
+
+.sheet-viewer {
+	flex: 1;
+	overflow: auto;
+	background: white;
+	position: relative;
+}
+
+.loading-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.osmd-container {
+	padding: 20px;
+	min-height: 100%;
+}
+
+@media print {
+	.playback-controls,
+	.viewer-toolbar {
+		display: none !important;
+	}
+
+	.sheet-viewer {
+		overflow: visible !important;
+	}
+}
+</style>

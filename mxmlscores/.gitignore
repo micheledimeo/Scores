@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Build output
+/js/
+/css/*.css
+/css/*.css.map
+
+# Build directories
+build_package/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Nextcloud
+/vendor/
+
+# Test files
+.mxmlscores-testsprite/
+testsprite_tests/
+testsprite.log
+TEST_REPORT.md
+
+# Temporary files
+*.log
+*.tmp

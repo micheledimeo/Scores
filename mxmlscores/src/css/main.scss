@@ -1,0 +1,65 @@
+.app-scores {
+	width: 100%;
+	height: 100%;
+}
+
+#app-content {
+	height: 100%;
+}
+
+.viewer-container {
+	width: 100%;
+	height: 100%;
+	background-color: var(--color-main-background);
+}
+
+/* OpenSheetMusicDisplay container styles */
+.osmd-container {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	padding: 20px;
+	background-color: white;
+}
+
+.viewer-controls {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.playback-controls {
+	display: flex;
+	gap: 8px;
+	padding: 16px;
+	border-bottom: 1px solid var(--color-border);
+	background-color: var(--color-background-dark);
+}
+
+.playback-button {
+	min-width: 100px;
+}
+
+.tempo-control {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: 16px;
+}
+
+.tempo-slider {
+	width: 150px;
+}
+
+.sheet-viewer {
+	flex: 1;
+	overflow: auto;
+	background: white;
+}
+
+.loading-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}

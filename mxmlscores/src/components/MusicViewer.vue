@@ -1,0 +1,2047 @@
+<template>
+	<div class="music-viewer">
+		<!-- Compact playback controls bar -->
+		<div class="playback-controls">
+			<div class="control-group">
+				<!-- Play button -->
+				<NcButton
+					v-if="!isPlaying"
+					type="primary"
+					:disabled="!isLoaded || isInitializing"
+					@click="play"
+					:aria-label="'Play'">
+					<template #icon>
+						<Play :size="20" />
+					</template>
+				</NcButton>
+
+				<!-- Pause button -->
+				<NcButton
+					v-if="isPlaying"
+					:disabled="!isLoaded || isInitializing"
+					@click="pause"
+					:aria-label="'Pause'">
+					<template #icon>
+						<Pause :size="20" />
+					</template>
+				</NcButton>
+
+				<!-- Stop button -->
+				<NcButton
+					:disabled="!isLoaded || isInitializing || (!isPlaying && currentTime === 0)"
+					@click="stop"
+					:aria-label="'Stop'">
+					<template #icon>
+						<Stop :size="20" />
+					</template>
+				</NcButton>
+
+				<!-- Loop button -->
+				<NcButton
+					:disabled="!isLoaded || isInitializing"
+					@click="toggleLoop"
+					:class="{ 'loop-active': loopEnabled }"
+					:aria-label="loopEnabled ? 'Loop enabled' : 'Loop disabled'">
+					<template #icon>
+						<Repeat :size="20" />
+					</template>
+				</NcButton>
+
+			<!-- Mixer toggle button -->
+			<NcButton
+				v-if="mixerChannels.length > 0"
+				:disabled="!isLoaded || isInitializing"
+				@click="toggleMixer"
+				:class="{ 'mixer-active': showMixer }"
+				:aria-label="showMixer ? 'Hide mixer' : 'Show mixer'"
+				:title="showMixer ? 'Hide mixer' : 'Show mixer'">
+				<template #icon>
+					<Tune :size="20" />
+				</template>
+			</NcButton>
+		</div>
+
+		<!-- Progress bar -->
+		<div class="progress-section">
+			<div class="progress-bar">
+				<div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+			</div>
+			<div class="time-display">
+				<span>{{ formatTime(currentTime) }}</span>
+				<span class="separator">/</span>
+				<span>{{ formatTime(totalDuration) }}</span>
+				<span class="measure-separator">•</span>
+				<span class="measure-display">{{ currentMeasure + 1 }}/{{ totalMeasures }}</span>
+			</div>
+		</div>
+
+		<!-- Tempo and Volume controls grouped -->
+		<div class="tempo-volume-group">
+			<!-- Tempo control -->
+			<div class="tempo-control">
+				<span class="unit-label">BPM</span>
+				<input
+					id="tempo-input"
+					v-model.number="tempo"
+					type="number"
+					min="40"
+					max="240"
+					step="1"
+					class="tempo-input"
+					:disabled="!isLoaded || isInitializing"
+					@change="updateTempo"
+					@keyup.enter="updateTempo">
+				<input
+					id="tempo-slider"
+					v-model.number="tempo"
+					type="range"
+					min="40"
+					max="240"
+					step="1"
+					class="tempo-slider"
+					:disabled="!isLoaded || isInitializing"
+					@input="updateTempo">
+			</div>
+
+			<!-- Volume control -->
+			<div class="volume-control">
+				<span class="unit-label">VOL</span>
+				<input
+					id="volume-input"
+					v-model.number="volume"
+					type="number"
+					min="0"
+					max="100"
+					step="1"
+					class="volume-input"
+					:disabled="!isLoaded || isInitializing"
+					@change="updateVolume"
+					@keyup.enter="updateVolume">
+				<input
+					id="volume-slider"
+					v-model.number="volume"
+					type="range"
+					min="0"
+					max="100"
+					step="1"
+					class="volume-slider"
+					:disabled="!isLoaded || isInitializing"
+					@input="updateVolume">
+			</div>
+		</div>
+
+		<!-- Zoom controls -->
+		<div class="zoom-controls">
+			<NcButton
+				:disabled="!isLoaded"
+				@click="zoomOut"
+				:aria-label="'Zoom out'">
+				<template #icon>
+					<MagnifyMinusOutline :size="20" />
+				</template>
+			</NcButton>
+
+			<span class="zoom-level">{{ Math.round(zoomLevel * 100) }}%</span>
+
+			<NcButton
+				:disabled="!isLoaded"
+				@click="zoomIn"
+				:aria-label="'Zoom in'">
+				<template #icon>
+					<MagnifyPlusOutline :size="20" />
+				</template>
+			</NcButton>
+		</div>
+
+		<!-- Mixer channels -->
+		<div v-if="showMixer && mixerChannels.length > 0" class="mixer-channels">
+			<button
+				v-for="(channel, idx) in mixerChannels"
+				:key="idx"
+				:class="['channel-button', getChannelClass(channel.state)]"
+				:disabled="!isLoaded || isInitializing"
+				:title="`${channel.name || 'Unknown'} - ${channel.state.toUpperCase()}`"
+				@click="toggleChannel(idx)">
+				{{ getChannelLabel(channel.state) }}
+			</button>
+		</div>
+	</div>
+
+		<!-- Sheet viewer -->
+		<div class="sheet-viewer">
+			<!-- Debug info panel for mobile (iOS audio troubleshooting) - temporarily hidden -->
+			<!-- <div v-if="debugInfo.length > 0" class="debug-panel">
+				<div class="debug-header">Audio Debug Info:</div>
+				<div v-for="(msg, idx) in debugInfo" :key="idx" class="debug-line">{{ msg }}</div>
+			</div> -->
+
+			<div v-if="loading" class="loading-spinner">
+				<NcLoadingIcon :size="64" />
+				<p>Loading score...</p>
+			</div>
+			<div
+				v-if="!loading"
+				ref="osmdContainer"
+				class="osmd-container" />
+		</div>
+
+		<!-- Welcome Screen with Quick Tips - shown AFTER loading -->
+		<div v-if="showWelcome && !loading && isLoaded" class="welcome-screen">
+			<div class="welcome-content">
+				<h2>{{ welcomeTitle }}</h2>
+				
+				<div class="quick-tips">
+					<h3>{{ quickTipsTitle }}</h3>
+					
+					<div class="tip-item">
+						<span class="tip-icon">⌨️</span>
+						<div class="tip-text">
+							<strong>{{ keyboardShortcutsTitle }}</strong>
+							<ul>
+								<li><kbd>Space</kbd> - {{ playPauseText }}</li>
+								<li><kbd>←</kbd> <kbd>→</kbd> - {{ navigateMeasuresText }}</li>
+								<li><kbd>+</kbd> <kbd>-</kbd> - {{ zoomText }}</li>
+							</ul>
+						</div>
+					</div>
+					
+					<div class="tip-item">
+						<span class="tip-icon">🎵</span>
+						<div class="tip-text">
+							<strong>{{ playbackControlsTitle }}</strong>
+							<p>{{ playbackControlsDesc }}</p>
+						</div>
+					</div>
+					
+					<div class="tip-item">
+						<span class="tip-icon">🔍</span>
+						<div class="tip-text">
+							<strong>{{ zoomTitle }}</strong>
+							<p>{{ zoomDesc }}</p>
+						</div>
+					</div>
+					
+					<div class="tip-item">
+						<span class="tip-icon">🔄</span>
+						<div class="tip-text">
+							<strong>{{ loopModeTitle }}</strong>
+							<p>{{ loopModeDesc }}</p>
+						</div>
+					</div>
+				</div>
+				
+				<NcButton
+					type="primary"
+					@click="closeWelcome">
+					{{ gotItText }}
+				</NcButton>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+import { ref, onMounted, onBeforeUnmount, markRaw, watch, nextTick } from 'vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
+
+import { NcButton, NcLoadingIcon } from '@nextcloud/vue'
+
+import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay'
+import PlaybackEngine from 'osmd-audio-player'
+import { SoundfontPlayer } from 'osmd-audio-player/dist/players/SoundfontPlayer'
+import { MixerInstrumentPlayer, InstrumentState } from '../utils/MixerInstrumentPlayer'
+
+import Play from 'vue-material-design-icons/Play.vue'
+import Pause from 'vue-material-design-icons/Pause.vue'
+import Stop from 'vue-material-design-icons/Stop.vue'
+import Repeat from 'vue-material-design-icons/Repeat.vue'
+import MagnifyPlusOutline from 'vue-material-design-icons/MagnifyPlusOutline.vue'
+import MagnifyMinusOutline from 'vue-material-design-icons/MagnifyMinusOutline.vue'
+import Tune from 'vue-material-design-icons/Tune.vue'
+
+export default {
+	name: 'MusicViewer',
+	components: {
+		NcButton,
+		NcLoadingIcon,
+		Play,
+		Pause,
+		Stop,
+		Repeat,
+		MagnifyPlusOutline,
+		MagnifyMinusOutline,
+		Tune,
+	},
+	props: {
+		fileContent: {
+			type: String,
+			required: true,
+		},
+		fileName: {
+			type: String,
+			required: true,
+		},
+		fileId: {
+			type: Number,
+			required: false,
+			default: null,
+		},
+		forceShowWelcome: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ['playback-state-changed', 'welcome-closed'],
+	setup(props, { emit }) {
+		// Refs
+		const osmdContainer = ref(null)
+		const osmd = ref(null)
+		const playbackManager = ref(null)
+		const mixerPlayer = ref(null)
+		const mixerChannels = ref([])
+		const showMixer = ref(false)
+		const audioContext = ref(null)
+		const loading = ref(true)
+		const isLoaded = ref(false)
+		const isPlaying = ref(false)
+		const isInitializing = ref(false)
+		const tempo = ref(120)
+		const volume = ref(80)
+		// Set default zoom based on screen size: 0.7 for mobile, 1.0 for desktop
+		const isMobile = window.innerWidth <= 768
+		const zoomLevel = ref(isMobile ? 0.7 : 1.0)
+		const currentTime = ref(0)
+		const totalDuration = ref(0)
+		const progressPercent = ref(0)
+		const progressInterval = ref(null)
+		const loopEnabled = ref(false)
+		const showWelcome = ref(false) // TEMP: Disabled for testing
+		const currentMeasure = ref(0)
+		const totalMeasures = ref(0)
+		const playbackStartTime = ref(0) // AudioContext time when playback started
+		const playbackStartOffset = ref(0) // Offset if starting from middle of score
+		const currentTimestep = ref(0) // Current timestep for playback synchronization
+
+		// Debug info for mobile
+		const debugInfo = ref([])
+		const addDebugInfo = (message) => {
+			const timestamp = new Date().toLocaleTimeString()
+			debugInfo.value.push(`[${timestamp}] ${message}`)
+			console.log(message)
+			// Keep only last 10 messages
+			if (debugInfo.value.length > 10) {
+				debugInfo.value.shift()
+			}
+		}
+
+		// Translations for welcome screen
+		const welcomeTitle = ref(t('musicxmlviewer', 'Welcome to MusicXML Viewer'))
+		const quickTipsTitle = ref(t('musicxmlviewer', 'Quick Tips'))
+		const keyboardShortcutsTitle = ref(t('musicxmlviewer', 'Keyboard Shortcuts'))
+		const playPauseText = ref(t('musicxmlviewer', 'Play/Pause'))
+		const navigateMeasuresText = ref(t('musicxmlviewer', 'Navigate measures and start playback'))
+		const zoomText = ref(t('musicxmlviewer', 'Zoom in/out'))
+		const playbackControlsTitle = ref(t('musicxmlviewer', 'Playback Controls'))
+		const playbackControlsDesc = ref(t('musicxmlviewer', 'Use the control bar to play, pause, stop, and loop your music. Adjust tempo and volume as needed.'))
+		const zoomTitle = ref(t('musicxmlviewer', 'Zoom'))
+		const zoomDesc = ref(t('musicxmlviewer', 'Use + and - buttons or keyboard shortcuts to zoom in and out of the score.'))
+		const loopModeTitle = ref(t('musicxmlviewer', 'Loop Mode'))
+		const loopModeDesc = ref(t('musicxmlviewer', 'Click the repeat button to enable continuous playback. The music will restart automatically when finished.'))
+		const gotItText = ref(t('musicxmlviewer', 'Got it!'))
+
+		// Format time in mm:ss
+		const formatTime = (seconds) => {
+			if (!seconds || isNaN(seconds)) return '0:00'
+			const mins = Math.floor(seconds / 60)
+			const secs = Math.floor(seconds % 60)
+			return `${mins}:${secs.toString().padStart(2, '0')}`
+		}
+
+		// Watch playing state and emit to parent
+		watch(isPlaying, (newVal) => {
+			emit('playback-state-changed', newVal)
+		})
+
+		// Watch for forced welcome screen display
+		watch(() => props.forceShowWelcome, (newVal) => {
+			if (newVal) {
+				showWelcome.value = true
+			}
+		})
+
+		// Load score
+		const loadScore = async () => {
+			try {
+				loading.value = true
+				console.log('MusicViewer mounted')
+
+				// Wait for the DOM to update and remove loading spinner
+				await nextTick()
+				
+				// Set loading to false first, so the container becomes visible
+				loading.value = false
+				
+				// Wait again for the container to be rendered in the DOM
+				await nextTick()
+				
+				// Add a small delay to ensure the container has proper dimensions
+				await new Promise(resolve => setTimeout(resolve, 100))
+
+				if (!osmdContainer.value) {
+					console.error('OSMD container not found')
+					return
+				}
+				
+				// Verify container has valid dimensions
+				const containerWidth = osmdContainer.value.clientWidth
+				const containerHeight = osmdContainer.value.clientHeight
+				console.log(`Container dimensions: ${containerWidth}x${containerHeight}`)
+				
+				if (containerWidth === 0) {
+					console.error('Container width is 0, cannot render score')
+					showError(t('musicxmlviewer', 'Unable to display score: viewer container has no width'))
+					return
+				}
+				
+				// Initialize OSMD with proper settings
+				const osmdInstance = new OpenSheetMusicDisplay(osmdContainer.value, {
+					autoResize: true,
+					backend: 'svg',
+					drawTitle: true,
+					drawComposer: true,
+					drawLyricist: true,
+					drawCredits: true,
+					drawPartNames: true,
+					drawPartAbbreviations: false, // Only show instrument names on first system
+					drawFingerings: true,
+					drawMeasureNumbers: true,
+					measureNumberInterval: 5,
+					useXMLMeasureNumbers: true,
+					drawingParameters: 'compacttight', // Enable cursor support
+				})
+
+				osmd.value = markRaw(osmdInstance)
+
+				const xmlContent = atob(props.fileContent)
+
+				await osmd.value.load(xmlContent)
+
+				// Apply zoom level before rendering (especially important for mobile default 70%)
+				osmd.value.zoom = zoomLevel.value
+
+				await osmd.value.render()
+
+				// Enable and show the cursor
+				if (osmd.value.cursor) {
+					osmd.value.cursor.show()
+					console.log('OSMD cursor enabled and shown')
+				}
+
+				// Calculate total measures
+				if (osmd.value.Sheet && osmd.value.Sheet.SourceMeasures) {
+					totalMeasures.value = osmd.value.Sheet.SourceMeasures.length
+					console.log(`Total measures: ${totalMeasures.value}`)
+				}
+
+				// Check if welcome screen should be shown
+				const welcomeShown = localStorage.getItem('musicxmlviewer_welcome_shown')
+				if (welcomeShown === 'true') {
+					showWelcome.value = false
+				}
+
+				console.log('Score loaded successfully')
+
+				isLoaded.value = true
+
+				// Initialize playback engine and mixer channels immediately after loading
+				await initializePlayback()
+			} catch (error) {
+				console.error('Error loading score:', error)
+				showError(t('musicxmlviewer', 'Failed to load the music score'))
+				loading.value = false
+			}
+		}
+
+		// Initialize playback manager
+		const initializePlayback = async () => {
+			if (!osmd.value || playbackManager.value) {
+				return
+			}
+
+			try {
+				isInitializing.value = true
+				console.log('Initializing playback...')
+
+				// 1. Create AudioContext FIRST
+				if (!audioContext.value) {
+					audioContext.value = new (window.AudioContext || window.webkitAudioContext)()
+					addDebugInfo(`AudioContext created, state: ${audioContext.value.state}`)
+				}
+
+				// iOS/Safari: AudioContext starts in 'suspended' state and must be resumed from user interaction
+				if (audioContext.value.state === 'suspended') {
+					addDebugInfo('AudioContext suspended, will resume on Play')
+					// Note: We don't resume here because we're not in a user interaction yet
+					// The resume will happen in the play() function when user clicks Play button
+				}
+
+				addDebugInfo(`AudioContext ready, state: ${audioContext.value.state}`)
+
+				// 2. Create master gain node and connect it BEFORE creating player
+				const masterGain = audioContext.value.createGain()
+				masterGain.connect(audioContext.value.destination)
+				masterGain.gain.value = volume.value / 100
+				console.log('Master gain node created and connected')
+
+				// 3. Create SoundfontPlayer and wrap it with MixerInstrumentPlayer
+				const soundfontPlayer = new SoundfontPlayer()
+				soundfontPlayer.init(audioContext.value)
+
+				const mixer = new MixerInstrumentPlayer(soundfontPlayer)
+				mixer.init(audioContext.value)
+				mixerPlayer.value = markRaw(mixer)
+
+				// 4. Create PlaybackEngine with mixer player
+				const pbManager = new PlaybackEngine(audioContext.value, mixer)
+				
+				// 5. Load score (this will load instruments internally)
+				await pbManager.loadScore(osmd.value)
+				pbManager.setBpm(tempo.value)
+
+				// 6. Wait a bit for instruments to fully load
+				await new Promise(resolve => setTimeout(resolve, 1000))
+
+				// 7. Initialize mixer channels ONLY from actually loaded instruments
+				// Get instruments in the SCORE ORDER from OSMD PartList
+				const actualInstruments = []
+
+				// Try to get instruments in score order from OSMD's sheet structure
+				if (osmd.value.sheet && osmd.value.sheet.Instruments) {
+					console.log('Extracting instruments from OSMD sheet in score order')
+
+					// OSMD.sheet.Instruments is an array ordered as they appear in the score
+					for (const osmdInstrument of osmd.value.sheet.Instruments) {
+						// Get the MIDI program (midiId) from the first voice
+						if (osmdInstrument.Voices && osmdInstrument.Voices.length > 0) {
+							const voice = osmdInstrument.Voices[0]
+							// The midiInstrumentId is stored in the instrument
+							const midiId = osmdInstrument.MidiInstrumentId || voice.Parent?.MidiInstrumentId
+
+							if (midiId !== undefined && soundfontPlayer.players.has(midiId.toString())) {
+								// Find the corresponding instrument from mixer.instruments
+								const instrument = mixer.instruments.find(inst => inst.midiId === midiId)
+								if (instrument) {
+									actualInstruments.push(instrument)
+									console.log(`Found instrument in score order: ${instrument.name} (midiId=${midiId})`)
+								}
+							}
+						}
+					}
+				}
+
+				// Fallback: use soundfontPlayer.players Map order if OSMD structure not available
+				if (actualInstruments.length === 0 && soundfontPlayer.players instanceof Map) {
+					console.log('Fallback: Extracting instruments from soundfontPlayer.players Map')
+
+					soundfontPlayer.players.forEach((player, midiIdStr) => {
+						const midiId = parseInt(midiIdStr, 10)
+						const instrument = mixer.instruments.find(inst => inst.midiId === midiId)
+						if (instrument) {
+							actualInstruments.push(instrument)
+							console.log(`Found actual instrument: ${instrument.name} (midiId=${midiId})`)
+						}
+					})
+				}
+
+				console.log('Total actual instruments in score order:', actualInstruments.length)
+
+				// Set ONLY the actual instruments in the mixer
+				mixer.setScoreInstruments(actualInstruments)
+
+				// Initialize one channel per actual instrument
+				mixer.initializeChannels()
+
+				mixerChannels.value = mixer.getChannels()
+				console.log('Mixer channels loaded:', mixerChannels.value.length, mixerChannels.value)
+
+				playbackManager.value = markRaw(pbManager)
+				
+				// Store master gain reference for volume control
+				playbackManager.value.masterGain = masterGain
+				
+				// 6. CRITICAL: Now reroute all loaded instruments through master gain
+				// Wait a bit to ensure instruments are fully loaded
+				await new Promise(resolve => setTimeout(resolve, 500))
+				
+				console.log('Attempting to reroute instruments through master gain...')
+				let reroutedCount = 0
+				
+				// The soundfontPlayer has a 'players' Map with the actual instrument objects
+				if (soundfontPlayer.players && soundfontPlayer.players instanceof Map) {
+					console.log('Found players Map with', soundfontPlayer.players.size, 'instruments')
+					
+					soundfontPlayer.players.forEach((player, instrumentName) => {
+						console.log(`Inspecting player "${instrumentName}":`, player)
+						
+						// The player object should have an 'out' GainNode that we need to reroute
+						if (player && player.out) {
+							try {
+								// Disconnect from default destination
+								player.out.disconnect()
+								// Connect through master gain
+								player.out.connect(masterGain)
+								reroutedCount++
+								console.log(`✓ Rerouted player "${instrumentName}" through master gain`)
+							} catch (e) {
+								console.warn(`✗ Could not reroute player "${instrumentName}":`, e)
+							}
+						} else {
+							console.warn(`Player "${instrumentName}" has no 'out' property:`, Object.keys(player || {}))
+						}
+					})
+				} else {
+					console.warn('soundfontPlayer.players is not a Map:', soundfontPlayer.players)
+				}
+				
+				console.log(`Rerouting complete: ${reroutedCount} instruments connected to master gain`)
+				
+				if (reroutedCount === 0) {
+					console.error('⚠️ WARNING: No instruments were rerouted! Volume control will not work.')
+					console.log('soundfontPlayer structure:', soundfontPlayer)
+					console.log('pbManager.player structure:', pbManager.player)
+				}
+
+				playbackManager.value.on('state-change', (state) => {
+					console.log('Playback state changed:', state)
+					if (state === 'PLAYING') {
+						isPlaying.value = true
+						startProgressTracking()
+					} else if (state === 'PAUSED') {
+						isPlaying.value = false
+						stopProgressTracking()
+					} else if (state === 'STOPPED') {
+						isPlaying.value = false
+						stopProgressTracking()
+
+						// If loop is enabled and playback reached the end, restart
+						if (loopEnabled.value && progressPercent.value >= 99) {
+							console.log('Loop enabled: restarting playback')
+							setTimeout(async () => {
+								currentTime.value = 0
+								progressPercent.value = 0
+								currentMeasure.value = 0
+								playbackStartTime.value = 0
+								playbackStartOffset.value = 0
+
+								// Reset cursor to beginning
+								if (osmd.value && osmd.value.cursor) {
+									osmd.value.cursor.reset()
+									osmd.value.cursor.show()
+								}
+
+								await play()
+							}, 200)
+						}
+					}
+				})
+				playbackManager.value.on('iteration', (notes) => {
+					updateProgress()
+
+					// Track current measure and advance cursor
+					if (osmd.value && osmd.value.cursor && isPlaying.value) {
+						try {
+							// Add small delay to sync cursor with actual audio playback
+							// PlaybackManager schedules notes slightly ahead, so we delay cursor movement
+							setTimeout(() => {
+								if (!isPlaying.value || !osmd.value?.cursor) return
+
+								// CRITICAL: Manually advance cursor position
+								osmd.value.cursor.next()
+
+							const iterator = osmd.value.cursor.iterator
+
+							// Update current measure based on cursor position
+							const currentVoiceEntry = iterator.currentVoiceEntries
+							if (currentVoiceEntry && currentVoiceEntry[0]) {
+								const measureNum = currentVoiceEntry[0].parentSourceStaffEntry?.verticalContainerParent?.parentMeasure?.measureNumber
+								if (measureNum !== undefined) {
+									// OSMD measure numbers are 1-based, convert to 0-based
+									const newMeasure = measureNum - 1
+									if (newMeasure !== currentMeasure.value) {
+										currentMeasure.value = newMeasure
+										console.log(`Measure: ${currentMeasure.value + 1}/${totalMeasures.value}`)
+									}
+								}
+							}
+
+							// Force cursor visual update after advancing
+							osmd.value.cursor.show()
+
+							// Check if cursor has reached the end of the score
+							if (iterator.endReached) {
+								console.log('Playback completed - cursor reached end of score')
+
+								// Properly stop playback (not pause)
+								if (playbackManager.value) {
+									playbackManager.value.stop()
+								}
+								isPlaying.value = false
+								stopProgressTracking()
+
+								// If loop is enabled, restart
+								if (loopEnabled.value) {
+									console.log('Loop enabled: restarting playback')
+									setTimeout(async () => {
+										// Reset all values
+										currentTime.value = 0
+										progressPercent.value = 0
+										currentMeasure.value = 0
+										playbackStartTime.value = 0
+										playbackStartOffset.value = 0
+										
+										// Reset cursor to beginning
+										if (osmd.value && osmd.value.cursor) {
+											osmd.value.cursor.reset()
+											osmd.value.cursor.show()
+										}
+										
+										// Start playback again
+										await play()
+									}, 200)
+								} else {
+									// Reset to beginning for next play
+									console.log('Resetting to beginning for next play')
+									
+									// Reset all values
+									currentTime.value = 0
+									progressPercent.value = 0
+									currentMeasure.value = 0
+									playbackStartTime.value = 0
+									playbackStartOffset.value = 0
+									
+									// Reset cursor to beginning
+									if (osmd.value && osmd.value.cursor) {
+										osmd.value.cursor.reset()
+										osmd.value.cursor.show()
+									}
+								}
+							}
+							}, 150) // 150ms delay to sync cursor with audio
+						} catch (error) {
+							// Cursor position update failed (non-critical)
+							console.debug('Cursor position update error:', error)
+						}
+					}
+				})
+
+				console.log('Playback initialized successfully')
+				isInitializing.value = false
+
+				// Set initial volume
+				updateVolume()
+
+				// Estimate total duration
+				estimateDuration()
+			} catch (error) {
+				console.error('Error initializing playback:', error)
+				showError(t('musicxmlviewer', 'Failed to initialize audio playback'))
+				isInitializing.value = false
+			}
+		}
+
+		// Progress tracking
+		const startProgressTracking = () => {
+			if (progressInterval.value) {
+				clearInterval(progressInterval.value)
+			}
+			progressInterval.value = setInterval(() => {
+				updateProgress()
+			}, 100)
+		}
+
+		const stopProgressTracking = () => {
+			if (progressInterval.value) {
+				clearInterval(progressInterval.value)
+				progressInterval.value = null
+			}
+		}
+
+		const updateProgress = () => {
+			// PRECISE progress tracking using AudioContext time
+			if (playbackManager.value && audioContext.value) {
+				const state = playbackManager.value.state
+				if (state === 'PLAYING') {
+					// Calculate elapsed time using AudioContext currentTime (most accurate)
+					const elapsedTime = audioContext.value.currentTime - playbackStartTime.value + playbackStartOffset.value
+					currentTime.value = elapsedTime
+					
+					if (totalDuration.value > 0) {
+						progressPercent.value = Math.min((currentTime.value / totalDuration.value) * 100, 100)
+					}
+				}
+			}
+		}
+
+		const estimateDuration = () => {
+			// Rough estimate based on tempo and number of measures
+			if (osmd.value && osmd.value.Sheet) {
+				const measures = osmd.value.Sheet.SourceMeasures.length
+				const beatsPerMeasure = 4 // assumption
+				const secondsPerBeat = 60 / tempo.value
+				totalDuration.value = measures * beatsPerMeasure * secondsPerBeat
+			}
+		}
+
+		// Play
+		const play = async () => {
+			if (!osmd.value) return
+
+			if (!playbackManager.value) {
+				await initializePlayback()
+			}
+
+			if (!playbackManager.value) {
+				showError(t('musicxmlviewer', 'Playback not available'))
+				return
+			}
+
+			try {
+				// CRITICAL: Ensure playback manager is fully stopped before starting
+				// This prevents double playback issues
+				const state = playbackManager.value.state
+				if (state === 'PLAYING' || state === 'PAUSED') {
+					console.log('Stopping previous playback before starting new one')
+					playbackManager.value.stop()
+					// Small delay to ensure stop is processed
+					await new Promise(resolve => setTimeout(resolve, 50))
+				}
+
+				// CRITICAL: Resume AudioContext for iOS/Safari
+				// iOS requires AudioContext to be resumed from a user interaction
+				if (audioContext.value) {
+					if (audioContext.value.state === 'suspended') {
+						addDebugInfo('Resuming AudioContext...')
+						try {
+							await audioContext.value.resume()
+							addDebugInfo(`✓ Resumed: ${audioContext.value.state}`)
+						} catch (error) {
+							addDebugInfo(`✗ Resume failed: ${error.message}`)
+							showError('Audio initialization failed. Please try again.')
+							return
+						}
+					}
+
+					// Extra check for iOS - sometimes needs a second resume
+					if (audioContext.value.state === 'suspended') {
+						addDebugInfo('Still suspended, trying again...')
+						await audioContext.value.resume()
+					}
+
+					// iOS Audio Unlock: Play a silent sound to unlock audio playback
+					// This is required because iOS needs a sound to be triggered from user interaction
+					try {
+						const buffer = audioContext.value.createBuffer(1, 1, 22050)
+						const source = audioContext.value.createBufferSource()
+						source.buffer = buffer
+						source.connect(audioContext.value.destination)
+						source.start(0)
+						addDebugInfo('✓ Silent unlock sound played')
+					} catch (error) {
+						addDebugInfo(`✗ Silent sound failed: ${error.message}`)
+					}
+
+					addDebugInfo(`Ready to play, state: ${audioContext.value.state}`)
+				}
+
+				// If starting from the beginning, ensure cursor is reset
+				if (currentTime.value === 0 && currentMeasure.value === 0) {
+					if (osmd.value && osmd.value.cursor) {
+						osmd.value.cursor.reset()
+						osmd.value.cursor.show()
+					}
+					// Also ensure playback manager starts from beginning
+					if (playbackManager.value.jumpToStep) {
+						playbackManager.value.jumpToStep(0)
+					}
+					currentTimestep.value = 0
+					console.log('Starting playback from the beginning')
+				} else {
+					// CRITICAL: If not starting from beginning, RE-APPLY the timestep
+					// This ensures playback starts from the correct position even after stop()
+					console.log(`Play called with measure=${currentMeasure.value}, timestep=${currentTimestep.value}, time=${currentTime.value}`)
+
+					// CRITICAL: jumpToStep moves the internal cursor, so we need to restore visual cursor position
+					if (playbackManager.value && playbackManager.value.jumpToStep) {
+						console.log(`Applying timestep ${currentTimestep.value} for playback`)
+						playbackManager.value.jumpToStep(currentTimestep.value)
+
+						// Restore cursor to correct visual position after jumpToStep
+						await moveCursorToMeasure(currentMeasure.value)
+					}
+
+					// CRITICAL: Ensure cursor is visible
+					if (osmd.value && osmd.value.cursor) {
+						osmd.value.cursor.show()
+					}
+				}
+
+				// Save the AudioContext time when playback starts for precise timing
+				playbackStartTime.value = audioContext.value.currentTime
+				// If resuming from pause, keep the current time as offset
+				playbackStartOffset.value = currentTime.value
+
+				console.log(`▶️ Starting playback from measure ${currentMeasure.value} at time ${currentTime.value.toFixed(2)}s`)
+				playbackManager.value.play()
+				isPlaying.value = true
+			} catch (error) {
+				console.error('Error starting playback:', error)
+				showError(t('musicxmlviewer', 'Failed to start playback'))
+			}
+		}
+
+		// Pause
+		const pause = () => {
+			if (!playbackManager.value) return
+			
+			try {
+				playbackManager.value.pause()
+				isPlaying.value = false
+			} catch (error) {
+				console.error('Error pausing playback:', error)
+			}
+		}
+
+		// Toggle playback (play/pause) - used for keyboard shortcut
+		const togglePlayback = async () => {
+			if (isPlaying.value) {
+				pause()
+			} else {
+				await play()
+			}
+		}
+
+		// Stop playback
+		const stop = () => {
+			if (!playbackManager.value) return
+
+			try {
+				playbackManager.value.stop()
+				isPlaying.value = false
+				currentTime.value = 0
+				progressPercent.value = 0
+				playbackStartTime.value = 0
+				playbackStartOffset.value = 0
+
+				// Reset to beginning
+				currentMeasure.value = 0
+				currentTimestep.value = 0
+				
+				// Reset visual cursor to beginning
+				if (osmd.value && osmd.value.cursor) {
+					osmd.value.cursor.reset()
+					osmd.value.cursor.show()
+				}
+				
+				console.log('Playback stopped and reset to measure 0')
+			} catch (error) {
+				console.error('Error stopping playback:', error)
+			}
+		}
+
+		// Toggle loop
+		const toggleLoop = () => {
+			loopEnabled.value = !loopEnabled.value
+			console.log('Loop', loopEnabled.value ? 'enabled' : 'disabled')
+		}
+
+		// Toggle mixer visibility
+		const toggleMixer = () => {
+			showMixer.value = !showMixer.value
+			console.log('Mixer', showMixer.value ? 'shown' : 'hidden')
+		}
+
+		// Toggle mixer channel state
+		const toggleChannel = (arrayIndex) => {
+			if (!mixerPlayer.value) return
+
+			const channel = mixerChannels.value[arrayIndex]
+			if (!channel) return
+
+			console.log(`Toggle channel ${arrayIndex}: "${channel.name}" (index=${channel.index}, midiId=${channel.midiId}) from ${channel.state}`)
+			const newState = mixerPlayer.value.toggleChannelState(channel.index)
+			console.log(`  -> New state: ${newState}`)
+			mixerChannels.value = mixerPlayer.value.getChannels()
+			console.log('  -> Updated channels:', mixerChannels.value.map(c => `${c.name}:${c.state}`))
+		}
+
+		// Get CSS class for channel button based on state
+		const getChannelClass = (state) => {
+			switch (state) {
+				case InstrumentState.PLAY:
+					return 'channel-play'
+				case InstrumentState.SOLO:
+					return 'channel-solo'
+				case InstrumentState.MUTE:
+					return 'channel-mute'
+				default:
+					return 'channel-play'
+			}
+		}
+
+		// Get label for channel button based on state
+		const getChannelLabel = (state) => {
+			switch (state) {
+				case InstrumentState.PLAY:
+					return 'P'
+				case InstrumentState.SOLO:
+					return 'S'
+				case InstrumentState.MUTE:
+					return 'M'
+				default:
+					return 'P'
+			}
+		}
+
+		// Close welcome screen
+		const closeWelcome = () => {
+			showWelcome.value = false
+			// Store preference in localStorage
+			localStorage.setItem('musicxmlviewer_welcome_shown', 'true')
+			// Emit event to parent
+			emit('welcome-closed')
+		}
+
+		// Move visual cursor to specific measure and return the timestep count
+		const moveCursorToMeasure = async (targetMeasure) => {
+			if (!osmd.value || !osmd.value.cursor) {
+				console.warn('Cannot move cursor: OSMD or cursor not initialized')
+				return 0
+			}
+
+			try {
+				// Reset cursor to beginning
+				osmd.value.cursor.reset()
+
+				// If target is measure 0, we're already there after reset
+				if (targetMeasure === 0) {
+					osmd.value.cursor.show()
+					console.log(`✓ Cursor at measure 0 (no steps needed)`)
+					return 0
+				}
+
+				// OSMD cursor moves through timesteps (notes/chords), not measures
+				// We need to find the first note of the target measure and move there
+				const iterator = osmd.value.cursor.iterator
+
+				// Skip to target measure by checking the measure number of current note
+				let steps = 0
+				const maxSteps = 10000 // Safety limit to prevent infinite loops
+
+				while (!iterator.endReached && steps < maxSteps) {
+					// CRITICAL: Check BEFORE moving the cursor
+					const currentVoiceEntry = iterator.currentVoiceEntries
+					if (currentVoiceEntry && currentVoiceEntry[0]) {
+						const currentMeasureNumber = currentVoiceEntry[0].parentSourceStaffEntry?.verticalContainerParent?.parentMeasure?.measureNumber
+
+						if (currentMeasureNumber !== undefined) {
+							// OSMD measure numbers are 1-based, our targetMeasure is 0-based
+							const currentMeasure0Based = currentMeasureNumber - 1
+
+							if (currentMeasure0Based === targetMeasure) {
+								// We've reached the exact target measure, stop here
+								console.log(`✓ Cursor moved to measure ${targetMeasure} (after ${steps} steps, OSMD measure ${currentMeasureNumber})`)
+								break
+							}
+						}
+					}
+
+					// Move to next timestep
+					osmd.value.cursor.next()
+					steps++
+				}
+
+				// CRITICAL: Always show cursor after moving
+				osmd.value.cursor.show()
+
+				// Return the timestep count for playback synchronization
+				return steps
+
+			} catch (error) {
+				console.error('Error moving cursor:', error)
+				// Always try to show cursor even if there's an error
+				if (osmd.value && osmd.value.cursor) {
+					osmd.value.cursor.show()
+				}
+				return 0
+			}
+		}
+
+
+		// Navigate to specific measure
+		const navigateToMeasure = async (measureIndex) => {
+			if (!osmd.value) {
+				console.warn('Cannot navigate: OSMD not initialized')
+				return
+			}
+
+			try {
+				// CRITICAL: Always stop playback (whether playing or paused) to reset internal state
+				if (playbackManager.value) {
+					const wasPlaying = isPlaying.value
+					playbackManager.value.stop()
+					isPlaying.value = false
+					if (wasPlaying) {
+						console.log('Stopped playback for navigation')
+					} else {
+						console.log('Reset paused playback for navigation')
+					}
+				}
+
+				// Jump to measure WITHOUT auto-starting playback
+				const oldMeasure = currentMeasure.value
+				currentMeasure.value = Math.max(0, Math.min(measureIndex, totalMeasures.value - 1))
+				console.log(`NavigateToMeasure: ${oldMeasure} → ${currentMeasure.value} (requested: ${measureIndex})`)
+
+				// Move the visual cursor to the selected measure and get the timestep
+				const timestep = await moveCursorToMeasure(currentMeasure.value)
+
+				// Initialize playback manager if not already done
+				if (!playbackManager.value) {
+					await initializePlayback()
+				}
+
+				// CRITICAL: Save the timestep for playback synchronization
+				// We will apply this timestep only when play() is called
+				currentTimestep.value = timestep
+				console.log(`Saved timestep: ${timestep} for measure ${currentMeasure.value}`)
+
+				// CRITICAL: Calculate estimated time at current measure for progress bar
+				// This ensures progress bar reflects the selected measure position
+				const beatsPerMeasure = 4 // assumption
+				const secondsPerBeat = 60 / tempo.value
+				const estimatedTime = currentMeasure.value * beatsPerMeasure * secondsPerBeat
+
+				currentTime.value = estimatedTime
+				playbackStartOffset.value = estimatedTime
+				playbackStartTime.value = 0
+
+				// Update progress bar to reflect current position
+				if (totalDuration.value > 0) {
+					progressPercent.value = Math.min((currentTime.value / totalDuration.value) * 100, 100)
+				}
+
+				console.log(`✓ Navigation complete: measure ${currentMeasure.value}, timestep ${timestep}, estimated time ${estimatedTime.toFixed(2)}s`)
+			} catch (error) {
+				console.error('Error navigating to measure:', error)
+			}
+		}
+
+		// Navigate to next measure
+		const nextMeasure = async () => {
+			console.log(`Next measure requested. Current: ${currentMeasure.value}, navigating to: ${currentMeasure.value + 1}`)
+			await navigateToMeasure(currentMeasure.value + 1)
+		}
+
+		// Navigate to previous measure
+		const prevMeasure = async () => {
+			console.log(`Previous measure requested. Current: ${currentMeasure.value}, navigating to: ${currentMeasure.value - 1}`)
+			await navigateToMeasure(currentMeasure.value - 1)
+		}
+
+		// Update tempo
+		const updateTempo = () => {
+			if (playbackManager.value) {
+				try {
+					playbackManager.value.setBpm(tempo.value)
+					estimateDuration()
+				} catch (error) {
+					console.error('Error updating tempo:', error)
+				}
+			}
+		}
+
+		// Update volume
+		const updateVolume = () => {
+			try {
+				// Calculate normalized volume (0-1)
+				const normalizedVolume = volume.value / 100
+				
+				if (!playbackManager.value || !playbackManager.value.masterGain) {
+					// If playback not initialized yet, volume will be set during initialization
+					console.log('Volume will be set when playback is initialized:', volume.value + '%')
+					return
+				}
+				
+				// CRITICAL: Use .gain.value not .gain
+				// Use smooth transition to avoid audio clicks
+				const gainNode = playbackManager.value.masterGain
+				const currentTime = audioContext.value.currentTime
+				
+				// Cancel any scheduled changes
+				gainNode.gain.cancelScheduledValues(currentTime)
+				
+				// Set current value and ramp to new value smoothly (50ms transition)
+				gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime)
+				gainNode.gain.linearRampToValueAtTime(normalizedVolume, currentTime + 0.05)
+				
+				console.log(`Volume smoothly ramping to ${volume.value}% (${normalizedVolume})`)
+			} catch (error) {
+				console.error('Error updating volume:', error)
+			}
+		}
+
+		// Zoom in
+		const zoomIn = () => {
+			if (!osmd.value) return
+
+			try {
+				zoomLevel.value += 0.1
+				osmd.value.zoom = zoomLevel.value
+
+				// If playback is active, don't render to avoid disrupting cursor iteration
+				// The zoom will be applied on next render cycle
+				if (!isPlaying.value) {
+					osmd.value.render()
+					// Re-show cursor after zoom
+					if (osmd.value.cursor) {
+						osmd.value.cursor.show()
+					}
+				}
+			} catch (error) {
+				console.error('Error zooming in:', error)
+			}
+		}
+
+		// Zoom out
+		const zoomOut = () => {
+			if (!osmd.value) return
+
+			try {
+				zoomLevel.value = Math.max(0.5, zoomLevel.value - 0.1)
+				osmd.value.zoom = zoomLevel.value
+
+				// If playback is active, don't render to avoid disrupting cursor iteration
+				// The zoom will be applied on next render cycle
+				if (!isPlaying.value) {
+					osmd.value.render()
+					// Re-show cursor after zoom
+					if (osmd.value.cursor) {
+						osmd.value.cursor.show()
+					}
+				}
+			} catch (error) {
+				console.error('Error zooming out:', error)
+			}
+		}
+
+		// Share score
+		// Keyboard shortcuts
+		const handleKeyboard = (e) => {
+			// Skip if typing in input fields
+			if (e.target.matches('input, textarea')) return
+			
+			// Space: Play/Pause
+			if (e.code === 'Space') {
+				e.preventDefault()
+				togglePlayback()
+			}
+			// Plus/Minus: Zoom
+			if (e.key === '+' || e.key === '=') {
+				e.preventDefault()
+				zoomIn()
+			}
+			if (e.key === '-' || e.key === '_') {
+				e.preventDefault()
+				zoomOut()
+			}
+			// Left/Right Arrows: Navigate measures
+			if (e.key === 'ArrowLeft') {
+				e.preventDefault()
+				prevMeasure()
+			}
+			if (e.key === 'ArrowRight') {
+				e.preventDefault()
+				nextMeasure()
+			}
+		}
+
+		// Cleanup
+		const cleanup = () => {
+			console.log('Cleaning up MusicViewer...')
+			stopProgressTracking()
+			if (playbackManager.value) {
+				try {
+					playbackManager.value.stop()
+				} catch (e) {
+					// Ignore errors during cleanup
+				}
+			}
+			if (audioContext.value) {
+				audioContext.value.close()
+			}
+		}
+
+
+	// Handle sidebar toggle for responsive layout
+	const handleSidebarToggle = () => {
+		if (!osmd.value) return
+
+		// Wait for CSS transition to complete (300ms) and a bit more for layout stabilization
+		setTimeout(() => {
+			try {
+				// Force container dimension recalculation
+				const container = osmdContainer.value
+				if (!container) return
+
+				// Get new container width after sidebar toggle
+				const newWidth = container.offsetWidth
+				console.log('Container resized to:', newWidth)
+
+				// Method 1: Update sheet page width and re-render
+				// This forces OSMD to recalculate layout based on new container width
+				if (osmd.value.sheet) {
+					osmd.value.sheet.pageWidth = newWidth / osmd.value.zoom / 10.0
+				}
+
+				// Method 2: Re-render with current zoom to force layout recalculation
+				osmd.value.zoom = zoomLevel.value
+				osmd.value.render()
+
+				// Re-show cursor after re-render
+				if (osmd.value.cursor) {
+					osmd.value.cursor.show()
+				}
+				console.log('OSMD re-rendered after sidebar toggle - new width:', newWidth)
+			} catch (error) {
+				console.error('Error re-rendering OSMD:', error)
+			}
+		}, 400)
+	}
+
+	// Store observer reference for cleanup
+	const sidebarObserver = ref(null)
+
+		// Lifecycle hooks
+		onMounted(async () => {
+			await loadScore()
+			window.addEventListener('keydown', handleKeyboard)
+		// Watch for sidebar toggle to re-render sheet music
+		// Use nextTick to ensure DOM is ready
+		await nextTick()
+
+		// Find the app-navigation element
+		const appNav = document.querySelector('#app-navigation-vue')
+
+		if (appNav) {
+			// Use MutationObserver to detect when classes or styles change
+			const observer = new MutationObserver((mutations) => {
+				mutations.forEach((mutation) => {
+					if (mutation.attributeName === 'class' || mutation.attributeName === 'style') {
+						console.log('Sidebar state changed, triggering OSMD re-render')
+						handleSidebarToggle()
+					}
+				})
+			})
+
+			observer.observe(appNav, {
+				attributes: true,
+				attributeFilter: ['class', 'style']
+			})
+
+			sidebarObserver.value = observer
+		}
+
+		// Also listen to window resize as fallback
+		window.addEventListener('resize', handleSidebarToggle)
+		})
+
+		onBeforeUnmount(() => {
+			console.log('MusicViewer unmounting')
+			cleanup()
+			window.removeEventListener('keydown', handleKeyboard)
+
+		// Cleanup sidebar observer
+		if (sidebarObserver.value) {
+			sidebarObserver.value.disconnect()
+			sidebarObserver.value = null
+		}
+		window.removeEventListener('resize', handleSidebarToggle)
+		})
+
+		return {
+			osmdContainer,
+			loading,
+			isLoaded,
+			isPlaying,
+			isInitializing,
+			tempo,
+			volume,
+			zoomLevel,
+			currentTime,
+			totalDuration,
+			progressPercent,
+			loopEnabled,
+			showWelcome,
+			currentMeasure,
+			totalMeasures,
+			mixerChannels,
+			showMixer,
+			debugInfo,
+			// Translation strings
+			welcomeTitle,
+			quickTipsTitle,
+			keyboardShortcutsTitle,
+			playPauseText,
+			navigateMeasuresText,
+			zoomText,
+			playbackControlsTitle,
+			playbackControlsDesc,
+			zoomTitle,
+			zoomDesc,
+			loopModeTitle,
+			loopModeDesc,
+			gotItText,
+			// Functions
+			play,
+			pause,
+			togglePlayback,
+			stop,
+			toggleLoop,
+			toggleMixer,
+			toggleChannel,
+			getChannelClass,
+			getChannelLabel,
+			closeWelcome,
+			nextMeasure,
+			prevMeasure,
+			updateTempo,
+			updateVolume,
+			zoomIn,
+			zoomOut,
+			formatTime,
+		}
+	},
+}
+</script>
+
+<style scoped>
+.music-viewer {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	min-height: 100vh;
+	background-color: var(--color-main-background);
+	overflow: hidden;
+}
+
+/* Compact playback controls */
+.playback-controls {
+	position: sticky;
+	top: 0;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 4px;
+	padding: 3px 12px;
+	background-color: rgba(var(--color-main-background-rgb), 0.98);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--color-border);
+	flex-wrap: wrap;
+	z-index: 100;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	min-height: 48px;
+	height: auto;
+	max-height: 144px;
+	box-sizing: border-box;
+}
+
+
+
+.control-group {
+	display: flex;
+	gap: 8px;
+	flex: 0 0 auto;
+}
+
+.loop-active {
+	background-color: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
+}
+
+.loop-active:hover {
+	background-color: var(--color-primary-element-hover) !important;
+}
+
+/* Progress section */
+.progress-section {
+	width: auto;
+	min-width: 200px;
+	max-width: 200px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-right: 16px;
+}
+
+.progress-bar {
+	height: 6px;
+	background-color: var(--color-background-dark);
+	border-radius: 3px;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.progress-fill {
+	height: 100%;
+	background: var(--color-primary-element);
+	transition: width 0.1s ease;
+	border-radius: 3px;
+}
+
+.time-display {
+	display: flex;
+	gap: 3px;
+	font-size: 11px;
+	color: var(--color-text-maxcontrast);
+	justify-content: center;
+	line-height: 1;
+}
+
+.separator {
+	opacity: 0.5;
+}
+
+.measure-separator {
+	opacity: 0.5;
+	margin: 0 4px;
+}
+
+.measure-display {
+	font-weight: 500;
+	color: var(--color-primary-element);
+}
+
+/* Tempo and Volume Group */
+.tempo-volume-group {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	margin-right: 16px;
+}
+
+/* Tempo control */
+.tempo-control {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	padding: 0;
+	margin: 0;
+}
+
+
+.tempo-input,
+.volume-input {
+	width: 50px;
+	padding: 4px 6px;
+	border: 1px solid var(--color-border);
+	border-radius: 3px;
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 12px;
+	text-align: center;
+	height: 28px;
+	box-sizing: border-box;
+}
+
+.tempo-input:focus,
+.volume-input:focus {
+	outline: none;
+	border-color: var(--color-primary-element);
+}
+
+.unit-label {
+	font-size: 11px;
+	color: var(--color-text-maxcontrast);
+	font-weight: 500;
+	line-height: 1;
+}
+
+.tempo-slider {
+	display: none !important;
+}
+
+/* Volume control */
+.volume-control {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	padding: 0;
+	margin: 0;
+}
+
+
+.volume-slider {
+	display: none !important;
+}
+
+/* Mixer toggle button */
+.mixer-toggle {
+	display: flex;
+	align-items: center;
+	margin-left: 8px;
+}
+
+.mixer-active {
+	background-color: var(--color-primary-element) !important;
+	color: white !important;
+}
+
+/* Mixer channels */
+.mixer-channels {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0;
+	overflow-x: auto;
+	flex-basis: 100%;
+	width: 100%;
+	order: 10;
+}
+
+.channel-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	min-width: 34px;
+	min-height: 34px;
+	padding: 0;
+	border: 2px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+	cursor: pointer;
+	transition: all 0.2s;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.channel-button:hover:not(:disabled) {
+	border-color: var(--color-primary-element);
+	box-shadow: 0 0 0 2px var(--color-primary-element-light);
+}
+
+.channel-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Channel state colors */
+.channel-play {
+	background-color: var(--color-success);
+	color: white;
+	border-color: var(--color-success);
+}
+
+.channel-play:hover:not(:disabled) {
+	background-color: var(--color-success-hover, #46ba61);
+	box-shadow: 0 0 0 2px rgba(70, 186, 97, 0.3);
+}
+
+.channel-play:focus,
+.channel-play:focus-visible {
+	background-color: var(--color-success);
+	color: white;
+	border-color: var(--color-success);
+	outline: 2px solid var(--color-success);
+	outline-offset: 2px;
+}
+
+.channel-solo {
+	background-color: var(--color-warning);
+	color: white;
+	border-color: var(--color-warning);
+}
+
+.channel-solo:hover:not(:disabled) {
+	background-color: var(--color-warning-hover, #f5a623);
+	box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.3);
+}
+
+.channel-solo:focus,
+.channel-solo:focus-visible {
+	background-color: var(--color-warning);
+	color: white;
+	border-color: var(--color-warning);
+	outline: 2px solid var(--color-warning);
+	outline-offset: 2px;
+}
+
+.channel-mute {
+	background-color: var(--color-error);
+	color: white;
+	border-color: var(--color-error);
+}
+
+.channel-mute:hover:not(:disabled) {
+	background-color: var(--color-error-hover, #e9322d);
+	box-shadow: 0 0 0 2px rgba(233, 50, 45, 0.3);
+}
+
+.channel-mute:focus,
+.channel-mute:focus-visible {
+	background-color: var(--color-error);
+	color: white;
+	border-color: var(--color-error);
+	outline: 2px solid var(--color-error);
+	outline-offset: 2px;
+}
+
+/* Zoom controls */
+.zoom-controls {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex: 0 0 auto;
+}
+
+.zoom-level {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--color-main-text);
+	min-width: 42px;
+	text-align: center;
+	line-height: 1;
+}
+
+/* Remove padding from NcButton components and set consistent size */
+.playback-controls :deep(.button-vue) {
+	padding: 0 !important;
+	min-height: 34px !important;
+	height: 34px !important;
+	width: 34px !important;
+	min-width: 34px !important;
+}
+
+/* Slider styles */
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 6px;
+	background: var(--color-background-dark);
+	border-radius: 3px;
+	outline: none;
+	transition: background 0.2s;
+}
+
+input[type="range"]:hover {
+	background: var(--color-background-hover);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	background: var(--color-primary-element);
+	border-radius: 50%;
+	cursor: pointer;
+	transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+	transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	background: var(--color-primary-element);
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: transform 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+	transform: scale(1.2);
+}
+
+input[type="range"]:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Welcome Screen */
+.welcome-screen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10000;
+	padding: 20px;
+}
+
+.welcome-content {
+	background-color: var(--color-main-background);
+	border-radius: 8px;
+	padding: 32px;
+	max-width: 600px;
+	max-height: 90vh;
+	overflow-y: auto;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-content h2 {
+	margin-top: 0;
+	margin-bottom: 24px;
+	color: var(--color-main-text);
+	font-size: 24px;
+	font-weight: 600;
+}
+
+.welcome-content h3 {
+	margin-top: 0;
+	margin-bottom: 16px;
+	color: var(--color-main-text);
+	font-size: 18px;
+	font-weight: 500;
+}
+
+.quick-tips {
+	margin-bottom: 24px;
+}
+
+.tip-item {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 20px;
+	align-items: flex-start;
+}
+
+.tip-icon {
+	font-size: 24px;
+	flex-shrink: 0;
+}
+
+.tip-text {
+	flex: 1;
+}
+
+.tip-text strong {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--color-main-text);
+}
+
+.tip-text p {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	line-height: 1.5;
+}
+
+.tip-text ul {
+	margin: 8px 0 0 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.tip-text li {
+	color: var(--color-text-maxcontrast);
+	line-height: 1.8;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.tip-text kbd {
+	display: inline-block;
+	padding: 2px 8px;
+	background-color: var(--color-background-dark);
+	border: 1px solid var(--color-border);
+	border-radius: 3px;
+	font-family: monospace;
+	font-size: 12px;
+	color: var(--color-main-text);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Debug panel for iOS audio troubleshooting */
+.debug-panel {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background-color: rgba(0, 0, 0, 0.9);
+	color: #00ff00;
+	padding: 12px;
+	border-radius: 8px;
+	font-family: monospace;
+	font-size: 11px;
+	max-width: 90vw;
+	max-height: 200px;
+	overflow-y: auto;
+	z-index: 10000;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.debug-header {
+	color: #ffff00;
+	font-weight: bold;
+	margin-bottom: 8px;
+	border-bottom: 1px solid #444;
+	padding-bottom: 4px;
+}
+
+.debug-line {
+	margin: 2px 0;
+	line-height: 1.4;
+	word-wrap: break-word;
+}
+
+/* Sheet viewer */
+.sheet-viewer {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 20px;
+	padding-top: 0;
+	background-color: #f5f5f5;
+	min-height: 0;
+}
+
+.osmd-container {
+	width: 100%;
+	min-height: 800px;
+	background-color: #ffffff;
+	border-radius: 3px;
+	padding: 0;
+}
+
+/* White background for the actual score SVG with subtle border */
+.osmd-container svg {
+	background-color: #ffffff !important;
+	border-radius: 6px;
+	padding: 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	transition: box-shadow 0.2s ease;
+}
+
+.osmd-container svg:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading-spinner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 400px;
+	gap: 16px;
+}
+
+.loading-spinner p {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+	.playback-controls {
+		gap: 12px;
+		padding: 10px 16px;
+	}
+
+	.tempo-slider,
+	.volume-slider {
+		width: 80px;
+	}
+}
+
+@media (max-width: 768px) {
+	.playback-controls {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		padding: 8px;
+		max-height: none;
+	}
+
+	/* Row 1: Control group + Progress section */
+	.control-group {
+		order: 1;
+		flex: 1 1 auto;
+		min-width: 200px;
+		justify-content: flex-start;
+		margin: 0;
+		padding-left: 40px;
+	}
+
+	.progress-section {
+		order: 2;
+		flex: 1 1 auto;
+		min-width: 150px;
+		max-width: none;
+		margin: 0;
+	}
+
+	/* Row 2: Tempo/Volume group + Zoom controls */
+	.tempo-volume-group {
+		order: 3;
+		flex: 1 1 auto;
+		min-width: 200px;
+		justify-content: flex-start;
+		margin: 0;
+		gap: 8px;
+	}
+
+	.tempo-control,
+	.volume-control {
+		flex: 0 0 auto;
+		justify-content: center;
+	}
+
+	.zoom-controls {
+		order: 4;
+		flex: 0 0 auto;
+		justify-content: center;
+	}
+
+	/* Row 3: Mixer channels (full width) */
+	.mixer-channels {
+		order: 5;
+		flex-basis: 100%;
+		width: 100%;
+		justify-content: flex-start;
+		overflow-x: auto;
+		padding: 4px 0;
+		display: flex !important;
+	}
+
+	/* Keep sliders hidden on mobile - user prefers number inputs only */
+	.tempo-slider,
+	.volume-slider {
+		display: none !important;
+	}
+
+	/* Remove top padding from sheet viewer on mobile */
+	.sheet-viewer {
+		padding-top: 0 !important;
+	}
+}
+
+</style>
+
