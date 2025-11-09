@@ -180,24 +180,6 @@ mxmlscores/
 └── README.md             # This file
 ```
 
-## Development
-
-### Adding New Features
-
-1. Create new Vue components in `src/components/`
-2. Add new routes in `appinfo/routes.php`
-3. Create corresponding controllers in `lib/Controller/`
-4. Build and test
-
-### Debugging
-
-- Enable Nextcloud debug mode in `config.php`:
-  ```php
-  'debug' => true,
-  ```
-- Check browser console for JavaScript errors
-- Check Nextcloud logs for PHP errors: `data/nextcloud.log`
-
 ## Technologies Used
 
 - **OpenSheetMusicDisplay**: Music notation rendering
@@ -205,25 +187,6 @@ mxmlscores/
 - **Vite**: Build tool
 - **Nextcloud Vue Components**: UI components
 - **PHP 8.1+**: Backend API
-
-## Deployment
-
-The app includes a deployment script (`deploy-production.sh`) for easy deployment to production servers:
-
-```bash
-./deploy-production.sh
-```
-
-This script will:
-1. Build the app locally
-2. Deploy files to the production server via SSH
-3. Set correct ownership and permissions
-4. Prepare the app for use
-
-After deployment, run the Nextcloud upgrade command to update the database:
-```bash
-ssh your-server "cd /path/to/nextcloud && php occ upgrade"
-```
 
 ## Version History
 
@@ -252,7 +215,6 @@ AGPL-3.0-or-later
 ## Credits
 
 - Built with [OpenSheetMusicDisplay](https://opensheetmusicdisplay.org/)
-- Inspired by the WordPress OpenSheetMusicDisplay plugin
 
 ## Support
 
