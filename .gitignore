@@ -35,3 +35,16 @@ TEST_REPORT.md
 # Temporary files
 *.log
 *.tmp
+
+# Utility scripts (not for distribution)
+package-app.sh
+update-repo-urls.sh
+deploy-production.sh
+deploy-and-test.sh
+backup.sh
+
+# Documentation files (except README.md)
+DEPLOY_CHECKLIST.md
+WORKFLOW.md
+GITHUB_SETUP.md
+INSTALL.md
