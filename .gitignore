@@ -51,3 +51,13 @@ INSTALL.md
 # Code signing
 appinfo/signature.json
 sign-app.sh
+
+# Submission and certificate files
+CSR_SUBMISSION_GUIDE.md
+NEXTCLOUD_APPSTORE_SUBMISSION.md
+CHANGELOG.md
+*.csr
+*.crt
+
+# Deployment script (now in repository but ignored for public)
+deploy-production.sh
