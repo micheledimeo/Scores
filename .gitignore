@@ -39,7 +39,6 @@ TEST_REPORT.md
 # Utility scripts (not for distribution)
 package-app.sh
 update-repo-urls.sh
-deploy-production.sh
 deploy-and-test.sh
 backup.sh
 
