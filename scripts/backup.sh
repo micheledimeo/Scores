@@ -12,7 +12,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-BACKUP_DIR="backups"
+PROJECT_ROOT="/Users/Michele/Sites"
+BACKUP_DIR="${PROJECT_ROOT}/backups"
 MAX_BACKUPS=30  # Keep last 30 backups
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_NAME="mxmlscores_backup_${TIMESTAMP}.tar.gz"
@@ -22,6 +23,9 @@ echo "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
 
 # Create backup directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
+
+# Change to app directory
+cd "${PROJECT_ROOT}/mxmlscores"
 
 # Files and directories to backup
 BACKUP_TARGETS=(

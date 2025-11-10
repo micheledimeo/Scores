@@ -16,7 +16,8 @@ NC='\033[0m'
 
 # Configuration
 APP_NAME="mxmlscores"
-APP_DIR="/Users/Michele/Sites/mxmlscores"
+PROJECT_ROOT="/Users/Michele/Sites"
+APP_DIR="${PROJECT_ROOT}/mxmlscores"
 CERT_DIR="$HOME/.nextcloud/certificates"
 PRIVATE_KEY="$CERT_DIR/${APP_NAME}.key"
 PUBLIC_CERT="$CERT_DIR/${APP_NAME}.crt"

@@ -15,12 +15,18 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Configuration
+PROJECT_ROOT="/Users/Michele/Sites"
+APP_DIR="${PROJECT_ROOT}/mxmlscores"
+TEST_DIR="${PROJECT_ROOT}/testsprite"
+
 echo -e "${GREEN}=== Deploy & Test Workflow ===${NC}"
 echo "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
 echo ""
 
 # Step 1: Build
 echo -e "${BLUE}[1/4]${NC} ${YELLOW}Building application...${NC}"
+cd "${APP_DIR}"
 npm run build
 if [ $? -ne 0 ]; then
     echo -e "${RED}✗ Build failed${NC}"
@@ -31,7 +37,7 @@ echo ""
 
 # Step 2: Deploy
 echo -e "${BLUE}[2/4]${NC} ${YELLOW}Deploying to production...${NC}"
-./deploy-production.sh
+"${APP_DIR}/scripts/deploy-production.sh"
 if [ $? -ne 0 ]; then
     echo -e "${RED}✗ Deploy failed${NC}"
     exit 1
@@ -50,7 +56,7 @@ echo ""
 
 # Step 4: Run tests
 echo -e "${BLUE}[4/4]${NC} ${YELLOW}Running online tests...${NC}"
-cd ../. mxmlscores-testsprite
+cd "${TEST_DIR}"
 npm run test:online
 
 # Check test results
@@ -68,5 +74,5 @@ else
     echo -e "⚠ Tests (some failures)"
     echo ""
     echo "View detailed results with:"
-    echo "  cd ../.mxmlscores-testsprite && npx playwright show-report"
+    echo "  cd ${TEST_DIR} && npx playwright show-report"
 fi

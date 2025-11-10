@@ -6,59 +6,74 @@ This branch (`utils`) contains development and deployment utilities for the mxml
 
 **These files are NOT included in the main branch** to keep the public repository clean and focused on the app code.
 
-## 📜 Available Scripts
+## 📂 Branch Organization
+
+All utilities are organized in dedicated folders:
+
+- **`scripts/`** - Shell scripts for deployment, packaging, and maintenance
+- **`docs/`** - Extended documentation and guides
+
+## 📜 Available Scripts (in scripts/ folder)
 
 ### Deployment Scripts
 
-- **`deploy-production.sh`** - Deploy the app to production server
+- **`scripts/deploy-production.sh`** - Deploy the app to production server
   ```bash
-  ./deploy-production.sh
+  ./scripts/deploy-production.sh
   ```
 
-- **`deploy-and-test.sh`** - Deploy and run tests
+- **`scripts/deploy-and-test.sh`** - Deploy and run tests
   ```bash
-  ./deploy-and-test.sh
+  ./scripts/deploy-and-test.sh
   ```
 
 ### Packaging Scripts
 
-- **`package-app.sh`** - Create distributable tar.gz package
+- **`scripts/package-app.sh`** - Create distributable tar.gz package
   ```bash
-  ./package-app.sh
-  # Creates: dist/mxmlscores-[version].tar.gz
+  ./scripts/package-app.sh
+  # Creates: /Users/Michele/Sites/dist/mxmlscores-[version].tar.gz
+  ```
+
+- **`scripts/sign-app.sh`** - Sign app for Nextcloud App Store
+  ```bash
+  ./scripts/sign-app.sh
   ```
 
 ### Repository Management
 
-- **`update-repo-urls.sh`** - Update repository URLs in info.xml
+- **`scripts/update-repo-urls.sh`** - Update repository URLs in info.xml
   ```bash
-  ./update-repo-urls.sh [github-username] [author-email]
+  ./scripts/update-repo-urls.sh [github-username] [author-email]
   ```
 
-- **`backup.sh`** - Backup utility
+- **`scripts/backup.sh`** - Backup utility
   ```bash
-  ./backup.sh
+  ./scripts/backup.sh
   ```
 
-## 📚 Documentation Files
+## 📚 Documentation Files (in docs/ folder)
 
-- **`DEPLOY_CHECKLIST.md`** - Deployment checklist
-- **`WORKFLOW.md`** - Development workflow
-- **`GITHUB_SETUP.md`** - GitHub setup guide
-- **`INSTALL.md`** - Installation instructions
+- **`docs/DEPLOY_CHECKLIST.md`** - Deployment checklist
+- **`docs/WORKFLOW.md`** - Development workflow
+- **`docs/GITHUB_SETUP.md`** - GitHub setup guide
+- **`docs/INSTALL.md`** - Installation instructions
+- **`docs/CSR_SUBMISSION_GUIDE.md`** - Certificate Signing Request guide
+- **`docs/NEXTCLOUD_APPSTORE_SUBMISSION.md`** - App Store submission data
 
 ## 🔄 How to Use This Branch
 
 ### Get utility scripts when needed
 
 ```bash
-# From main branch, copy a specific script
-git checkout utils -- package-app.sh
+# From main branch, copy specific scripts/docs
+git checkout utils -- scripts/package-app.sh
+git checkout utils -- docs/DEPLOY_CHECKLIST.md
 
 # Use the script
-./package-app.sh
+./scripts/package-app.sh
 
-# The file is gitignored in main, so it won't be committed
+# The files are gitignored in main, so they won't be committed
 ```
 
 ### Update scripts
@@ -67,12 +82,13 @@ git checkout utils -- package-app.sh
 # Switch to utils branch
 git checkout utils
 
-# Edit scripts
-vim deploy-production.sh
+# Edit scripts (now in organized folders)
+vim scripts/deploy-production.sh
+vim docs/WORKFLOW.md
 
 # Commit changes
-git add deploy-production.sh
-git commit -m "Update deployment script"
+git add scripts/ docs/
+git commit -m "Update deployment utilities"
 git push origin utils
 
 # Return to main
@@ -83,8 +99,8 @@ git checkout main
 
 ```bash
 # From main branch, get all utils without committing them
-git checkout utils -- package-app.sh deploy-production.sh backup.sh
-git checkout utils -- DEPLOY_CHECKLIST.md WORKFLOW.md GITHUB_SETUP.md INSTALL.md
+git checkout utils -- scripts/
+git checkout utils -- docs/
 
 # Use them (they're gitignored so won't be committed to main)
 ```

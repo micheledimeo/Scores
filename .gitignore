@@ -10,7 +10,6 @@ package-lock.json
 
 # Build directories
 build_package/
-dist/
 
 # IDE
 .idea/
@@ -26,15 +25,37 @@ Thumbs.db
 # Nextcloud
 /vendor/
 
-# Test files
-.mxmlscores-testsprite/
-testsprite_tests/
+# Test files (now in parent directory)
 testsprite.log
-TEST_REPORT.md
 
 # Temporary files
 *.log
 *.tmp
 
+<<<<<<< Updated upstream
 # NOTE: This is the utils branch - utility scripts and docs ARE tracked here
 # In main branch, these files are gitignored
+=======
+# Utility scripts (not for distribution)
+package-app.sh
+update-repo-urls.sh
+deploy-and-test.sh
+backup.sh
+
+# Documentation files (except README.md)
+DEPLOY_CHECKLIST.md
+WORKFLOW.md
+GITHUB_SETUP.md
+INSTALL.md
+
+# Code signing
+appinfo/signature.json
+sign-app.sh
+
+# Submission and certificate files (now in parent directory or utils branch)
+*.csr
+*.crt
+
+# Deployment script (now in repository but ignored for public)
+deploy-production.sh
+>>>>>>> Stashed changes

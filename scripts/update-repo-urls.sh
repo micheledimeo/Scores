@@ -36,7 +36,8 @@ if [ -z "$AUTHOR_EMAIL" ]; then
     echo ""
 fi
 
-INFO_XML="appinfo/info.xml"
+PROJECT_ROOT="/Users/Michele/Sites"
+INFO_XML="${PROJECT_ROOT}/mxmlscores/appinfo/info.xml"
 REPO_NAME="mxmlscores"
 
 echo -e "${BLUE}╔════════════════════════════════════════════╗${NC}"

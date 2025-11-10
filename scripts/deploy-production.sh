@@ -15,7 +15,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 APP_NAME="mxmlscores"
-LOCAL_DIR="/Users/Michele/Sites/mxmlscores"
+PROJECT_ROOT="/Users/Michele/Sites"
+LOCAL_DIR="${PROJECT_ROOT}/mxmlscores"
 REMOTE_USER="root"
 REMOTE_HOST="ottoniascoppio"  # Uses SSH config
 REMOTE_DIR="/home/ottoniascoppio/domains/cloud.ottoniascoppio.org/public_html/apps/${APP_NAME}"
