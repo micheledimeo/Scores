@@ -25,7 +25,7 @@ Thumbs.db
 # Nextcloud
 /vendor/
 
-# Project files directory (development, testing, builds, backups)
+# Project files directory (development, testing, builds, backups, scripts, docs, screenshots)
 project-files/
 
 # Temporary files
@@ -34,10 +34,6 @@ project-files/
 *.bak
 *.bak.*
 *.backup
-
-# Utility scripts and documentation (from utils branch)
-scripts/
-docs/
 
 # Code signing
 appinfo/signature.json
