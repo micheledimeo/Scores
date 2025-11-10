@@ -68,38 +68,6 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - Node.js 20 or later
 - npm 10 or later
 
-### Development Setup
-
-1. Clone or copy this directory to your Nextcloud `apps/` folder
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Build the app:
-   ```bash
-   npm run build
-   ```
-4. Enable the app in Nextcloud:
-   ```bash
-   php occ app:enable mxmlscores
-   ```
-
-### Production Build
-
-For production, run:
-```bash
-npm run build
-```
-
-This will create optimized files in the `js/` directory.
-
-### Development Mode
-
-For development with hot reload:
-```bash
-npm run watch
-```
-
 ## Usage
 
 ### Basic Usage
