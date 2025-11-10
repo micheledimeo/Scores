@@ -36,17 +36,5 @@ TEST_REPORT.md
 *.log
 *.tmp
 
-# NOTE: In the 'utils' branch, utility scripts and docs are tracked
-# In 'main' branch, they are ignored (see below)
-
-# Utility scripts (not for distribution - ignored in main branch only)
-# Uncomment these in main branch:
-# package-app.sh
-# update-repo-urls.sh
-# deploy-production.sh
-# deploy-and-test.sh
-# backup.sh
-# DEPLOY_CHECKLIST.md
-# WORKFLOW.md
-# GITHUB_SETUP.md
-# INSTALL.md
+# NOTE: This is the utils branch - utility scripts and docs ARE tracked here
+# In main branch, these files are gitignored
