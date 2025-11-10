@@ -10,7 +10,6 @@ package-lock.json
 
 # Build directories
 build_package/
-dist/
 
 # IDE
 .idea/
@@ -26,11 +25,8 @@ Thumbs.db
 # Nextcloud
 /vendor/
 
-# Test files
-.mxmlscores-testsprite/
-testsprite_tests/
-testsprite.log
-TEST_REPORT.md
+# Project files directory (development, testing, builds, backups)
+project-files/
 
 # Temporary files
 *.log
@@ -39,28 +35,13 @@ TEST_REPORT.md
 *.bak.*
 *.backup
 
-# Utility scripts (not for distribution)
-package-app.sh
-update-repo-urls.sh
-deploy-and-test.sh
-backup.sh
-
-# Documentation files (except README.md)
-DEPLOY_CHECKLIST.md
-WORKFLOW.md
-GITHUB_SETUP.md
-INSTALL.md
+# Utility scripts and documentation (from utils branch)
+scripts/
+docs/
 
 # Code signing
 appinfo/signature.json
-sign-app.sh
 
-# Submission and certificate files
-CSR_SUBMISSION_GUIDE.md
-NEXTCLOUD_APPSTORE_SUBMISSION.md
-CHANGELOG.md
+# Certificate files
 *.csr
 *.crt
-
-# Deployment script (now in repository but ignored for public)
-deploy-production.sh
