@@ -32,6 +32,7 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - **PHP**: 8.1 - 8.4 (tested on 8.2)
 - **Node.js**: 20.x or later
 - **npm**: 10.x or later
+- **Browsers**: Chrome, Firefox, Safari (including iOS/iPadOS 17.0+)
 
 ## Recent Improvements (Pre-TestSprite Version)
 
@@ -157,6 +158,19 @@ mxmlscores/
 - **PHP 8.1+**: Backend API
 
 ## Version History
+
+### v0.9.5 (2025-11-10)
+- **iOS/iPadOS Audio Support**: Fixed audio playback on iOS Safari 17.0+
+  - Implemented correct iOS audio unlock pattern (silent sound before AudioContext resume)
+  - Added iOS app lifecycle management for background/foreground transitions
+  - Exposed AudioContext to window for debugging
+  - Added comprehensive logging for audio state diagnostics
+- **Testing Infrastructure**: Created TestSprite-based iOS audio diagnostic test suite
+  - 6 specialized tests for iOS audio verification
+  - iPhone 15 Pro Max WebKit simulation in Playwright
+  - Automated AudioContext state monitoring
+  - Soundfont loading verification
+- **Search Counter Alignment**: Fixed visual alignment of search result counter with folder counters
 
 ### v0.9.2 (2025-11-09)
 - Added support for Nextcloud 32.0.1

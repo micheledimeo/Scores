@@ -98,29 +98,53 @@ class ApiController extends Controller {
 
             $userFolder = $this->rootFolder->getUserFolder($this->userId);
 
-            // Get configured scores folder path
-            $scoresFolder = $this->config->getAppValue($this->appName, 'scores_folder', '');
-
-            // If a specific folder is configured, use it; otherwise use user's root folder
-            $targetFolder = $userFolder;
-            if (!empty($scoresFolder)) {
-                try {
-                    $targetFolder = $userFolder->get($scoresFolder);
-                    if (!($targetFolder instanceof \OCP\Files\Folder)) {
-                        return new DataResponse(['error' => 'Configured path is not a folder'], Http::STATUS_BAD_REQUEST);
-                    }
-                } catch (NotFoundException $e) {
-                    return new DataResponse(['error' => 'Configured scores folder not found: ' . $scoresFolder], Http::STATUS_NOT_FOUND);
-                }
-            }
+            // Get configured scores folder paths (comma-separated)
+            $scoresFolderConfig = $this->config->getAppValue($this->appName, 'scores_folder', '');
 
             // Estensioni supportate per file MusicXML e formati musicali
             // IMPORTANTE: .mxml è l'estensione principale per MusicXML non compresso
             $supportedExtensions = ['mxml', 'xml', 'musicxml', 'mxl', 'mei', 'gp', 'gpx', 'gp3', 'gp4', 'gp5'];
 
-            $folderStructure = $this->buildFolderStructure($targetFolder, $supportedExtensions);
+            $allFolders = [];
+            $allFiles = [];
 
-            return new DataResponse($folderStructure);
+            // If specific folders are configured, scan each one recursively
+            if (!empty($scoresFolderConfig)) {
+                $configuredPaths = array_map('trim', explode(',', $scoresFolderConfig));
+
+                foreach ($configuredPaths as $scoresFolder) {
+                    if (empty($scoresFolder)) {
+                        continue;
+                    }
+
+                    try {
+                        $targetFolder = $userFolder->get($scoresFolder);
+                        if (!($targetFolder instanceof \OCP\Files\Folder)) {
+                            \OC::$server->getLogger()->warning('Configured path is not a folder: ' . $scoresFolder, ['app' => 'mxml-scores']);
+                            continue;
+                        }
+
+                        // Build folder structure for this configured folder
+                        $structure = $this->buildFolderStructure($targetFolder, $supportedExtensions);
+                        $allFolders = array_merge($allFolders, $structure['folders']);
+                        $allFiles = array_merge($allFiles, $structure['files']);
+
+                    } catch (NotFoundException $e) {
+                        \OC::$server->getLogger()->warning('Configured scores folder not found: ' . $scoresFolder, ['app' => 'mxml-scores']);
+                        continue;
+                    }
+                }
+            } else {
+                // No specific folder configured, scan user's root folder
+                $structure = $this->buildFolderStructure($userFolder, $supportedExtensions);
+                $allFolders = $structure['folders'];
+                $allFiles = $structure['files'];
+            }
+
+            return new DataResponse([
+                'folders' => $allFolders,
+                'files' => $allFiles
+            ]);
 
         } catch (\Exception $e) {
             \OC::$server->getLogger()->error('Error in listFiles: ' . $e->getMessage(), ['app' => 'mxml-scores']);

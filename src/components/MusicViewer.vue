@@ -479,6 +479,12 @@ export default {
 				if (!audioContext.value) {
 					audioContext.value = new (window.AudioContext || window.webkitAudioContext)()
 					addDebugInfo(`AudioContext created, state: ${audioContext.value.state}`)
+
+					// DEBUG: Expose AudioContext to window for testing/debugging
+					if (typeof window !== 'undefined') {
+						window.audioContext = audioContext.value
+						console.log('AudioContext exposed to window.audioContext for debugging')
+					}
 				}
 
 				// iOS/Safari: AudioContext starts in 'suspended' state and must be resumed from user interaction
@@ -819,11 +825,30 @@ export default {
 					await new Promise(resolve => setTimeout(resolve, 50))
 				}
 
-				// CRITICAL: Resume AudioContext for iOS/Safari
-				// iOS requires AudioContext to be resumed from a user interaction
+				// CRITICAL: iOS Audio Unlock Pattern
+				// iOS Safari requires a specific sequence to unlock audio playback
 				if (audioContext.value) {
+					// STEP 1: Play silent sound FIRST (before resume)
+					// This is the key fix for iOS - the silent sound must come from direct user interaction
+					// Playing it before resume helps iOS recognize the user gesture
 					if (audioContext.value.state === 'suspended') {
-						addDebugInfo('Resuming AudioContext...')
+						addDebugInfo('iOS Audio Unlock: Playing silent sound first...')
+						try {
+							const buffer = audioContext.value.createBuffer(1, 1, 22050)
+							const source = audioContext.value.createBufferSource()
+							source.buffer = buffer
+							source.connect(audioContext.value.destination)
+							source.start(0)
+							addDebugInfo('✓ Silent unlock sound played')
+						} catch (error) {
+							addDebugInfo(`✗ Silent sound failed: ${error.message}`)
+						}
+					}
+
+					// STEP 2: Now resume AudioContext
+					// After the silent sound, iOS is more likely to allow the resume
+					if (audioContext.value.state === 'suspended') {
+						addDebugInfo('Resuming AudioContext after silent sound...')
 						try {
 							await audioContext.value.resume()
 							addDebugInfo(`✓ Resumed: ${audioContext.value.state}`)
@@ -834,26 +859,14 @@ export default {
 						}
 					}
 
-					// Extra check for iOS - sometimes needs a second resume
+					// STEP 3: Extra check for iOS - sometimes needs a second resume
 					if (audioContext.value.state === 'suspended') {
-						addDebugInfo('Still suspended, trying again...')
+						addDebugInfo('Still suspended, trying second resume...')
 						await audioContext.value.resume()
+						addDebugInfo(`After second resume: ${audioContext.value.state}`)
 					}
 
-					// iOS Audio Unlock: Play a silent sound to unlock audio playback
-					// This is required because iOS needs a sound to be triggered from user interaction
-					try {
-						const buffer = audioContext.value.createBuffer(1, 1, 22050)
-						const source = audioContext.value.createBufferSource()
-						source.buffer = buffer
-						source.connect(audioContext.value.destination)
-						source.start(0)
-						addDebugInfo('✓ Silent unlock sound played')
-					} catch (error) {
-						addDebugInfo(`✗ Silent sound failed: ${error.message}`)
-					}
-
-					addDebugInfo(`Ready to play, state: ${audioContext.value.state}`)
+					addDebugInfo(`Ready to play, final state: ${audioContext.value.state}`)
 				}
 
 				// If starting from the beginning, ensure cursor is reset
@@ -894,8 +907,23 @@ export default {
 				playbackStartOffset.value = currentTime.value
 
 				console.log(`▶️ Starting playback from measure ${currentMeasure.value} at time ${currentTime.value.toFixed(2)}s`)
+				console.log(`🔊 AudioContext state before playbackManager.play(): ${audioContext.value.state}`)
+				console.log(`🔊 AudioContext currentTime: ${audioContext.value.currentTime}`)
+				console.log(`🔊 AudioContext sampleRate: ${audioContext.value.sampleRate}`)
+				console.log(`🔊 AudioContext destination channels: ${audioContext.value.destination.channelCount}`)
+
 				playbackManager.value.play()
 				isPlaying.value = true
+
+				// Verify audio is actually playing after a short delay
+				setTimeout(() => {
+					console.log(`🔊 AudioContext state after play: ${audioContext.value.state}`)
+					if (audioContext.value.state === 'suspended') {
+						console.error('⚠️ AudioContext is still suspended after play() - audio will not work!')
+					} else {
+						console.log('✅ AudioContext is running - audio should work')
+					}
+				}, 100)
 			} catch (error) {
 				console.error('Error starting playback:', error)
 				showError(t('musicxmlviewer', 'Failed to start playback'))
@@ -1328,6 +1356,22 @@ export default {
 		onMounted(async () => {
 			await loadScore()
 			window.addEventListener('keydown', handleKeyboard)
+
+			// iOS Lifecycle Handler: Resume AudioContext when app returns from background
+			// iOS Safari suspends AudioContext when tab/app goes to background
+			document.addEventListener('visibilitychange', () => {
+				if (document.visibilityState === 'visible' && audioContext.value) {
+					if (audioContext.value.state === 'suspended') {
+						console.log('iOS: App returned to foreground, resuming AudioContext')
+						audioContext.value.resume().then(() => {
+							console.log('AudioContext resumed after visibility change:', audioContext.value.state)
+						}).catch(err => {
+							console.error('Failed to resume AudioContext after visibility change:', err)
+						})
+					}
+				}
+			})
+
 		// Watch for sidebar toggle to re-render sheet music
 		// Use nextTick to ensure DOM is ready
 		await nextTick()
@@ -1444,7 +1488,7 @@ export default {
 	width: 100%;
 	display: flex;
 	align-items: center;
-	justify-content: flex-start;
+	justify-content: flex-end;
 	gap: 4px;
 	padding: 3px 12px;
 	background-color: rgba(var(--color-main-background-rgb), 0.98);
@@ -1605,6 +1649,7 @@ export default {
 .mixer-channels {
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 	gap: 8px;
 	padding: 0;
 	overflow-x: auto;

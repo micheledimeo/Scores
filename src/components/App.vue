@@ -126,26 +126,14 @@
 							<div class="license-info">
 								<h4>{{ t('scores', 'Credits & License') }}</h4>
 								<p class="license-credits">
+									{{ t('scores', 'This app is licensed under') }}
+									<span class="license-link" @click="showLicenseModal = true">AGPL-3.0-or-later</span>
+								</p>
+								<p class="license-credits">
 									{{ t('scores', 'This app uses OpenSheetMusicDisplay (OSMD)') }}
 									<br>
-									<small>Copyright © 2019 PhonicScore</small>
+									<small>Copyright © 2019 PhonicScore - BSD-3-Clause License</small>
 								</p>
-								<details class="license-details">
-									<summary>{{ t('scores', 'BSD-3-Clause License') }}</summary>
-									<div class="license-text">
-										<p><strong>{{ t('scores', 'Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:') }}</strong></p>
-										<ol>
-											<li>{{ t('scores', 'Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.') }}</li>
-											<li>{{ t('scores', 'Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.') }}</li>
-											<li>{{ t('scores', 'Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.') }}</li>
-										</ol>
-										<p class="license-disclaimer">
-											<small>
-												{{ t('scores', 'THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.') }}
-											</small>
-										</p>
-									</div>
-								</details>
 							</div>
 						</div>
 					</template>
@@ -237,6 +225,48 @@
 									<span v-else class="icon-checkmark"></span>
 								</template>
 								{{ t('scores', 'Save') }}
+							</NcButton>
+						</div>
+					</div>
+				</NcModal>
+
+				<!-- License Modal -->
+				<NcModal v-if="showLicenseModal"
+					:name="t('scores', 'License Information')"
+					@close="showLicenseModal = false"
+					size="normal">
+					<div class="license-modal-content">
+						<div class="license-modal-header">
+							<h3>GNU Affero General Public License</h3>
+							<p class="license-version">Version 3.0 or later</p>
+						</div>
+
+						<div class="license-modal-body">
+							<div class="license-section">
+								<p>This program is free software: you can redistribute it and/or modify it under the terms of the <strong>GNU Affero General Public License</strong> as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+							</div>
+
+							<div class="license-section">
+								<p>This program is distributed in the hope that it will be useful, but <strong>WITHOUT ANY WARRANTY</strong>; without even the implied warranty of <strong>MERCHANTABILITY</strong> or <strong>FITNESS FOR A PARTICULAR PURPOSE</strong>.</p>
+							</div>
+
+							<div class="license-section">
+								<p>See the GNU Affero General Public License for more details.</p>
+							</div>
+
+							<div class="license-link-section">
+								<a href="https://www.gnu.org/licenses/agpl-3.0.html"
+								   target="_blank"
+								   rel="noopener noreferrer"
+								   class="license-external-link">
+									{{ t('scores', 'Read full license text at gnu.org') }} ↗
+								</a>
+							</div>
+						</div>
+
+						<div class="license-modal-footer">
+							<NcButton type="primary" @click="showLicenseModal = false">
+								{{ t('scores', 'Close') }}
 							</NcButton>
 						</div>
 					</div>
@@ -401,6 +431,7 @@ export default {
 		const settingsError = ref('')
 		const showSettingsModal = ref(false)
 		const showBrowserModal = ref(false)
+		const showLicenseModal = ref(false)
 		const browserFolders = ref([])
 		const currentBrowserPath = ref('')
 		const loadingFolders = ref(false)
@@ -774,6 +805,7 @@ export default {
 			settingsError,
 			showSettingsModal,
 			showBrowserModal,
+			showLicenseModal,
 			browserFolders,
 			currentBrowserPath,
 			loadingFolders,
@@ -828,16 +860,16 @@ export default {
 /* Counter overlay - positioned at the right edge, aligned with folder counters */
 .search-counter-overlay {
 	position: absolute;
-	right: 12px; /* Aligned with folder counter position */
+	right: 16px; /* Aligned with folder counter position */
 	top: 50%;
 	transform: translateY(-50%);
 	pointer-events: none;
 	z-index: 1;
 }
 
-/* When close button is shown, keep same position */
+/* When close button is shown, adjust position to avoid close button */
 .search-box-wrapper:has(.app-navigation-search :deep(.input-field__clear-button)) .search-counter-overlay {
-	right: 12px; /* Keep aligned with folder counters */
+	right: 44px; /* Move left to avoid close button (8px base + 36px button) */
 }
 
 /* App navigation list */
@@ -2209,4 +2241,106 @@ li.file-in-folder [class*="entry"] {
 
 /* REMOVED - was contradicting scoped RTL rules for truncation */
 /* Let the scoped :deep() rules handle text direction for truncation */
+
+/* License Modal Styles */
+.license-modal-content {
+	padding: 20px;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.license-modal-header {
+	text-align: center;
+	margin-bottom: 24px;
+	padding-bottom: 16px;
+	border-bottom: 2px solid var(--color-border);
+}
+
+.license-modal-header h3 {
+	margin: 0 0 8px 0;
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--color-main-text);
+}
+
+.license-version {
+	margin: 0;
+	font-size: 14px;
+	color: var(--color-text-maxcontrast);
+	font-weight: 500;
+}
+
+.license-modal-body {
+	margin-bottom: 24px;
+}
+
+.license-section {
+	margin-bottom: 16px;
+	padding: 16px;
+	background-color: var(--color-background-hover);
+	border-radius: 8px;
+	border-left: 3px solid var(--color-primary-element);
+}
+
+.license-section p {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: var(--color-main-text);
+}
+
+.license-section strong {
+	font-weight: 600;
+	color: var(--color-primary-element);
+}
+
+.license-link-section {
+	text-align: center;
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid var(--color-border);
+}
+
+.license-external-link {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text) !important;
+	text-decoration: none;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 14px;
+	transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.license-external-link:hover {
+	background-color: var(--color-primary-element-hover);
+	transform: translateY(-1px);
+	text-decoration: none;
+}
+
+.license-modal-footer {
+	display: flex;
+	justify-content: center;
+	padding-top: 16px;
+	border-top: 1px solid var(--color-border);
+}
+
+.license-link {
+	display: inline;
+	padding: 0 4px;
+	background: none;
+	border: none;
+	color: var(--color-primary-element);
+	font-weight: 600;
+	font-size: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.license-link:hover {
+	color: var(--color-primary-element-hover);
+	background: none;
+}
 </style>
