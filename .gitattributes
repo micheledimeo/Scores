@@ -1,0 +1,39 @@
+# Git attributes for mxmlscores
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Shell scripts should always have LF line endings
+*.sh text eol=lf
+
+# PHP files
+*.php text eol=lf
+
+# Vue/JavaScript files
+*.vue text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+
+# CSS/SCSS files
+*.css text eol=lf
+*.scss text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# XML files
+*.xml text eol=lf
+
+# Exclude files from export (git archive)
+.gitignore export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+project-files/testsprite/ export-ignore
+project-files/backups/ export-ignore
+project-files/dist/ export-ignore
+project-files/app-certificate-requests/ export-ignore
+node_modules/ export-ignore
+.vscode/ export-ignore
+.idea/ export-ignore

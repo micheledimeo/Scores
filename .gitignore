@@ -24,8 +24,11 @@ Thumbs.db
 # Nextcloud
 /vendor/
 
-# Project files directory (development, testing, builds, backups, scripts, docs, screenshots)
-project-files/
+# Project files - ignore build artifacts and local files, keep documentation
+project-files/backups/
+project-files/dist/
+project-files/testsprite/
+project-files/app-certificate-requests/
 
 # Temporary files
 *.log
