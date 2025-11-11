@@ -1,0 +1,75 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+        php-version: ['8.1', '8.2', '8.3']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Setup PHP ${{ matrix.php-version }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, xml, ctype, json
+        coverage: none
+
+    - name: Install Node dependencies
+      run: npm ci
+
+    - name: Lint JavaScript
+      run: npm run lint || echo "Linting not configured, skipping"
+      continue-on-error: true
+
+    - name: Lint CSS
+      run: npm run stylelint || echo "CSS linting not configured, skipping"
+      continue-on-error: true
+
+    - name: Build app
+      run: npm run build
+
+    - name: Check build output
+      run: |
+        if [ ! -d "js" ]; then
+          echo "Error: js directory not created"
+          exit 1
+        fi
+        if [ ! -d "css" ]; then
+          echo "Error: css directory not created"
+          exit 1
+        fi
+        echo "Build successful! Output directories created."
+        ls -la js/
+        ls -la css/
+
+    - name: Validate PHP syntax
+      run: |
+        find lib -name "*.php" -print0 | xargs -0 -n1 php -l
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      if: matrix.node-version == '20.x' && matrix.php-version == '8.2'
+      with:
+        name: build-output
+        path: |
+          js/
+          css/
+        retention-days: 7

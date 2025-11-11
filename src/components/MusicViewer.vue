@@ -9,7 +9,8 @@
 					type="primary"
 					:disabled="!isLoaded || isInitializing"
 					@click="play"
-					:aria-label="'Play'">
+					:aria-label="'Play'"
+					:title="'Play (Space)'">
 					<template #icon>
 						<Play :size="20" />
 					</template>
@@ -20,7 +21,8 @@
 					v-if="isPlaying"
 					:disabled="!isLoaded || isInitializing"
 					@click="pause"
-					:aria-label="'Pause'">
+					:aria-label="'Pause'"
+					:title="'Pause (Space)'">
 					<template #icon>
 						<Pause :size="20" />
 					</template>
@@ -30,7 +32,8 @@
 				<NcButton
 					:disabled="!isLoaded || isInitializing || (!isPlaying && currentTime === 0)"
 					@click="stop"
-					:aria-label="'Stop'">
+					:aria-label="'Stop'"
+					:title="'Stop'">
 					<template #icon>
 						<Stop :size="20" />
 					</template>
@@ -41,7 +44,8 @@
 					:disabled="!isLoaded || isInitializing"
 					@click="toggleLoop"
 					:class="{ 'loop-active': loopEnabled }"
-					:aria-label="loopEnabled ? 'Loop enabled' : 'Loop disabled'">
+					:aria-label="loopEnabled ? 'Loop enabled' : 'Loop disabled'"
+					:title="loopEnabled ? 'Loop enabled (L)' : 'Loop disabled (L)'">
 					<template #icon>
 						<Repeat :size="20" />
 					</template>
@@ -54,7 +58,7 @@
 				@click="toggleMixer"
 				:class="{ 'mixer-active': showMixer }"
 				:aria-label="showMixer ? 'Hide mixer' : 'Show mixer'"
-				:title="showMixer ? 'Hide mixer' : 'Show mixer'">
+				:title="showMixer ? 'Hide mixer (M)' : 'Show mixer (M)'">
 				<template #icon>
 					<Tune :size="20" />
 				</template>
@@ -134,10 +138,11 @@
 		<div class="zoom-controls">
 			<NcButton
 				:disabled="!isLoaded"
-				@click="zoomOut"
-				:aria-label="'Zoom out'">
+				@click="zoomIn"
+				:aria-label="'Zoom in'"
+				:title="'Zoom in (↑)'">
 				<template #icon>
-					<MagnifyMinusOutline :size="20" />
+					<MagnifyPlusOutline :size="20" />
 				</template>
 			</NcButton>
 
@@ -145,10 +150,22 @@
 
 			<NcButton
 				:disabled="!isLoaded"
-				@click="zoomIn"
-				:aria-label="'Zoom in'">
+				@click="zoomOut"
+				:aria-label="'Zoom out'"
+				:title="'Zoom out (↓)'">
 				<template #icon>
-					<MagnifyPlusOutline :size="20" />
+					<MagnifyMinusOutline :size="20" />
+				</template>
+			</NcButton>
+
+			<NcButton
+				:disabled="!isLoaded"
+				@click="toggleFullscreen"
+				:aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+				:title="isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen (F)'">
+				<template #icon>
+					<Fullscreen v-if="!isFullscreen" :size="20" />
+					<FullscreenExit v-else :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -200,7 +217,8 @@
 							<ul>
 								<li><kbd>Space</kbd> - {{ playPauseText }}</li>
 								<li><kbd>←</kbd> <kbd>→</kbd> - {{ navigateMeasuresText }}</li>
-								<li><kbd>+</kbd> <kbd>-</kbd> - {{ zoomText }}</li>
+								<li><kbd>↑</kbd> <kbd>↓</kbd> - {{ zoomText }}</li>
+						<li><kbd>F</kbd> - {{ fullscreenText }}</li>
 							</ul>
 						</div>
 					</div>
@@ -261,6 +279,8 @@ import Repeat from 'vue-material-design-icons/Repeat.vue'
 import MagnifyPlusOutline from 'vue-material-design-icons/MagnifyPlusOutline.vue'
 import MagnifyMinusOutline from 'vue-material-design-icons/MagnifyMinusOutline.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
+import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
+import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 
 export default {
 	name: 'MusicViewer',
@@ -274,6 +294,8 @@ export default {
 		MagnifyPlusOutline,
 		MagnifyMinusOutline,
 		Tune,
+		Fullscreen,
+		FullscreenExit,
 	},
 	props: {
 		fileContent: {
@@ -313,6 +335,7 @@ export default {
 		// Set default zoom based on screen size: 0.7 for mobile, 1.0 for desktop
 		const isMobile = window.innerWidth <= 768
 		const zoomLevel = ref(isMobile ? 0.7 : 1.0)
+		const isFullscreen = ref(false)
 		const currentTime = ref(0)
 		const totalDuration = ref(0)
 		const progressPercent = ref(0)
@@ -344,10 +367,11 @@ export default {
 		const playPauseText = ref(t('musicxmlviewer', 'Play/Pause'))
 		const navigateMeasuresText = ref(t('musicxmlviewer', 'Navigate measures and start playback'))
 		const zoomText = ref(t('musicxmlviewer', 'Zoom in/out'))
+		const fullscreenText = ref(t('musicxmlviewer', 'Toggle fullscreen'))
 		const playbackControlsTitle = ref(t('musicxmlviewer', 'Playback Controls'))
 		const playbackControlsDesc = ref(t('musicxmlviewer', 'Use the control bar to play, pause, stop, and loop your music. Adjust tempo and volume as needed.'))
 		const zoomTitle = ref(t('musicxmlviewer', 'Zoom'))
-		const zoomDesc = ref(t('musicxmlviewer', 'Use + and - buttons or keyboard shortcuts to zoom in and out of the score.'))
+		const zoomDesc = ref(t('musicxmlviewer', 'Use arrow up/down buttons or keyboard shortcuts to zoom in and out of the score.'))
 		const loopModeTitle = ref(t('musicxmlviewer', 'Loop Mode'))
 		const loopModeDesc = ref(t('musicxmlviewer', 'Click the repeat button to enable continuous playback. The music will restart automatically when finished.'))
 		const gotItText = ref(t('musicxmlviewer', 'Got it!'))
@@ -735,7 +759,7 @@ export default {
 									}
 								}
 							}
-							}, 150) // 150ms delay to sync cursor with audio
+							}, 200) // 200ms delay to sync cursor with audio
 						} catch (error) {
 							// Cursor position update failed (non-critical)
 							console.debug('Cursor position update error:', error)
@@ -1265,6 +1289,45 @@ export default {
 			}
 		}
 
+		// Toggle fullscreen
+		const toggleFullscreen = async () => {
+			try {
+				const musicViewerElement = document.querySelector('.music-viewer')
+				if (!musicViewerElement) {
+					console.error('Music viewer element not found')
+					return
+				}
+
+				if (!isFullscreen.value) {
+					// Enter fullscreen
+					if (musicViewerElement.requestFullscreen) {
+						await musicViewerElement.requestFullscreen()
+					} else if (musicViewerElement.webkitRequestFullscreen) {
+						await musicViewerElement.webkitRequestFullscreen()
+					} else if (musicViewerElement.mozRequestFullScreen) {
+						await musicViewerElement.mozRequestFullScreen()
+					} else if (musicViewerElement.msRequestFullscreen) {
+						await musicViewerElement.msRequestFullscreen()
+					}
+					isFullscreen.value = true
+				} else {
+					// Exit fullscreen
+					if (document.exitFullscreen) {
+						await document.exitFullscreen()
+					} else if (document.webkitExitFullscreen) {
+						await document.webkitExitFullscreen()
+					} else if (document.mozCancelFullScreen) {
+						await document.mozCancelFullScreen()
+					} else if (document.msExitFullscreen) {
+						await document.msExitFullscreen()
+					}
+					isFullscreen.value = false
+				}
+			} catch (error) {
+				console.error('Error toggling fullscreen:', error)
+			}
+		}
+
 		// Share score
 		// Keyboard shortcuts
 		const handleKeyboard = (e) => {
@@ -1276,12 +1339,12 @@ export default {
 				e.preventDefault()
 				togglePlayback()
 			}
-			// Plus/Minus: Zoom
-			if (e.key === '+' || e.key === '=') {
+			// Arrow Up/Down: Zoom
+			if (e.key === 'ArrowUp') {
 				e.preventDefault()
 				zoomIn()
 			}
-			if (e.key === '-' || e.key === '_') {
+			if (e.key === 'ArrowDown') {
 				e.preventDefault()
 				zoomOut()
 			}
@@ -1352,10 +1415,24 @@ export default {
 	// Store observer reference for cleanup
 	const sidebarObserver = ref(null)
 
+	// Fullscreen change handler
+	const handleFullscreenChange = () => {
+		isFullscreen.value = !!(document.fullscreenElement ||
+			document.webkitFullscreenElement ||
+			document.mozFullScreenElement ||
+			document.msFullscreenElement)
+	}
+
 		// Lifecycle hooks
 		onMounted(async () => {
 			await loadScore()
 			window.addEventListener('keydown', handleKeyboard)
+
+			// Add fullscreen change listeners
+			document.addEventListener('fullscreenchange', handleFullscreenChange)
+			document.addEventListener('webkitfullscreenchange', handleFullscreenChange)
+			document.addEventListener('mozfullscreenchange', handleFullscreenChange)
+			document.addEventListener('MSFullscreenChange', handleFullscreenChange)
 
 			// iOS Lifecycle Handler: Resume AudioContext when app returns from background
 			// iOS Safari suspends AudioContext when tab/app goes to background
@@ -1407,6 +1484,12 @@ export default {
 			cleanup()
 			window.removeEventListener('keydown', handleKeyboard)
 
+		// Cleanup fullscreen listeners
+		document.removeEventListener('fullscreenchange', handleFullscreenChange)
+		document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
+		document.removeEventListener('mozfullscreenchange', handleFullscreenChange)
+		document.removeEventListener('MSFullscreenChange', handleFullscreenChange)
+
 		// Cleanup sidebar observer
 		if (sidebarObserver.value) {
 			sidebarObserver.value.disconnect()
@@ -1424,6 +1507,7 @@ export default {
 			tempo,
 			volume,
 			zoomLevel,
+			isFullscreen,
 			currentTime,
 			totalDuration,
 			progressPercent,
@@ -1441,6 +1525,7 @@ export default {
 			playPauseText,
 			navigateMeasuresText,
 			zoomText,
+			fullscreenText,
 			playbackControlsTitle,
 			playbackControlsDesc,
 			zoomTitle,
@@ -1465,6 +1550,7 @@ export default {
 			updateVolume,
 			zoomIn,
 			zoomOut,
+			toggleFullscreen,
 			formatTime,
 		}
 	},

@@ -34,31 +34,32 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - **npm**: 10.x or later
 - **Browsers**: Chrome, Firefox, Safari (including iOS/iPadOS 17.0+)
 
-## Recent Improvements (Pre-TestSprite Version)
+## Recent Improvements
 
-### UI/UX Enhancements
-- **Smart File Truncation**: Files in folders automatically truncate from the left (max 36 chars + "...") to ensure instrument names are always visible on the right
-- **Folder Icons**: Material Design folder icons with proper spacing
-- **File Count Badges**: Each folder shows the number of files it contains
-- **Optimized Spacing**: Root files have 5px left padding for better alignment
-- **Icon Management**: File icons hidden in folder view to maximize space for file names
+### v0.9.6 - Score Folders & Configuration (2025-11-11)
+- **Critical Bug Fix**: Files in custom Score Folders now display correctly
+- **Streamlined UI**: Direct folder addition from Browse dialog
+- **Smart Save Button**: Only enabled when changes are detected
+- **JSON Configuration**: Modern configuration storage with CSV fallback
+- **Distribution Tools**: Complete packaging and backup scripts
 
-### Search & Navigation
-- **Match Counter**: Search box displays total number of matching files
-- **Expandable Folders**: Click folders to expand/collapse and view contained files
-- **Real-time Filtering**: Search applies to both folder names and file names
+### v0.9.5 - iOS Audio Support (2025-11-10)
+- **iOS/iPadOS Playback**: Full audio support for iOS Safari 17.0+
+- **Audio Lifecycle**: Background/foreground transition handling
+- **Testing Suite**: TestSprite-based iOS audio diagnostic tests
+- **Search Counter**: Aligned with folder counter styling
 
-### Settings & Configuration
-- **Translation System**: Full i18n support with translatable strings for "Scores Folders" settings
-- **Multiple Folder Paths**: Administrators can configure multiple scores folder locations
-- **Folder Browser**: Interactive folder navigation for selecting scores directories
-- **App Icon**: Custom library_music Material Design icon
+### v0.9.4 - UI/UX Polish (2025-11-09)
+- **Smart File Truncation**: Left truncation (max 30 chars) to show instrument names
+- **File Count Badges**: Folders display total file count including subfolders
+- **Material Design Icons**: Folder icons with proper spacing
+- **Welcome Screen**: Quick Tips for keyboard shortcuts
+- **CSS Improvements**: Fixed folder expansion and counter positioning
 
-### Technical Improvements
-- **CSS Specificity Optimization**: Proper CSS rules to override Nextcloud defaults
-- **Vue 3 Reactivity**: Fixed folder expansion state management with proper Set reactivity
-- **Event Handling**: Proper @update:open event handling for NcAppNavigationItem components
-- **Performance**: Optimized CSS with text-overflow: clip for better rendering
+### v0.9.3 - Internationalization (2025-11-09)
+- **Full i18n Support**: Translatable strings for all settings
+- **Folder Browser**: Interactive navigation for path selection
+- **Security**: Path traversal prevention
 
 ## Installation
 
@@ -159,6 +160,21 @@ mxmlscores/
 
 ## Version History
 
+### v0.9.6 (2025-11-11)
+- **Score Folders Configuration Fix**: Critical bug fix for folder scanning
+  - Fixed ApiController to read from correct configuration key ('scores_folders')
+  - Files in newly added folders (e.g., MieScores) now appear correctly
+  - Added backward compatibility for old CSV-based configuration
+- **Improved Score Folders UI**: Streamlined folder management workflow
+  - Browse → Confirm now directly adds folders (removed redundant Add button)
+  - Save button intelligently disabled when no changes detected
+  - Automatic file list refresh after saving new folder paths
+- **Enhanced Configuration**: Multiple Score Folders with JSON storage
+  - Support for multiple folder paths as JSON array
+  - Interactive folder browser for easy path selection
+  - Change detection for preventing unnecessary saves
+- **Distribution**: Complete packaging and backup scripts in project-files/
+
 ### v0.9.5 (2025-11-10)
 - **iOS/iPadOS Audio Support**: Fixed audio playback on iOS Safari 17.0+
   - Implemented correct iOS audio unlock pattern (silent sound before AudioContext resume)
@@ -172,6 +188,18 @@ mxmlscores/
   - Soundfont loading verification
 - **Search Counter Alignment**: Fixed visual alignment of search result counter with folder counters
 
+### v0.9.4 (2025-11-09)
+- **Smart File Display**: Left truncation for files in folders to show instrument names
+- **File Counter Badges**: Folders show total number of music files (including subfolders)
+- **Material Design Icons**: Folder icons with proper spacing
+- **Welcome Screen**: Quick Tips for keyboard shortcuts
+- **CSS Improvements**: Fixed folder expansion and counter positioning
+
+### v0.9.3 (2025-11-09)
+- **Internationalization**: Full i18n support for Score Folders settings
+- **Folder Browser**: Navigate and select folders interactively
+- **Security**: Path traversal prevention in folder validation
+
 ### v0.9.2 (2025-11-09)
 - Added support for Nextcloud 32.0.1
 - Updated PHP minimum requirement to 8.1
@@ -183,7 +211,7 @@ mxmlscores/
 - Extended compatibility to Nextcloud 32.x
 - Updated PHP support to 8.4
 
-### v0.9.0
+### v0.9.0 (2025-11-08)
 - Initial public release
 - Full MusicXML playback support
 - Admin settings panel

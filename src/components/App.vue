@@ -47,7 +47,7 @@
 							@update:open="toggleFolder(folder.id)"
 							@click="toggleFolder(folder.id)">
 							<template #icon>
-								<Folder :size="20" />
+								<FolderIcon :size="20" />
 							</template>
 							<template #counter>
 								<NcCounterBubble :count="folder.files?.length || 0" />
@@ -130,7 +130,8 @@
 									<span class="license-link" @click="showLicenseModal = true">AGPL-3.0-or-later</span>
 								</p>
 								<p class="license-credits">
-									{{ t('scores', 'This app uses OpenSheetMusicDisplay (OSMD)') }}
+									{{ t('scores', 'This app uses') }}
+									<a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay" target="_blank" rel="noopener noreferrer" class="osmd-link">OpenSheetMusicDisplay (OSMD)</a>
 									<br>
 									<small>Copyright © 2019 PhonicScore - BSD-3-Clause License</small>
 								</p>
@@ -156,7 +157,7 @@
 									v-for="(path, index) in scoresFolderPaths"
 									:key="index"
 									class="folder-path-item">
-									<span class="icon-folder"></span>
+									<FolderIcon :size="16" />
 									<span class="folder-path-text">{{ path || '/' }}</span>
 									<NcButton
 										type="error"
@@ -168,31 +169,15 @@
 								</div>
 							</div>
 
-							<!-- Input nuovo percorso -->
+							<!-- Browse button to add new folders -->
 							<div class="folder-input-group">
-								<input
-									id="scores-folder"
-									v-model="newFolderPath"
-									type="text"
-									:placeholder="t('scores', 'e.g. Music/Scores or leave empty for root')"
-									class="folder-input"
-									readonly
-									@click="showFolderBrowser">
 								<NcButton
-									@click="showFolderBrowser">
+									@click="showFolderBrowser"
+									type="primary">
 									<template #icon>
-										<span class="icon-folder"></span>
+										<FolderIcon :size="20" />
 									</template>
-									{{ t('scores', 'Browse') }}
-								</NcButton>
-								<NcButton
-									type="primary"
-									:disabled="!canAddNewPath"
-									@click="addFolderPath">
-									<template #icon>
-										<span class="icon-add"></span>
-									</template>
-									{{ t('scores', 'Add') }}
+									{{ t('scores', 'Browse and Add Folder') }}
 								</NcButton>
 							</div>
 
@@ -218,7 +203,7 @@
 							</NcButton>
 							<NcButton
 								type="primary"
-								:disabled="savingSettings"
+								:disabled="savingSettings || !hasPathsChanged"
 								@click="saveScoresFolder">
 								<template #icon>
 									<NcLoadingIcon v-if="savingSettings" />
@@ -298,7 +283,7 @@
 								{{ t('scores', 'Loading folders...') }}
 							</div>
 							<div v-else-if="browserFolders.length === 0" class="empty-folders">
-								<span class="icon-folder"></span>
+								<FolderIcon :size="48" />
 								<p>{{ t('scores', 'No folders found') }}</p>
 							</div>
 							<div
@@ -307,7 +292,7 @@
 								:key="folder.id"
 								class="browser-folder-item"
 								@dblclick="navigateToFolder(folder.path)">
-								<span class="icon-folder"></span>
+								<FolderIcon :size="20" />
 								<span class="folder-name-browser">{{ folder.name }}</span>
 								<NcButton type="tertiary" @click="selectFolder(folder.path)">
 									{{ t('scores', 'Select') }}
@@ -390,7 +375,7 @@ import {
 
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
+import FolderIcon from 'vue-material-design-icons/Folder.vue'
 
 import MusicViewer from './MusicViewer.vue'
 
@@ -410,7 +395,7 @@ export default {
 		NcTextField,
 		Magnify,
 		Cog,
-		Folder,
+		FolderIcon,
 	},
 	setup() {
 		const folderStructure = ref({ folders: [], files: [] })
@@ -425,6 +410,7 @@ export default {
 		const showWelcomeScreen = ref(false)
 		const isAdmin = ref(false)
 		const scoresFolderPaths = ref([]) // Array of folder paths
+		const originalScoresFolderPaths = ref([]) // Track original state for detecting changes
 		const newFolderPath = ref('') // Temporary path for adding new folders
 		const savingSettings = ref(false)
 		const settingsSaved = ref(false)
@@ -587,9 +573,8 @@ export default {
 
 			if (isInFolder) {
 				// For files in folders, manually truncate from left if too long
-				// 284px width = approximately 36-39 characters total (including ...)
-				// Use 36 chars + 3 dots = 39 total to guarantee no right truncation
-				const maxLength = 36
+				// 30 chars + "..." = 33 total characters for full visibility on the right
+				const maxLength = 30
 				if (nameWithoutExt.length > maxLength) {
 					// Show the last maxLength characters (right part) with ellipsis at the start
 					return '...' + nameWithoutExt.slice(-maxLength)
@@ -648,11 +633,14 @@ export default {
 				const data = response.data
 				if (Array.isArray(data.folderPaths)) {
 					scoresFolderPaths.value = data.folderPaths
+					originalScoresFolderPaths.value = [...data.folderPaths] // Deep copy for comparison
 				} else if (data.folderPath) {
 					// Backward compatibility: convert single path to array
 					scoresFolderPaths.value = data.folderPath ? [data.folderPath] : []
+					originalScoresFolderPaths.value = data.folderPath ? [data.folderPath] : []
 				} else {
 					scoresFolderPaths.value = []
+					originalScoresFolderPaths.value = []
 				}
 			} catch (error) {
 				console.error('Failed to load scores folder setting:', error)
@@ -679,6 +667,17 @@ export default {
 				   !scoresFolderPaths.value.includes(newFolderPath.value)
 		})
 
+		const hasPathsChanged = computed(() => {
+			// Check if the current paths differ from the original ones
+			if (scoresFolderPaths.value.length !== originalScoresFolderPaths.value.length) {
+				return true
+			}
+			// Check if all paths are the same (order-independent comparison)
+			const currentSorted = [...scoresFolderPaths.value].sort()
+			const originalSorted = [...originalScoresFolderPaths.value].sort()
+			return !currentSorted.every((path, index) => path === originalSorted[index])
+		})
+
 		const addFolderPath = () => {
 			if (canAddNewPath.value) {
 				scoresFolderPaths.value.push(newFolderPath.value)
@@ -700,7 +699,9 @@ export default {
 					folderPaths: scoresFolderPaths.value
 				})
 				settingsSaved.value = true
-				// Reload files with new folder paths
+				// Update original paths to reflect saved state
+				originalScoresFolderPaths.value = [...scoresFolderPaths.value]
+				// Reload files with new folder paths to trigger full rescan
 				await loadFiles()
 				// Hide success message and close modal after 2 seconds
 				setTimeout(() => {
@@ -764,7 +765,12 @@ export default {
 		}
 
 		const confirmFolderSelection = () => {
-			newFolderPath.value = currentBrowserPath.value
+			const selectedPath = currentBrowserPath.value
+			// Add directly to the list if not already present
+			if (selectedPath !== null && !scoresFolderPaths.value.includes(selectedPath)) {
+				scoresFolderPaths.value.push(selectedPath)
+			}
+			newFolderPath.value = '' // Clear the temporary field
 			closeFolderBrowser()
 		}
 
@@ -800,6 +806,7 @@ export default {
 			scoresFolderPaths,
 			newFolderPath,
 			canAddNewPath,
+			hasPathsChanged,
 			savingSettings,
 			settingsSaved,
 			settingsError,
@@ -850,26 +857,49 @@ export default {
 	z-index: 1;
 }
 
-/* Search box wrapper - matches Files app width with padding */
+/* Search box wrapper - with right padding to leave space for counter */
 .search-box-wrapper {
 	position: relative;
 	width: 100%;
 	padding: 0 8px;
+	padding-right: 44px; /* Space for counter bubble */
 }
 
-/* Counter overlay - positioned at the right edge, aligned with folder counters */
+/* Reduce search input width to accommodate counter */
+.search-box-wrapper :deep(.input-field__input) {
+	padding-right: 8px !important;
+}
+
+/* Counter overlay - positioned outside search box, aligned with folder counters */
 .search-counter-overlay {
 	position: absolute;
-	right: 16px; /* Aligned with folder counter position */
+	right: 4px; /* Aligned with folder counter position */
 	top: 50%;
 	transform: translateY(-50%);
 	pointer-events: none;
 	z-index: 1;
 }
 
-/* When close button is shown, adjust position to avoid close button */
+/* When close button is shown, no adjustment needed as counter is outside */
 .search-box-wrapper:has(.app-navigation-search :deep(.input-field__clear-button)) .search-counter-overlay {
-	right: 44px; /* Move left to avoid close button (8px base + 36px button) */
+	right: 4px; /* Keep aligned with folder counters */
+}
+
+/* Folder icons - keep transparent (default Nextcloud style) */
+.folder-item .icon-folder {
+	/* No filter - use default icon appearance */
+}
+
+/* Align folder counters with search counter */
+.folder-item :deep(.app-navigation-entry__counter),
+.folder-item :deep(.counter-bubble__counter),
+.folder-item :deep(.counter-bubble),
+:deep(.app-navigation-entry__counter),
+:deep(.counter-bubble__counter),
+:deep(.counter-bubble) {
+	right: 0px !important;
+	margin-right: 0 !important;
+	position: absolute !important;
 }
 
 /* App navigation list */
@@ -1031,7 +1061,7 @@ export default {
 }
 
 .quick-tips li {
-	padding: 6px 0;
+	padding: 0;
 	color: var(--color-text-maxcontrast);
 }
 
@@ -2193,21 +2223,28 @@ li.file-item .app-navigation-entry-link {
 	padding-left: 5px !important;
 }
 
-/* Remove right padding from files in folders - AGGRESSIVE targeting with wildcard */
+/* Align file names in folders with folder name (after folder icon) */
 li.file-in-folder,
+li.file-in-folder > a,
+li.file-in-folder .app-navigation-entry-link {
+	padding-left: 36px !important; /* Align with folder name (icon width + spacing) */
+	padding-right: 0 !important;
+	padding-inline-end: 0 !important;
+	padding-inline-start: 36px !important;
+	margin-right: 0 !important;
+	margin-inline-end: 0 !important;
+}
+
+/* Remove padding from nested elements to avoid double padding */
 li.file-in-folder *,
 li.file-in-folder > *,
-li.file-in-folder > a,
 li.file-in-folder > a *,
-li.file-in-folder .app-navigation-entry-link,
 li.file-in-folder .app-navigation-entry__name,
 li.file-in-folder .app-navigation-entry-link__name,
 li.file-in-folder a,
 li.file-in-folder span,
 li.file-in-folder div,
-li[class*="file-in-folder"],
 li[class*="file-in-folder"] *,
-li[class*="file-in-folder"] > a,
 li[class*="file-in-folder"] span {
 	padding-right: 0 !important;
 	padding-inline-end: 0 !important;
@@ -2222,8 +2259,8 @@ li[class*="file-in-folder"] span {
 ul.app-navigation-list > li.file-in-folder.app-navigation-entry:not(.app-navigation-entry--editing) .app-navigation-entry-link {
 	padding-inline-end: 0 !important;
 	padding-right: 0 !important;
-	padding-left: 0 !important;
-	padding-inline-start: 0 !important;
+	padding-left: 36px !important;
+	padding-inline-start: 36px !important;
 }
 
 /* Extra specific targeting for Nextcloud's component structure */
@@ -2334,7 +2371,7 @@ li.file-in-folder [class*="entry"] {
 	color: var(--color-primary-element);
 	font-weight: 600;
 	font-size: inherit;
-	text-decoration: underline;
+	text-decoration: none;
 	cursor: pointer;
 	transition: color 0.2s ease;
 }
@@ -2342,5 +2379,19 @@ li.file-in-folder [class*="entry"] {
 .license-link:hover {
 	color: var(--color-primary-element-hover);
 	background: none;
+	text-decoration: underline;
+}
+
+/* OSMD link style */
+.osmd-link {
+	color: var(--color-primary-element);
+	font-weight: 600;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.osmd-link:hover {
+	color: var(--color-primary-element-hover);
+	text-decoration: underline;
 }
 </style>

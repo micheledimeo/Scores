@@ -98,8 +98,8 @@ class ApiController extends Controller {
 
             $userFolder = $this->rootFolder->getUserFolder($this->userId);
 
-            // Get configured scores folder paths (comma-separated)
-            $scoresFolderConfig = $this->config->getAppValue($this->appName, 'scores_folder', '');
+            // Get configured scores folder paths (JSON array format)
+            $scoresFolderConfig = $this->config->getAppValue($this->appName, 'scores_folders', '');
 
             // Estensioni supportate per file MusicXML e formati musicali
             // IMPORTANTE: .mxml è l'estensione principale per MusicXML non compresso
@@ -108,9 +108,20 @@ class ApiController extends Controller {
             $allFolders = [];
             $allFiles = [];
 
-            // If specific folders are configured, scan each one recursively
+            // Try to parse JSON array of paths (new format)
+            $configuredPaths = [];
             if (!empty($scoresFolderConfig)) {
-                $configuredPaths = array_map('trim', explode(',', $scoresFolderConfig));
+                $decoded = json_decode($scoresFolderConfig, true);
+                if (is_array($decoded)) {
+                    $configuredPaths = $decoded;
+                } else {
+                    // Fallback: old comma-separated format for backward compatibility
+                    $configuredPaths = array_map('trim', explode(',', $scoresFolderConfig));
+                }
+            }
+
+            // If specific folders are configured, scan each one recursively
+            if (!empty($configuredPaths)) {
 
                 foreach ($configuredPaths as $scoresFolder) {
                     if (empty($scoresFolder)) {
