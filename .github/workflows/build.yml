@@ -33,7 +33,7 @@ jobs:
         coverage: none
 
     - name: Install Node dependencies
-      run: npm ci
+      run: npm ci --legacy-peer-deps
 
     - name: Lint JavaScript
       run: npm run lint || echo "Linting not configured, skipping"
