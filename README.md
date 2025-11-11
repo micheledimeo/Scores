@@ -147,6 +147,28 @@ mxmlscores/
 │   └── main.css
 ├── package.json          # Node dependencies
 ├── vite.config.js        # Vite configuration
+├── project-files/        # Development & distribution files (gitignored except docs)
+│   ├── scripts/          # Build, deploy, packaging scripts
+│   │   ├── package-app.sh
+│   │   ├── deploy-production.sh
+│   │   ├── sign-app.sh
+│   │   ├── backup.sh
+│   │   └── README.md     # Scripts documentation
+│   ├── docs/             # Development documentation
+│   │   ├── INSTALL.md
+│   │   ├── WORKFLOW.md
+│   │   └── NEXTCLOUD_APPSTORE_SUBMISSION.md
+│   ├── screenshots/      # App screenshots for documentation
+│   ├── dist/             # Built packages (gitignored)
+│   ├── backups/          # Local backups (gitignored)
+│   └── testsprite/       # Test configuration (gitignored)
+├── .github/
+│   ├── workflows/        # GitHub Actions CI/CD
+│   │   ├── build.yml     # Build and test workflow
+│   │   ├── release.yml   # Automated release creation
+│   │   └── lint.yml      # Code linting
+│   ├── CONTRIBUTING.md   # Contribution guidelines
+│   └── dependabot.yml    # Dependency updates
 └── README.md             # This file
 ```
 
