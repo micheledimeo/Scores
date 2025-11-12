@@ -5,6 +5,31 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.7] - 2025-11-12
+
+### Added
+- Nextcloud App Store submission preparation
+- Code signing certificate infrastructure
+- Comprehensive test suite with Playwright
+- GitHub Actions workflows for CI/CD and releases
+- Production deployment automation scripts
+
+### Changed
+- App renamed from "mxmlscores" to "scores" for better branding
+- Repository structure reorganized with project-files directory
+- Improved documentation for deployment and App Store submission
+
+### Fixed
+- Dependabot automated updates disabled to reduce repository clutter
+- Line ending consistency in backup files (CRLF to LF)
+- GitHub repository configuration and remote URLs
+
+### Technical Improvements
+- Certificate Signing Request (CSR) generated for App Store
+- Pull Request submitted to nextcloud/app-certificate-requests (#856)
+- Package signing script with OpenSSL integration
+- Enhanced build and deployment pipeline
+
 ## [0.9.6] - 2025-11-11
 
 ### Added
@@ -168,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.9.7]: https://github.com/micheledimeo/scores/releases/tag/v0.9.7
 [0.9.6]: https://github.com/micheledimeo/scores/releases/tag/v0.9.6
 [0.9.5]: https://github.com/micheledimeo/scores/releases/tag/v0.9.5
 [0.9.4]: https://github.com/micheledimeo/scores/releases/tag/v0.9.4
