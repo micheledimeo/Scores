@@ -66,7 +66,7 @@ jobs:
         find lib -name "*.php" -print0 | xargs -0 -n1 php -l
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: matrix.node-version == '20.x' && matrix.php-version == '8.2'
       with:
         name: build-output
