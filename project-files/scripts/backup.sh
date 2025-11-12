@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Backup script for mxmlscores
+# Backup script for scores
 # Creates timestamped tar.gz backups and manages backup retention
 
 set -e
@@ -12,13 +12,13 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_DIR="/Users/Michele/Sites/mxmlscores"
+APP_DIR="/Users/Michele/Sites/scores"
 BACKUP_DIR="${APP_DIR}/project-files/backups"
 MAX_BACKUPS=30  # Keep last 30 backups
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_NAME="mxmlscores_backup_${TIMESTAMP}.tar.gz"
+BACKUP_NAME="scores_backup_${TIMESTAMP}.tar.gz"
 
-echo -e "${GREEN}=== MusicXML Scores Backup ===${NC}"
+echo -e "${GREEN}=== Scores Backup ===${NC}"
 echo "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
 
 # Create backup directory if it doesn't exist
@@ -60,12 +60,12 @@ echo -e "${GREEN}✓ Backup created: ${BACKUP_SIZE}${NC}"
 
 # Cleanup old backups (keep last MAX_BACKUPS)
 echo -e "${YELLOW}Managing backup retention (keeping last ${MAX_BACKUPS} backups)...${NC}"
-BACKUP_COUNT=$(ls -1 "${BACKUP_DIR}"/mxmlscores_backup_*.tar.gz 2>/dev/null | wc -l)
+BACKUP_COUNT=$(ls -1 "${BACKUP_DIR}"/scores_backup_*.tar.gz 2>/dev/null | wc -l)
 
 if [ "$BACKUP_COUNT" -gt "$MAX_BACKUPS" ]; then
     REMOVE_COUNT=$((BACKUP_COUNT - MAX_BACKUPS))
     echo "  Removing $REMOVE_COUNT old backup(s)..."
-    ls -1t "${BACKUP_DIR}"/mxmlscores_backup_*.tar.gz | tail -n "$REMOVE_COUNT" | xargs rm -f
+    ls -1t "${BACKUP_DIR}"/scores_backup_*.tar.gz | tail -n "$REMOVE_COUNT" | xargs rm -f
     echo -e "${GREEN}  ✓ Cleanup complete${NC}"
 else
     echo "  No cleanup needed (${BACKUP_COUNT} backups)"
@@ -76,7 +76,7 @@ echo ""
 echo -e "${GREEN}=== Backup Summary ===${NC}"
 echo "Location: ${BACKUP_DIR}/${BACKUP_NAME}"
 echo "Size: ${BACKUP_SIZE}"
-echo "Total backups: $(ls -1 "${BACKUP_DIR}"/mxmlscores_backup_*.tar.gz 2>/dev/null | wc -l)"
+echo "Total backups: $(ls -1 "${BACKUP_DIR}"/scores_backup_*.tar.gz 2>/dev/null | wc -l)"
 echo ""
 echo "To restore this backup:"
 echo "  tar -xzf ${BACKUP_DIR}/${BACKUP_NAME}"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##
-# Package script for mxmlscores Nextcloud app
+# Package script for scores Nextcloud app
 # Creates a distributable tar.gz archive ready for installation on other Nextcloud instances
 ##
 
@@ -15,8 +15,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_NAME="mxmlscores"
-LOCAL_DIR="/Users/Michele/Sites/mxmlscores"
+APP_NAME="scores"
+LOCAL_DIR="/Users/Michele/Sites/scores"
 BUILD_DIR="${LOCAL_DIR}/build_package"
 DIST_DIR="${LOCAL_DIR}/project-files/dist"
 

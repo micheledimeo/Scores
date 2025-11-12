@@ -8,11 +8,11 @@ import './css/main.scss'
 // This prevents the "@nextcloud/vue library was used without setting appName" error
 window.OCA = window.OCA || {}
 window.OCA.Scores = window.OCA.Scores || {}
-window.OCA.Scores.appName = 'mxmlscores'
+window.OCA.Scores.appName = 'scores'
 
 // Also set on window for compatibility
-window.appName = 'mxmlscores'
+window.appName = 'scores'
 
 const app = createApp(App)
-app.provide('appName', 'mxmlscores')
+app.provide('appName', 'scores')
 app.mount('#app')

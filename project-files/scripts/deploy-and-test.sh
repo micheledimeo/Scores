@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Deploy and Test script for mxmlscores
+# Deploy and Test script for scores
 # 1. Builds the app
 # 2. Deploys to production
 # 3. Waits for deployment to stabilize
@@ -16,7 +16,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_DIR="/Users/Michele/Sites/mxmlscores"
+APP_DIR="/Users/Michele/Sites/scores"
 TEST_DIR="${APP_DIR}/project-files/testsprite"
 
 echo -e "${GREEN}=== Deploy & Test Workflow ===${NC}"

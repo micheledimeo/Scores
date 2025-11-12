@@ -27,7 +27,7 @@ This project follows the Nextcloud Code of Conduct. Please be respectful and con
 
 ### Finding Issues to Work On
 
-1. Check the [Issues page](https://github.com/micheledimeo/mxmlscores/issues)
+1. Check the [Issues page](https://github.com/micheledimeo/scores/issues)
 2. Look for issues labeled:
    - `good first issue` - Great for newcomers
    - `help wanted` - We need assistance
@@ -41,11 +41,11 @@ This project follows the Nextcloud Code of Conduct. Please be respectful and con
 ### 1. Fork and Clone
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/YOUR-USERNAME/mxmlscores.git
-cd mxmlscores
+git clone https://github.com/YOUR-USERNAME/scores.git
+cd scores
 
 # Add upstream remote
-git remote add upstream https://github.com/micheledimeo/mxmlscores.git
+git remote add upstream https://github.com/micheledimeo/scores.git
 ```
 
 ### 2. Install Dependencies
@@ -57,16 +57,16 @@ npm install
 ### 3. Set Up Nextcloud Development Environment
 ```bash
 # Link to your Nextcloud apps directory
-ln -s /path/to/mxmlscores /path/to/nextcloud/apps/mxmlscores
+ln -s /path/to/scores /path/to/nextcloud/apps/scores
 
 # Enable the app
 cd /path/to/nextcloud
-sudo -u www-data php occ app:enable mxmlscores
+sudo -u www-data php occ app:enable scores
 ```
 
 ### 4. Start Development Server
 ```bash
-# In the mxmlscores directory
+# In the scores directory
 npm run dev
 ```
 

@@ -1,10 +1,10 @@
-# Nextcloud App Store Submission - mxmlscores v0.9.5
+# Nextcloud App Store Submission - scores v0.9.5
 
 ## 📋 Registration Information
 
 ### App ID
 ```
-mxmlscores
+scores
 ```
 
 ### Certificate (X.509 in PEM format)
@@ -53,7 +53,7 @@ c5XzwKcNcsxE6YJDQvgqhmmwNk5/Z1f47jgrXQZrroUoGF/37RSWyd9EnqrnhEqBn3pcF/0rpiSMRDfS
 
 ### Download URL
 ```
-https://github.com/micheledimeo/mxmlscores/releases/download/v0.9.5/mxmlscores-0.9.5.tar.gz
+https://github.com/micheledimeo/scores/releases/download/v0.9.5/scores-0.9.5.tar.gz
 ```
 
 ### Archive Signature
@@ -103,24 +103,24 @@ Features:
 
 ### Repository URL
 ```
-https://github.com/micheledimeo/mxmlscores
+https://github.com/micheledimeo/scores
 ```
 
 ### Issue Tracker
 ```
-https://github.com/micheledimeo/mxmlscores/issues
+https://github.com/micheledimeo/scores/issues
 ```
 
 ### Homepage
 ```
-https://github.com/micheledimeo/mxmlscores
+https://github.com/micheledimeo/scores
 ```
 
 ### Screenshots
 ```
-https://raw.githubusercontent.com/micheledimeo/mxmlscores/main/screenshots/Scores%20-%200.png
-https://raw.githubusercontent.com/micheledimeo/mxmlscores/main/screenshots/Scores%20-%201.png
-https://raw.githubusercontent.com/micheledimeo/mxmlscores/main/screenshots/Scores%20-%202.png
+https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%200.png
+https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%201.png
+https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%202.png
 ```
 
 ### Author
@@ -151,7 +151,7 @@ AGPL v3
 2. **Register App:**
    - Go to: https://apps.nextcloud.com/developer/apps/new
    - Fill in:
-     - App ID: `mxmlscores`
+     - App ID: `scores`
      - Certificate: (paste the X.509 certificate above)
      - App ID Signature: (paste the signature above)
 
@@ -172,9 +172,9 @@ AGPL v3
 
 ## 📁 Files Location
 
-- **Private Key:** `~/.nextcloud/certificates/mxmlscores.key` (KEEP SECRET!)
-- **Certificate:** `~/.nextcloud/certificates/mxmlscores.crt`
-- **Release Package:** `/Users/Michele/Sites/mxmlscores/dist/mxmlscores-0.9.5.tar.gz`
+- **Private Key:** `~/.nextcloud/certificates/scores.key` (KEEP SECRET!)
+- **Certificate:** `~/.nextcloud/certificates/scores.crt`
+- **Release Package:** `/Users/Michele/Sites/scores/dist/scores-0.9.5.tar.gz`
 
 ---
 

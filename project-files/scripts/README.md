@@ -1,6 +1,6 @@
 # Deployment & Build Scripts
 
-This directory contains scripts for building, deploying, packaging, and managing the mxmlscores Nextcloud app.
+This directory contains scripts for building, deploying, packaging, and managing the scores Nextcloud app.
 
 ## Scripts Overview
 
@@ -24,25 +24,25 @@ This directory contains scripts for building, deploying, packaging, and managing
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/package-app.sh
 ```
 
 **Output**:
-- `project-files/dist/mxmlscores-X.Y.Z.tar.gz` - Distributable package
-- `project-files/dist/mxmlscores-X.Y.Z.tar.gz.md5` - Checksum file
+- `project-files/dist/scores-X.Y.Z.tar.gz` - Distributable package
+- `project-files/dist/scores-X.Y.Z.tar.gz.md5` - Checksum file
 
 **Installation on target server**:
 ```bash
 # Transfer package to target Nextcloud server
-scp mxmlscores-X.Y.Z.tar.gz user@server:/path/to/nextcloud/apps/
+scp scores-X.Y.Z.tar.gz user@server:/path/to/nextcloud/apps/
 
 # On server
 cd /path/to/nextcloud/apps
-tar -xzf mxmlscores-X.Y.Z.tar.gz
-chown -R www-data:www-data mxmlscores
+tar -xzf scores-X.Y.Z.tar.gz
+chown -R www-data:www-data scores
 # Enable from Nextcloud admin panel or:
-sudo -u www-data php occ app:enable mxmlscores
+sudo -u www-data php occ app:enable scores
 ```
 
 ---
@@ -65,11 +65,11 @@ sudo -u www-data php occ app:enable mxmlscores
 
 **Configuration**:
 ```bash
-APP_NAME="mxmlscores"
-LOCAL_DIR="/Users/Michele/Sites/mxmlscores"
+APP_NAME="scores"
+LOCAL_DIR="/Users/Michele/Sites/scores"
 REMOTE_USER="root"
 REMOTE_HOST="ottoniascoppio"  # Uses SSH config
-REMOTE_DIR="/home/ottoniascoppio/domains/cloud.ottoniascoppio.org/public_html/apps/mxmlscores"
+REMOTE_DIR="/home/ottoniascoppio/domains/cloud.ottoniascoppio.org/public_html/apps/scores"
 ```
 
 **Prerequisites**:
@@ -79,7 +79,7 @@ REMOTE_DIR="/home/ottoniascoppio/domains/cloud.ottoniascoppio.org/public_html/ap
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/deploy-production.sh
 ```
 
@@ -93,8 +93,8 @@ Host ottoniascoppio
 ```
 
 **Testing deployed app**:
-- App URL: `https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores`
-- Test mode: `https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/?testSample=1`
+- App URL: `https://cloud.ottoniascoppio.org/index.php/apps/scores`
+- Test mode: `https://cloud.ottoniascoppio.org/index.php/apps/scores/?testSample=1`
 
 ---
 
@@ -118,16 +118,16 @@ Host ottoniascoppio
 mkdir -p ~/.nextcloud/certificates
 
 # Generate private key (4096-bit RSA)
-openssl genrsa -out ~/.nextcloud/certificates/mxmlscores.key 4096
+openssl genrsa -out ~/.nextcloud/certificates/scores.key 4096
 
 # Extract public certificate
-openssl rsa -in ~/.nextcloud/certificates/mxmlscores.key -pubout \
-    -out ~/.nextcloud/certificates/mxmlscores.crt
+openssl rsa -in ~/.nextcloud/certificates/scores.key -pubout \
+    -out ~/.nextcloud/certificates/scores.crt
 ```
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/sign-app.sh
 ```
 
@@ -173,32 +173,32 @@ cd /Users/Michele/Sites/mxmlscores
 
 **Configuration**:
 ```bash
-APP_DIR="/Users/Michele/Sites/mxmlscores"
+APP_DIR="/Users/Michele/Sites/scores"
 BACKUP_DIR="${APP_DIR}/project-files/backups"
 MAX_BACKUPS=30  # Keep last 30 backups
 ```
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/backup.sh
 ```
 
 **Output**:
-- `project-files/backups/mxmlscores_backup_YYYYMMDD_HHMMSS.tar.gz`
+- `project-files/backups/scores_backup_YYYYMMDD_HHMMSS.tar.gz`
 
 **Restore from backup**:
 ```bash
 # View backup contents
-tar -tzf project-files/backups/mxmlscores_backup_20251111_142922.tar.gz
+tar -tzf project-files/backups/scores_backup_20251111_142922.tar.gz
 
 # Extract backup
 cd /Users/Michele/Sites/
-tar -xzf mxmlscores/project-files/backups/mxmlscores_backup_20251111_142922.tar.gz
+tar -xzf scores/project-files/backups/scores_backup_20251111_142922.tar.gz
 
 # Or extract to different location
 mkdir restore-test
-tar -xzf mxmlscores/project-files/backups/mxmlscores_backup_20251111_142922.tar.gz -C restore-test
+tar -xzf scores/project-files/backups/scores_backup_20251111_142922.tar.gz -C restore-test
 ```
 
 **Automated backups** (optional - using cron):
@@ -207,7 +207,7 @@ tar -xzf mxmlscores/project-files/backups/mxmlscores_backup_20251111_142922.tar.
 crontab -e
 
 # Add daily backup at 2 AM
-0 2 * * * /Users/Michele/Sites/mxmlscores/project-files/scripts/backup.sh >> /Users/Michele/Sites/mxmlscores/project-files/backups/backup.log 2>&1
+0 2 * * * /Users/Michele/Sites/scores/project-files/scripts/backup.sh >> /Users/Michele/Sites/scores/project-files/backups/backup.log 2>&1
 ```
 
 ---
@@ -223,7 +223,7 @@ crontab -e
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/deploy-and-test.sh
 ```
 
@@ -241,7 +241,7 @@ cd /Users/Michele/Sites/mxmlscores
 
 **Usage**:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./project-files/scripts/update-repo-urls.sh
 ```
 
@@ -262,7 +262,7 @@ npm run build
 ./project-files/scripts/deploy-production.sh
 
 # 5. Test deployed version
-open https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores
+open https://cloud.ottoniascoppio.org/index.php/apps/scores
 ```
 
 ### Creating a Release Package
@@ -288,7 +288,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 
 # 8. Create GitHub release with package
-# Upload: project-files/dist/mxmlscores-X.Y.Z.tar.gz
+# Upload: project-files/dist/scores-X.Y.Z.tar.gz
 ```
 
 ### Before Major Changes - Create Backup
@@ -299,7 +299,7 @@ git push origin vX.Y.Z
 # Make changes...
 
 # If needed, restore from backup
-tar -xzf project-files/backups/mxmlscores_backup_YYYYMMDD_HHMMSS.tar.gz
+tar -xzf project-files/backups/scores_backup_YYYYMMDD_HHMMSS.tar.gz
 ```
 
 ---
@@ -313,7 +313,7 @@ chmod +x project-files/scripts/*.sh
 
 If permission denied:
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 chmod +x project-files/scripts/deploy-production.sh
 chmod +x project-files/scripts/package-app.sh
 chmod +x project-files/scripts/sign-app.sh
@@ -378,10 +378,10 @@ project-files/
 │   ├── deploy-and-test.sh     # Deploy and run tests
 │   └── update-repo-urls.sh    # Update repository URLs
 ├── dist/                      # Distribution packages
-│   ├── mxmlscores-X.Y.Z.tar.gz
-│   └── mxmlscores-X.Y.Z.tar.gz.md5
+│   ├── scores-X.Y.Z.tar.gz
+│   └── scores-X.Y.Z.tar.gz.md5
 ├── backups/                   # Automated backups
-│   └── mxmlscores_backup_YYYYMMDD_HHMMSS.tar.gz
+│   └── scores_backup_YYYYMMDD_HHMMSS.tar.gz
 └── testsprite/                # TestSprite test configuration
 ```
 

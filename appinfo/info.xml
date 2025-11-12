@@ -6,7 +6,7 @@
     @see https://docs.nextcloud.com/server/stable/developer_manual/app_publishing_maintenance/app_metadata.html
   -->
 
-  <id>mxmlscores</id>
+  <id>scores</id>
   <name>Scores</name>
   <summary>View and play MusicXML scores</summary>
   <description><![CDATA[Display and play MusicXML and related music notation formats inside Nextcloud using OpenSheetMusicDisplay.
@@ -22,7 +22,7 @@ Features:
 - 📱 Responsive Design: Adaptive layout with collapsible sidebar
 ]]></description>
 
-  <version>0.9.6</version>
+  <version>0.9.7</version>
   <licence>agpl</licence>
   <author mail="micheledimeo@gmail.com">Michele</author>
   <namespace>Scores</namespace>
@@ -30,11 +30,11 @@ Features:
   <category>multimedia</category>
   <category>tools</category>
 
-  <website>https://github.com/micheledimeo/mxmlscores</website>
-  <bugs>https://github.com/micheledimeo/mxmlscores/issues</bugs>
-  <repository type="git">https://github.com/micheledimeo/mxmlscores.git</repository>
+  <website>https://github.com/micheledimeo/scores</website>
+  <bugs>https://github.com/micheledimeo/scores/issues</bugs>
+  <repository type="git">https://github.com/micheledimeo/scores.git</repository>
 
-  <screenshot>https://raw.githubusercontent.com/micheledimeo/mxmlscores/main/screenshots/player-view.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/player-view.png</screenshot>
 
   <dependencies>
     <nextcloud min-version="28" max-version="33" />
@@ -43,9 +43,9 @@ Features:
 
   <navigations>
     <navigation>
-      <id>mxmlscores</id>
+      <id>scores</id>
       <name>Scores</name>
-      <route>mxmlscores.page.index</route>
+      <route>scores.page.index</route>
       <icon>app.svg</icon>
       <order>10</order>
     </navigation>
