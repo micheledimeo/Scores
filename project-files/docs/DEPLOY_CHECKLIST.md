@@ -24,14 +24,14 @@
 - [ ] Attendere 10-15 secondi per stabilizzazione
 
 ### 5. Test Online Automatici
-- [ ] Eseguire test online: `cd ../.mxmlscores-testsprite && npm run test:online`
+- [ ] Eseguire test online: `cd ../.scores-testsprite && npm run test:online`
 - [ ] Verificare risultati test (obiettivo: 24+ test passati su 34)
 - [ ] Rivedere eventuali fallimenti
 
 ## Post-Deploy
 
 ### 6. Verifica Manuale
-- [ ] Aprire https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/
+- [ ] Aprire https://cloud.ottoniascoppio.org/index.php/apps/scores/
 - [ ] Verificare che l'app si carichi correttamente
 - [ ] Testare funzionalità critiche:
   - [ ] Caricamento spartiti
@@ -42,7 +42,7 @@
   - [ ] Navigazione misure
 
 ### 7. Test Sample Mode
-- [ ] Aprire https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/?testSample=1
+- [ ] Aprire https://cloud.ottoniascoppio.org/index.php/apps/scores/?testSample=1
 - [ ] Verificare caricamento automatico spartito di esempio
 - [ ] Testare playback
 
@@ -55,7 +55,7 @@
 
 ### In caso di problemi critici:
 1. Identificare ultimo backup funzionante in `backups/`
-2. Estrarre backup: `tar -xzf backups/mxmlscores_backup_YYYYMMDD_HHMMSS.tar.gz`
+2. Estrarre backup: `tar -xzf backups/scores_backup_YYYYMMDD_HHMMSS.tar.gz`
 3. Eseguire nuovamente deploy: `./deploy-production.sh`
 4. Verificare ripristino funzionalità
 
@@ -81,16 +81,16 @@
 npm run dev                    # 2. Test locale
 npm run build                  # 3. Build
 ./deploy-production.sh         # 4. Deploy
-cd ../.mxmlscores-testsprite && npm run test:online  # 5. Test
+cd ../.scores-testsprite && npm run test:online  # 5. Test
 
 # Verifica rapida
-curl -I https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/
+curl -I https://cloud.ottoniascoppio.org/index.php/apps/scores/
 ```
 
 ## Contatti di Emergenza
 
 - Server SSH: `ottoniascoppio.org`
-- Path remoto: `/home/ottoniascoppio/html/apps/mxmlscores/`
+- Path remoto: `/home/ottoniascoppio/html/apps/scores/`
 - Documentazione: https://cloud.ottoniascoppio.org/
 
 ---

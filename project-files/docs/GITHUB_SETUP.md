@@ -1,12 +1,12 @@
 # GitHub Repository Setup Guide
 
-Questa guida ti aiuta a pubblicare l'app mxmlscores su GitHub e prepararla per l'App Store di Nextcloud.
+Questa guida ti aiuta a pubblicare l'app scores su GitHub e prepararla per l'App Store di Nextcloud.
 
 ## 1. Crea il Repository su GitHub
 
 1. Vai su https://github.com/new
 2. Compila i campi:
-   - **Repository name:** `mxmlscores` (o `nextcloud-mxmlscores`)
+   - **Repository name:** `scores` (o `nextcloud-scores`)
    - **Description:** "View and play MusicXML scores in Nextcloud"
    - **Visibility:** Public (obbligatorio per App Store Nextcloud)
    - **DON'T** initialize with README (lo abbiamo già)
@@ -17,7 +17,7 @@ Questa guida ti aiuta a pubblicare l'app mxmlscores su GitHub e prepararla per l
 Dopo aver creato il repository su GitHub, GitHub ti mostrerà le istruzioni. Usa questi comandi:
 
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 
 # Verifica che .gitignore sia corretto
 cat .gitignore
@@ -29,7 +29,7 @@ git add .
 git commit -m "Initial commit - MusicXML Scores Viewer for Nextcloud v0.9.2"
 
 # Aggiungi il remote (SOSTITUISCI 'YOUR-USERNAME' con il tuo username GitHub)
-git remote add origin https://github.com/YOUR-USERNAME/mxmlscores.git
+git remote add origin https://github.com/YOUR-USERNAME/scores.git
 
 # Rinomina il branch principale (se necessario)
 git branch -M main
@@ -47,7 +47,7 @@ git push -u origin main
 
 ### B. Crea cartella Screenshots
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 mkdir -p screenshots
 ```
 
@@ -82,10 +82,10 @@ Esegui questo script di aggiornamento (verrà creato automaticamente):
 
 Oppure modifica manualmente:
 ```xml
-<website>https://github.com/YOUR-USERNAME/mxmlscores</website>
-<bugs>https://github.com/YOUR-USERNAME/mxmlscores/issues</bugs>
-<repository type="git">https://github.com/YOUR-USERNAME/mxmlscores.git</repository>
-<screenshot>https://raw.githubusercontent.com/YOUR-USERNAME/mxmlscores/main/screenshots/player-view.png</screenshot>
+<website>https://github.com/YOUR-USERNAME/scores</website>
+<bugs>https://github.com/YOUR-USERNAME/scores/issues</bugs>
+<repository type="git">https://github.com/YOUR-USERNAME/scores.git</repository>
+<screenshot>https://raw.githubusercontent.com/YOUR-USERNAME/scores/main/screenshots/player-view.png</screenshot>
 <author mail="your-email@example.com">Michele</author>
 ```
 
@@ -125,7 +125,7 @@ Sul sito GitHub:
    ## Installation
    See [INSTALL.md](INSTALL.md) for installation instructions.
    ```
-5. Allega il file `dist/mxmlscores-0.9.2.tar.gz` (generato con `./package-app.sh`)
+5. Allega il file `dist/scores-0.9.2.tar.gz` (generato con `./package-app.sh`)
 6. Click "Publish release"
 
 ## 6. Prossimi Passi per App Store

@@ -13,10 +13,10 @@ window.OCA = window.OCA || {}
 window.OCA.Scores = window.OCA.Scores || {}
 
 // Set appName for @nextcloud/vue
-window.OCA.Scores.appName = 'mxmlscores'
+window.OCA.Scores.appName = 'scores'
 
 // Also set on window for compatibility
-window.appName = 'mxmlscores'
+window.appName = 'scores'
 
 // Log successful initialization (useful for debugging)
 console.log('[Scores] App name initialized:', window.appName)

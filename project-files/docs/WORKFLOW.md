@@ -4,9 +4,9 @@
 
 Questo progetto segue un flusso di lavoro **locale → produzione → test online**:
 
-1. **Sviluppo locale** in `/Users/Michele/Sites/mxmlscores`
+1. **Sviluppo locale** in `/Users/Michele/Sites/scores`
 2. **Deploy su produzione** via SSH su `cloud.ottoniascoppio.org`
-3. **Test automatici online** da `/.mxmlscores-testsprite`
+3. **Test automatici online** da `/.scores-testsprite`
 
 ---
 
@@ -24,7 +24,7 @@ npm run lint:fix     # Fix automatico problemi
 ```bash
 ./backup.sh          # Crea backup con timestamp
 ```
-- Salva in `backups/mxmlscores_backup_YYYYMMDD_HHMMSS.tar.gz`
+- Salva in `backups/scores_backup_YYYYMMDD_HHMMSS.tar.gz`
 - Mantiene automaticamente ultimi 30 backup
 - Usa prima di modifiche significative
 
@@ -36,7 +36,7 @@ npm run lint:fix     # Fix automatico problemi
 
 ### Test Online
 ```bash
-cd ../.mxmlscores-testsprite
+cd ../.scores-testsprite
 npm run test:online              # Tutti i test
 npm run test:online:simple       # Solo test semplici (7 test veloci)
 npx playwright show-report       # Visualizza report HTML
@@ -48,7 +48,7 @@ npx playwright show-report       # Visualizza report HTML
 
 ### 1. Backup Pre-Modifica
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 ./backup.sh
 ```
 
@@ -88,14 +88,14 @@ npm run build && ./deploy-production.sh
 ```
 
 Poi verifica manualmente:
-- https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/
+- https://cloud.ottoniascoppio.org/index.php/apps/scores/
 
 ---
 
 ## Struttura File
 
 ```
-mxmlscores/
+scores/
 ├── src/                        # Sorgenti Vue.js
 │   ├── components/             # Componenti Vue
 │   └── utils/                  # Utilities JavaScript
@@ -111,11 +111,11 @@ mxmlscores/
 ├── DEPLOY_CHECKLIST.md         # Checklist completa
 └── WORKFLOW.md                 # Questo file
 
-../.mxmlscores-testsprite/      # Repository test Playwright
+../.scores-testsprite/      # Repository test Playwright
 ├── tests/                      # Test E2E
 │   ├── app.spec.ts            # 12 test - Suite principale
 │   ├── online-simple.spec.ts  # 7 test - Test rapidi
-│   ├── mxmlscores.spec.js     # 4 test - Smoke tests
+│   ├── scores.spec.js     # 4 test - Smoke tests
 │   └── sidebar-and-mixer.spec.ts  # 11 test - Test avanzati
 ├── playwright.config.online.ts # Config test online
 └── .env                        # Credenziali Nextcloud
@@ -128,7 +128,7 @@ mxmlscores/
 ### ✅ Funzionanti Online (24/34 test - 71%)
 - `app.spec.ts`: 12/12 ✅
 - `online-simple.spec.ts`: 7/7 ✅
-- `mxmlscores.spec.js`: 4/4 ✅
+- `scores.spec.js`: 4/4 ✅
 
 ### ⚠️ Parzialmente Funzionanti (10/34 test)
 - `sidebar-and-mixer.spec.ts`: 1/11 (comportamento sidebar diverso in produzione)
@@ -151,16 +151,16 @@ npm run build
 ssh ottoniascoppio "echo OK"
 
 # Verifica permessi remoti
-ssh ottoniascoppio "ls -la /home/ottoniascoppio/html/apps/mxmlscores/"
+ssh ottoniascoppio "ls -la /home/ottoniascoppio/html/apps/scores/"
 ```
 
 ### Test Falliscono
 ```bash
 # Verifica app online
-curl -I https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/
+curl -I https://cloud.ottoniascoppio.org/index.php/apps/scores/
 
 # Rigenera auth
-cd ../.mxmlscores-testsprite
+cd ../.scores-testsprite
 rm -rf playwright/.auth/
 npx playwright test tests/auth.setup.ts --config=playwright.config.online.ts
 ```
@@ -171,7 +171,7 @@ npx playwright test tests/auth.setup.ts --config=playwright.config.online.ts
 ls -lt backups/
 
 # 2. Estrai backup
-tar -xzf backups/mxmlscores_backup_20251103_120000.tar.gz
+tar -xzf backups/scores_backup_20251103_120000.tar.gz
 
 # 3. Rideploy
 ./deploy-production.sh
@@ -201,7 +201,7 @@ tar -xzf backups/mxmlscores_backup_20251103_120000.tar.gz
 Per tracciare modifiche con git:
 
 ```bash
-cd /Users/Michele/Sites/mxmlscores
+cd /Users/Michele/Sites/scores
 
 # Inizializza repository
 git init
@@ -224,10 +224,10 @@ git merge feature/nome-feature
 
 ## URLs Utili
 
-- **App Produzione**: https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/
-- **Test Sample**: https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/?testSample=1
+- **App Produzione**: https://cloud.ottoniascoppio.org/index.php/apps/scores/
+- **Test Sample**: https://cloud.ottoniascoppio.org/index.php/apps/scores/?testSample=1
 - **Server SSH**: `ssh ottoniascoppio`
-- **Path Remoto**: `/home/ottoniascoppio/html/apps/mxmlscores/`
+- **Path Remoto**: `/home/ottoniascoppio/html/apps/scores/`
 
 ---
 

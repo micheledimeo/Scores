@@ -1,5 +1,5 @@
 <template>
-	<NcContent app-name="mxmlscores" :class="{'public-share-view': isPublicShare}">
+	<NcContent app-name="scores" :class="{'public-share-view': isPublicShare}">
 		<NcAppNavigation v-if="!isPublicShare">
 			<!-- Search box in header with counter -->
 			<template #search>
@@ -427,7 +427,7 @@ export default {
 
 		// Check if this is a public share using Nextcloud InitialState API
 		try {
-			const publicShareData = loadState('mxmlscores', 'publicShare')
+			const publicShareData = loadState('scores', 'publicShare')
 			console.log('✓ Public share detected via InitialState!')
 			isPublicShare.value = true
 
@@ -454,8 +454,8 @@ export default {
 		})
 		if (typeof window !== 'undefined' && window.location.search.includes('testSample=1') && !isPublicShare.value) {
 			console.warn('[DEV] Auto-loading test sample from URL parameter')
-			console.log('[DEV] Fetching: /apps/mxmlscores/public/test-scores/sample.musicxml')
-			fetch('/apps/mxmlscores/public/test-scores/sample.musicxml')
+			console.log('[DEV] Fetching: /apps/scores/public/test-scores/sample.musicxml')
+			fetch('/apps/scores/public/test-scores/sample.musicxml')
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(`HTTP ${response.status}: ${response.statusText}`)
@@ -486,7 +486,7 @@ export default {
 
 			try {
 				loading.value = true
-				const response = await axios.get(generateUrl('/apps/mxmlscores/api/files'))
+				const response = await axios.get(generateUrl('/apps/scores/api/files'))
 				folderStructure.value = response.data
 				filterFiles()
 			} catch (error) {
@@ -587,7 +587,7 @@ export default {
 		const loadFile = async (fileId) => {
 			try {
 				loading.value = true
-				const response = await axios.get(generateUrl('/apps/mxmlscores/api/file/{fileId}', { fileId }))
+				const response = await axios.get(generateUrl('/apps/scores/api/file/{fileId}', { fileId }))
 				currentFile.value = {
 					id: fileId,
 					name: response.data.name,
@@ -617,7 +617,7 @@ export default {
 		// Admin settings functions
 		const checkIsAdmin = async () => {
 			try {
-				const response = await axios.get(generateUrl('/apps/mxmlscores/api/settings/isAdmin'))
+				const response = await axios.get(generateUrl('/apps/scores/api/settings/isAdmin'))
 				isAdmin.value = response.data.isAdmin
 			} catch (error) {
 				console.error('Failed to check admin status:', error)
@@ -628,7 +628,7 @@ export default {
 			if (!isAdmin.value) return
 
 			try {
-				const response = await axios.get(generateUrl('/apps/mxmlscores/api/settings/folder'))
+				const response = await axios.get(generateUrl('/apps/scores/api/settings/folder'))
 				// Support both old single path and new multiple paths
 				const data = response.data
 				if (Array.isArray(data.folderPaths)) {
@@ -695,7 +695,7 @@ export default {
 			settingsError.value = ''
 
 			try {
-				await axios.post(generateUrl('/apps/mxmlscores/api/settings/folder'), {
+				await axios.post(generateUrl('/apps/scores/api/settings/folder'), {
 					folderPaths: scoresFolderPaths.value
 				})
 				settingsSaved.value = true
@@ -743,7 +743,7 @@ export default {
 		const loadBrowserFolders = async (path) => {
 			loadingFolders.value = true
 			try {
-				const response = await axios.get(generateUrl('/apps/mxmlscores/api/settings/browse'), {
+				const response = await axios.get(generateUrl('/apps/scores/api/settings/browse'), {
 					params: { path }
 				})
 				browserFolders.value = response.data.folders
@@ -2104,7 +2104,7 @@ export default {
 <style>
 /* Global styles (not scoped) for app icon - always white */
 /* Apply filter to make the black icon white in all themes */
-.app-menu-icon img[src*="mxmlscores/img/app.svg"] {
+.app-menu-icon img[src*="scores/img/app.svg"] {
 	filter: brightness(0) invert(1);
 }
 

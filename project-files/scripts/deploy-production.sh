@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##
-# Deploy script for mxmlscores Nextcloud app
+# Deploy script for scores Nextcloud app
 # Builds the app and deploys to production server
 ##
 
@@ -14,8 +14,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-APP_NAME="mxmlscores"
-LOCAL_DIR="/Users/Michele/Sites/mxmlscores"
+APP_NAME="scores"
+LOCAL_DIR="/Users/Michele/Sites/scores"
 REMOTE_USER="root"
 REMOTE_HOST="ottoniascoppio"  # Uses SSH config
 REMOTE_DIR="/home/ottoniascoppio/domains/cloud.ottoniascoppio.org/public_html/apps/${APP_NAME}"
@@ -81,6 +81,6 @@ ssh "${REMOTE_USER}@${REMOTE_HOST}" "chown -R ottoniascoppio:ottoniascoppio ${RE
 
 echo -e "${GREEN}=== Deployment completed successfully! ===${NC}"
 echo ""
-echo "App URL: https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores"
-echo "Test mode: https://cloud.ottoniascoppio.org/index.php/apps/mxmlscores/?testSample=1"
+echo "App URL: https://cloud.ottoniascoppio.org/index.php/apps/scores"
+echo "Test mode: https://cloud.ottoniascoppio.org/index.php/apps/scores/?testSample=1"
 echo ""

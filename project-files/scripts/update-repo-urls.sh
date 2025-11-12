@@ -36,8 +36,8 @@ if [ -z "$AUTHOR_EMAIL" ]; then
     echo ""
 fi
 
-INFO_XML="/Users/Michele/Sites/mxmlscores/appinfo/info.xml"
-REPO_NAME="mxmlscores"
+INFO_XML="/Users/Michele/Sites/scores/appinfo/info.xml"
+REPO_NAME="scores"
 
 echo -e "${BLUE}╔════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║     Update Repository URLs in info.xml    ║${NC}"

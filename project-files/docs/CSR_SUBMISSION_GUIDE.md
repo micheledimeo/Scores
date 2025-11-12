@@ -19,7 +19,7 @@ Click **"Fork"** to create your own copy.
 In your forked repository:
 
 1. Navigate to the `certificate` folder (or create it if it doesn't exist)
-2. Create a new file named: `mxmlscores.csr`
+2. Create a new file named: `scores.csr`
 3. Paste the CSR content (already in your clipboard!)
 4. Commit the file
 
@@ -27,15 +27,15 @@ In your forked repository:
 
 1. Go to your fork on GitHub
 2. Click **"Pull Request"**
-3. Title: `Certificate request for mxmlscores app`
+3. Title: `Certificate request for scores app`
 4. Description:
    ```
-   Certificate Signing Request for mxmlscores Nextcloud app
+   Certificate Signing Request for scores Nextcloud app
 
-   - App ID: mxmlscores
+   - App ID: scores
    - App Name: Scores
    - Description: View and play MusicXML scores in Nextcloud
-   - Repository: https://github.com/micheledimeo/mxmlscores
+   - Repository: https://github.com/micheledimeo/scores
    - Developer: Michele (micheledimeo@gmail.com)
    ```
 5. Submit the Pull Request
@@ -50,7 +50,7 @@ In your forked repository:
 
 Once you receive the signed certificate:
 
-1. Save it as: `~/.nextcloud/certificates/mxmlscores.crt`
+1. Save it as: `~/.nextcloud/certificates/scores.crt`
 2. Then proceed with app registration at https://apps.nextcloud.com/developer/apps/new
 
 ---
@@ -90,14 +90,14 @@ kVw2Y66nQC4FNiYy9w2GY20zrUaj1qc6lmVdjw4nJfcR8bA1mF7DC4xG2djHlJ/L
 
 ## 🔐 Important Files (Keep Secure!)
 
-- **Private Key:** `~/.nextcloud/certificates/mxmlscores.key`
+- **Private Key:** `~/.nextcloud/certificates/scores.key`
   - ⚠️ NEVER share this file!
   - Keep multiple secure backups
 
-- **CSR:** `~/.nextcloud/certificates/mxmlscores.csr`
+- **CSR:** `~/.nextcloud/certificates/scores.csr`
   - Already submitted via PR
 
-- **Certificate:** `~/.nextcloud/certificates/mxmlscores.crt`
+- **Certificate:** `~/.nextcloud/certificates/scores.crt`
   - Will be provided by Nextcloud team after CSR approval
 
 ---
@@ -120,4 +120,4 @@ If you need help during the process:
 ---
 
 Generated: 2025-11-10
-App: mxmlscores v0.9.5
+App: scores v0.9.5

@@ -1,6 +1,6 @@
 # Utility Scripts and Documentation
 
-This branch (`utils`) contains development and deployment utilities for the mxmlscores Nextcloud app.
+This branch (`utils`) contains development and deployment utilities for the scores Nextcloud app.
 
 ## 📌 Important
 
@@ -36,7 +36,7 @@ All development files are in the `project-files/` directory:
 - **`project-files/scripts/package-app.sh`** - Create distributable tar.gz package
   ```bash
   ./project-files/scripts/package-app.sh
-  # Creates: project-files/dist/mxmlscores-[version].tar.gz
+  # Creates: project-files/dist/scores-[version].tar.gz
   ```
 
 - **`project-files/scripts/sign-app.sh`** - Sign app for Nextcloud App Store

@@ -36,24 +36,24 @@ jobs:
     - name: Create distribution package
       run: |
         # Create build directory
-        mkdir -p build_package/mxmlscores
+        mkdir -p build_package/scores
 
         # Copy necessary files
-        cp -r js build_package/mxmlscores/
-        cp -r css build_package/mxmlscores/
-        cp -r lib build_package/mxmlscores/
-        cp -r appinfo build_package/mxmlscores/
-        cp -r templates build_package/mxmlscores/
-        cp -r img build_package/mxmlscores/
+        cp -r js build_package/scores/
+        cp -r css build_package/scores/
+        cp -r lib build_package/scores/
+        cp -r appinfo build_package/scores/
+        cp -r templates build_package/scores/
+        cp -r img build_package/scores/
 
         # Copy documentation
-        [ -f README.md ] && cp README.md build_package/mxmlscores/
-        [ -f LICENSE ] && cp LICENSE build_package/mxmlscores/
-        [ -f CHANGELOG.md ] && cp CHANGELOG.md build_package/mxmlscores/
+        [ -f README.md ] && cp README.md build_package/scores/
+        [ -f LICENSE ] && cp LICENSE build_package/scores/
+        [ -f CHANGELOG.md ] && cp CHANGELOG.md build_package/scores/
 
         # Copy public folder if exists
         if [ -d "public" ]; then
-          cp -r public build_package/mxmlscores/
+          cp -r public build_package/scores/
         fi
 
         # Clean up development files
@@ -62,12 +62,12 @@ jobs:
 
         # Create tar.gz archive
         cd build_package
-        tar -czf ../mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz mxmlscores
+        tar -czf ../scores-${{ steps.get_version.outputs.VERSION }}.tar.gz scores
         cd ..
 
         # Generate checksums
-        md5sum mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz > mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz.md5
-        sha256sum mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz > mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz.sha256
+        md5sum scores-${{ steps.get_version.outputs.VERSION }}.tar.gz > scores-${{ steps.get_version.outputs.VERSION }}.tar.gz.md5
+        sha256sum scores-${{ steps.get_version.outputs.VERSION }}.tar.gz > scores-${{ steps.get_version.outputs.VERSION }}.tar.gz.sha256
 
     - name: Extract changelog for this version
       id: changelog
@@ -93,9 +93,9 @@ jobs:
         name: Release v${{ steps.get_version.outputs.VERSION }}
         body_path: RELEASE_NOTES.md
         files: |
-          mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz
-          mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz.md5
-          mxmlscores-${{ steps.get_version.outputs.VERSION }}.tar.gz.sha256
+          scores-${{ steps.get_version.outputs.VERSION }}.tar.gz
+          scores-${{ steps.get_version.outputs.VERSION }}.tar.gz.md5
+          scores-${{ steps.get_version.outputs.VERSION }}.tar.gz.sha256
         draft: false
         prerelease: false
       env:

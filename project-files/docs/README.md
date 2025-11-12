@@ -1,6 +1,6 @@
 # Documentation and Guides
 
-This folder contains development documentation and guides for the mxmlscores Nextcloud app.
+This folder contains development documentation and guides for the scores Nextcloud app.
 
 ## 📚 Available Documents
 
