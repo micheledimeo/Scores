@@ -42,3 +42,10 @@ appinfo/signature.json
 # Certificate files
 *.csr
 *.crt
+
+# Test and backup files that may contain development metadata
+project-files/TEST_REPORT.md
+project-files/backups/CHANGELOG-pre-testsprite-*.md
+project-files/backups/DEPLOYMENT.md
+project-files/backups/opensheetmusicdisplay-develop/
+project-files/testsprite/TEST_*.md
