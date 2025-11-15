@@ -115,11 +115,8 @@
 									<li><kbd>←</kbd> <kbd>→</kbd> {{ t('scores', 'Navigate between measures') }}</li>
 									<li><kbd>↑</kbd> <kbd>↓</kbd> {{ t('scores', 'Zoom in / out') }}</li>
 									<li>{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
+									<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
 								</ul>
-							</div>
-							<div class="files-app-note">
-								<h4>{{ t('scores', 'Upload & Share') }}</h4>
-								<p>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</p>
 							</div>
 							<div class="license-info">
 								<h4>{{ t('scores', 'Credits & License') }}</h4>
@@ -1072,30 +1069,6 @@ export default {
 	max-height: none !important;
 	overflow-y: auto;
 	padding-bottom: 40px;
-}
-
-/* Files app note - matches quick-tips style */
-.files-app-note {
-	background-color: var(--color-background-hover);
-	border-radius: 8px;
-	padding: 20px;
-	width: 100%;
-	max-width: 400px;
-	text-align: left;
-}
-
-.files-app-note h4 {
-	margin: 0 0 12px 0;
-	font-size: 15px;
-	font-weight: 600;
-	color: var(--color-main-text);
-}
-
-.files-app-note p {
-	margin: 0;
-	font-size: 14px;
-	line-height: 1.6;
-	color: var(--color-text-maxcontrast);
 }
 
 /* License info - matches other sections style */
@@ -2106,16 +2079,16 @@ export default {
 		overflow-y: visible !important;
 	}
 
-	/* Add padding-top to title */
+	/* Reduce padding-top on mobile */
 	.app-content-vue :deep(.empty-content__name) {
-		padding-top: 24px;
+		padding-top: 8px;
 	}
 
 	.app-content-vue :deep(.empty-content__action) {
 		max-height: calc(100vh - 300px) !important;
 		overflow-y: auto !important;
 		padding-bottom: 20px;
-		padding-top: 16px;
+		padding-top: 8px;
 	}
 
 	.welcome-info-container {
@@ -2126,7 +2099,6 @@ export default {
 	}
 
 	.quick-tips,
-	.files-app-note,
 	.license-info {
 		max-width: 100%;
 		width: 100%;
