@@ -858,12 +858,11 @@ export default {
 	z-index: 1;
 }
 
-/* Search box wrapper - with right padding to leave space for counter */
+/* Search box wrapper - counter positioned absolutely, no padding needed */
 .search-box-wrapper {
 	position: relative;
 	width: 100%;
 	padding: 0 8px;
-	padding-right: 44px; /* Space for counter bubble */
 }
 
 /* Reduce search input width to accommodate counter */
