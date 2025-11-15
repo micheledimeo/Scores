@@ -173,12 +173,12 @@
 		<!-- Mixer channels -->
 		<div v-if="showMixer && mixerChannels.length > 0" class="mixer-channels">
 			<button
-				v-for="(channel, idx) in mixerChannels"
+				v-for="(channel, idx) in [...mixerChannels].reverse()"
 				:key="idx"
 				:class="['channel-button', getChannelClass(channel.state)]"
 				:disabled="!isLoaded || isInitializing"
 				:title="`${channel.name || 'Unknown'} - ${channel.state.toUpperCase()}`"
-				@click="toggleChannel(idx)">
+				@click="toggleChannel(mixerChannels.length - 1 - idx)">
 				{{ getChannelLabel(channel.state) }}
 			</button>
 		</div>
