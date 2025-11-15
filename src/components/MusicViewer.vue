@@ -2185,12 +2185,6 @@ input[type="range"]:disabled {
 		display: flex !important;
 	}
 
-	/* Keep sliders hidden on mobile - user prefers number inputs only */
-	.tempo-slider,
-	.volume-slider {
-		display: none !important;
-	}
-
 	/* Remove top padding from sheet viewer on mobile */
 	.sheet-viewer {
 		padding-top: 0 !important;
