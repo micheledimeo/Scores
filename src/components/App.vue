@@ -2077,11 +2077,18 @@ export default {
 		max-height: none !important;
 		height: auto !important;
 		overflow-y: visible !important;
+		padding-top: 0 !important;
+		margin-top: 0 !important;
 	}
 
-	/* Reduce padding-top on mobile */
+	/* Reduce padding-top on mobile - remove all spacing */
 	.app-content-vue :deep(.empty-content__name) {
-		padding-top: 8px;
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
+
+	.app-content-vue :deep(.empty-content__icon) {
+		display: none !important;
 	}
 
 	.app-content-vue :deep(.empty-content__action) {
