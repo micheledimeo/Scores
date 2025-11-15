@@ -2,7 +2,7 @@
 
 ![App Name](https://img.shields.io/badge/App%20Name-Scores-blue?style=for-the-badge)
 ![App ID](https://img.shields.io/badge/App%20ID-scores-lightgrey?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.9.7-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.9.8-green?style=flat-square)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-orange?style=flat-square)
 
 Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMusicDisplay.
@@ -14,7 +14,7 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - 🎚️ **Instrument Mixer**: Individual volume control for each instrument/channel with solo/mute capabilities
 - 🎵 **Tempo & Volume Control**: Precise BPM adjustment (40-240) and master volume with numeric inputs
 - 📊 **Progress Tracking**: Visual progress bar with current time and measure indicators
-- ⌨️ **Keyboard Shortcuts**: Space (play/pause), arrows (navigate measures), +/- (zoom)
+- ⌨️ **Keyboard Shortcuts**: Space (play/pause), F (return to start), arrows (navigate/zoom)
 - 🔍 **Smart Search**: Real-time search with match counter across all scores and folders
 - 📁 **Folder Navigation**: Organized folder tree with expandable/collapsible folders and file counts
 - 📝 **Smart File Display**: Automatic left truncation for files in folders to show instrument names
@@ -40,6 +40,14 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - **Browsers**: Chrome, Firefox, Safari (including iOS/iPadOS 17.0+)
 
 ## Recent Improvements
+
+### v0.9.8 - Mobile Optimization (2025-11-15)
+- **Mobile UX**: Welcome screen aligns to top with proper flexbox layout
+- **Touch-Friendly Controls**: Playback buttons meet 44x44px accessibility standards
+- **Compact Mobile Layout**: Optimized playback bar with progress on first row
+- **Simplified UI**: Removed folder counters and streamlined Quick Tips
+- **Better Spacing**: Reduced top spacing on mobile for improved space utilization
+- **Mixer Improvements**: Reversed channel button order for better organization
 
 ### v0.9.7 - App Store & Testing (2025-11-12)
 - **Nextcloud App Store Preparation**: Certificate signing infrastructure ready

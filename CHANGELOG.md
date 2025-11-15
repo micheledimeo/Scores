@@ -5,6 +5,37 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.8] - 2025-11-15
+
+### Added
+- Mobile-optimized playback controls layout with touch-friendly buttons
+- Reversed mixer channel button order for better visual organization
+- Flexbox-based vertical alignment for Welcome screen on mobile
+
+### Changed
+- **Mobile UX**: Welcome screen now aligns to top on mobile devices instead of center
+- **Mobile UI**: Removed folder score counters from navigation sidebar
+- **Mobile Layout**: Playback bar reorganized - controls and progress on first row, tempo/volume/zoom on second row
+- **Quick Tips**: Moved "Use Files app" message into Quick Tips section
+- **Quick Tips**: Added keyboard shortcuts documentation (F key for return to start, arrow keys for zoom)
+- **Quick Tips**: Removed redundant + - keys from zoom instructions (only arrow keys now)
+- Simplified Welcome screen by removing "Upload & Share" section
+- Reduced top spacing on mobile Welcome screen for better space utilization
+
+### Fixed
+- Mobile playback bar no longer shows tempo/volume sliders (compact number inputs only)
+- Progress bar stays on first row on mobile with proper flex layout
+- Touch targets for all playback buttons meet minimum 44x44px accessibility guidelines
+- AudioContext cleanup improved to reduce console warnings during score switching
+- Mobile Welcome screen spacing significantly reduced with proper flexbox alignment
+
+### Technical Improvements
+- CSS transform removed in favor of proper flexbox alignment (align-items: flex-start)
+- Playback controls use flex-shrink for responsive layout on mobile
+- Input fields width reduced to 60px on mobile for better space efficiency
+- Removed CSS for unused "Upload & Share" section
+- Enhanced mobile media queries for better responsive behavior
+
 ## [0.9.7] - 2025-11-12
 
 ### Added
@@ -193,6 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.9.8]: https://github.com/micheledimeo/scores/releases/tag/v0.9.8
 [0.9.7]: https://github.com/micheledimeo/scores/releases/tag/v0.9.7
 [0.9.6]: https://github.com/micheledimeo/scores/releases/tag/v0.9.6
 [0.9.5]: https://github.com/micheledimeo/scores/releases/tag/v0.9.5
