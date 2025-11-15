@@ -2106,10 +2106,16 @@ export default {
 		overflow-y: visible !important;
 	}
 
+	/* Add padding-top to title */
+	.app-content-vue :deep(.empty-content__name) {
+		padding-top: 24px;
+	}
+
 	.app-content-vue :deep(.empty-content__action) {
 		max-height: calc(100vh - 300px) !important;
 		overflow-y: auto !important;
 		padding-bottom: 20px;
+		padding-top: 16px;
 	}
 
 	.welcome-info-container {
