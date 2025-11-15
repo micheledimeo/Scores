@@ -2129,34 +2129,40 @@ input[type="range"]:disabled {
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 8px;
-		padding: 8px;
+		gap: 6px;
+		padding: 6px 8px;
 		max-height: none;
 	}
 
-	/* Row 1: Control group + Progress section */
+	/* Row 1: Control group (play/pause/stop/loop/mixer) - full width */
 	.control-group {
 		order: 1;
-		flex: 1 1 auto;
-		min-width: 200px;
+		flex: 1 1 100%;
 		justify-content: flex-start;
 		margin: 0;
-		padding-left: 40px;
+		padding: 0;
+		gap: 6px;
 	}
 
+	/* Ensure buttons are tappable on mobile (min 44x44px) */
+	.control-group :deep(.button-vue),
+	.zoom-controls :deep(.button-vue) {
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	/* Row 2: Progress section - full width */
 	.progress-section {
 		order: 2;
-		flex: 1 1 auto;
-		min-width: 150px;
+		flex: 1 1 100%;
 		max-width: none;
 		margin: 0;
 	}
 
-	/* Row 2: Tempo/Volume group + Zoom controls */
+	/* Row 3: Tempo/Volume group - inline */
 	.tempo-volume-group {
 		order: 3;
 		flex: 1 1 auto;
-		min-width: 200px;
 		justify-content: flex-start;
 		margin: 0;
 		gap: 8px;
@@ -2168,10 +2174,12 @@ input[type="range"]:disabled {
 		justify-content: center;
 	}
 
+	/* Row 3: Zoom controls - inline with tempo/volume */
 	.zoom-controls {
 		order: 4;
 		flex: 0 0 auto;
 		justify-content: center;
+		gap: 6px;
 	}
 
 	/* Row 3: Mixer channels (full width) */
@@ -2183,6 +2191,29 @@ input[type="range"]:disabled {
 		overflow-x: auto;
 		padding: 4px 0;
 		display: flex !important;
+	}
+
+	/* Hide sliders on mobile - keep only number inputs for better usability */
+	.tempo-slider,
+	.volume-slider {
+		display: none !important;
+	}
+
+	/* Make input fields more compact on mobile */
+	.tempo-input,
+	.volume-input {
+		width: 60px !important;
+		font-size: 14px !important;
+	}
+
+	/* Reduce tempo/volume group spacing */
+	.tempo-volume-group {
+		gap: 4px !important;
+	}
+
+	.tempo-control,
+	.volume-control {
+		gap: 4px !important;
 	}
 
 	/* Remove top padding from sheet viewer on mobile */
