@@ -2075,32 +2075,38 @@ export default {
 	/* Remove all top spacing from NcEmptyContent wrapper */
 	.app-content-vue {
 		padding-top: 0 !important;
+		margin-top: 0 !important;
 	}
 
-	/* Allow NcEmptyContent to scroll on mobile */
+	/* Allow NcEmptyContent to scroll on mobile - shift everything up */
 	.app-content-vue :deep(.empty-content) {
 		max-height: none !important;
 		height: auto !important;
 		overflow-y: visible !important;
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		transform: translateY(-80px) !important;
 	}
 
 	/* Remove all spacing from header/title area */
 	.app-content-vue :deep(.empty-content__header),
 	.app-content-vue :deep(.empty-content__title) {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
 	}
 
 	/* Reduce padding-top on mobile - remove all spacing */
 	.app-content-vue :deep(.empty-content__name) {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
 	}
 
 	.app-content-vue :deep(.empty-content__icon) {
 		display: none !important;
+	}
+
+	.app-content-vue :deep(.empty-content__message) {
+		margin-top: 8px !important;
 	}
 
 	.app-content-vue :deep(.empty-content__action) {
