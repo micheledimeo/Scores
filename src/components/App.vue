@@ -49,9 +49,6 @@
 							<template #icon>
 								<FolderIcon :size="20" />
 							</template>
-							<template #counter>
-								<NcCounterBubble :count="folder.files?.length || 0" />
-							</template>
 
 							<!-- Files in folder (inclusi quelli nelle sottocartelle) -->
 							<!-- Files will be shown as children -->
@@ -858,11 +855,12 @@ export default {
 	z-index: 1;
 }
 
-/* Search box wrapper - counter positioned absolutely, no padding needed */
+/* Search box wrapper - with right padding to leave space for counter */
 .search-box-wrapper {
 	position: relative;
 	width: 100%;
 	padding: 0 8px;
+	padding-right: 44px; /* Space for counter bubble */
 }
 
 /* Reduce search input width to accommodate counter */
@@ -888,18 +886,6 @@ export default {
 /* Folder icons - keep transparent (default Nextcloud style) */
 .folder-item .icon-folder {
 	/* No filter - use default icon appearance */
-}
-
-/* Align folder counters with search counter */
-.folder-item :deep(.app-navigation-entry__counter),
-.folder-item :deep(.counter-bubble__counter),
-.folder-item :deep(.counter-bubble),
-:deep(.app-navigation-entry__counter),
-:deep(.counter-bubble__counter),
-:deep(.counter-bubble) {
-	right: 0px !important;
-	margin-right: 0 !important;
-	position: absolute !important;
 }
 
 /* App navigation list */
