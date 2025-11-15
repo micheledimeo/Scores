@@ -2072,11 +2072,23 @@ export default {
 /* Force desktop layout behavior - sidebar should push content, not overlay */
 /* Mobile responsiveness for welcome screen */
 @media (max-width: 768px) {
+	/* Remove all top spacing from NcEmptyContent wrapper */
+	.app-content-vue {
+		padding-top: 0 !important;
+	}
+
 	/* Allow NcEmptyContent to scroll on mobile */
 	.app-content-vue :deep(.empty-content) {
 		max-height: none !important;
 		height: auto !important;
 		overflow-y: visible !important;
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+	}
+
+	/* Remove all spacing from header/title area */
+	.app-content-vue :deep(.empty-content__header),
+	.app-content-vue :deep(.empty-content__title) {
 		padding-top: 0 !important;
 		margin-top: 0 !important;
 	}
