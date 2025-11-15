@@ -2072,37 +2072,33 @@ export default {
 /* Force desktop layout behavior - sidebar should push content, not overlay */
 /* Mobile responsiveness for welcome screen */
 @media (max-width: 768px) {
-	/* Remove all top spacing from NcEmptyContent wrapper */
+	/* Align Welcome screen to top on mobile instead of center */
 	.app-content-vue {
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+		display: flex !important;
+		align-items: flex-start !important;
+		justify-content: flex-start !important;
+		padding-top: 16px !important;
 	}
 
-	/* Allow NcEmptyContent to scroll on mobile - shift everything up */
+	/* Allow NcEmptyContent to scroll on mobile */
 	.app-content-vue :deep(.empty-content) {
 		max-height: none !important;
 		height: auto !important;
 		overflow-y: visible !important;
 		padding: 0 !important;
 		margin: 0 !important;
-		transform: translateY(-80px) !important;
+		position: static !important;
+		transform: none !important;
 	}
 
-	/* Remove all spacing from header/title area */
-	.app-content-vue :deep(.empty-content__header),
-	.app-content-vue :deep(.empty-content__title) {
-		padding: 0 !important;
-		margin: 0 !important;
-	}
-
-	/* Reduce padding-top on mobile - remove all spacing */
-	.app-content-vue :deep(.empty-content__name) {
-		padding: 0 !important;
-		margin: 0 !important;
-	}
-
+	/* Hide icon on mobile for cleaner look */
 	.app-content-vue :deep(.empty-content__icon) {
 		display: none !important;
+	}
+
+	.app-content-vue :deep(.empty-content__name) {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
 	}
 
 	.app-content-vue :deep(.empty-content__message) {
