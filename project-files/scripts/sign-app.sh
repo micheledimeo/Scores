@@ -138,7 +138,7 @@ echo "  \"signature\": \"$SIGNATURE\"," >> "$SIGNATURE_FILE"
 
 # Add certificate
 echo '  "certificate": "' >> "$SIGNATURE_FILE"
-grep -v "BEGIN PUBLIC KEY" "$PUBLIC_CERT" | grep -v "END PUBLIC KEY" | tr -d '\n' >> "$SIGNATURE_FILE"
+grep -v "BEGIN CERTIFICATE" "$PUBLIC_CERT" | grep -v "END CERTIFICATE" | tr -d '\n' >> "$SIGNATURE_FILE"
 echo '"' >> "$SIGNATURE_FILE"
 echo "}" >> "$SIGNATURE_FILE"
 
