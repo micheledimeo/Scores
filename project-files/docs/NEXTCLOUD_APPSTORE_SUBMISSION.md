@@ -1,4 +1,4 @@
-# Nextcloud App Store Submission - scores v0.9.5
+# Nextcloud App Store Submission - scores v0.9.8
 
 ## 📋 Registration Information
 
@@ -7,40 +7,51 @@
 scores
 ```
 
-### Certificate (X.509 in PEM format)
+### Official Certificate (Received from Nextcloud - 2025-11-18)
+**Status:** ✅ **APPROVED** by Nextcloud App Store Team
+
+**Location:** `~/.nextcloud/certificates/scores.crt`
+
 ```
 -----BEGIN CERTIFICATE-----
-MIIFSTCCAzGgAwIBAgIUAOQwKbxNqPNC2USMZIi9Ny3DxPowDQYJKoZIhvcNAQEL
-BQAwNDETMBEGA1UEAwwKbXhtbHNjb3JlczEQMA4GA1UECgwHTWljaGVsZTELMAkG
-A1UEBhMCSVQwHhcNMjUxMTEwMTcxNjAyWhcNMzUxMTA4MTcxNjAyWjA0MRMwEQYD
-VQQDDApteG1sc2NvcmVzMRAwDgYDVQQKDAdNaWNoZWxlMQswCQYDVQQGEwJJVDCC
-AiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAJSTvvEfUicx6Vyxn2Q3595j
-6yCuCaicSqoq4ZEb05LZzGGpSJJyL69oI5HSHyKDCtYGJZFj9elL68rSLkLXeD8h
-dlXgkTvZ38eRxgDHvFx9zSN3PKADwr/ZauF3/+aJHHWFQfmadWjWJr2xGs9Z1mHC
-00H/elo3ThbL3j8NCfHjP5kNHDmgZIYg6j9wTVSst90rlRvAIPlQOXfl+YSBhflT
-Wg3lBesO1V2sq+U1Cc8I+UymqFFPciUSqhJ9ixEB5VyP+e9qXSSCII6pHsZun7ib
-PWCidh+pv/eKso7EPMoMscpqIohZkJWDM5DGwsJNpvW1GYe0VHT/gIJ+cpgV7IsV
-IN7DXA7lVmhftu/tSFL/UpgOv+KSbHSVdX//Ny5di3RBm2DVLC7RVccWprfUtsqz
-yQ3tcKrcY/jB2lFkXfmy7L96jLKu2MPdgj411EWrGJcbDkkJBR1Tine7nQiCdVQt
-Fj0Zh+ye24L075QvDDzSh03WZ3E7PbztPuKsZgJJmTq3L6KwcopGRHyjFoIEvHyn
-LDmulH81uzknqMJYLgsq6emqeQxEbNZJwnkjeDmXfTCPdm1gBO4CDMALKgDkvNHM
-fkzMjrZiWL6lPM9Nx4J3ZIGoY1LMfVNSubzC/pjVdFo3fHe86rplO9rASv419J4v
-oLVdFg/fBcrzrM6dG9RFAgMBAAGjUzBRMB0GA1UdDgQWBBQqRx0G5FZCATu0vww2
-FrBifWTioTAfBgNVHSMEGDAWgBQqRx0G5FZCATu0vww2FrBifWTioTAPBgNVHRMB
-Af8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4ICAQAciE25VV0O3okCg4W5TLhUHPT+
-AuNHDPenJwZ1QSdO78F4b7Do4WVLppgEUiCT3Fd8lO4IqPIB4FN85fmMBDIvHKk+
-np9Yo2AfaQXkUAa+8MVZnzzAgmJXpXHOrju2qYuCc0gnessFpLe07R3hly4gb+ae
-CHyX2WMbUrFbY43ay+9HxTVGkWFreRYTC4d4kVUd4RhuIMJwrmDefLa4EvWk0vLs
-mkKiRhLZljOouhenCX8/G3B7cJxtiaH76XlUCTSc+QDUyUpMyLc4S3tbFdZqoiT+
-ODdiAC0oXUV0jfn4Us8QFhZMwWMolecBgn0nyTW/aGmxwkSEyjfQwjZ1tcY8ZOpi
-l3zAJYqInvARaReRHsikyhcBCeBdjxFcVxYgftbfKHITVPGpRLpwupoE+xAheELl
-vPJTin8J2415n9bCJfDH77P4yEuXutns2LEu1ixD9db7odLVMJNZSKdeIsTGC74v
-3ARCa5pDP173dT1imLgX9uqVKYz716oliCV96pY9ryqAmho/3zAJ8Nr+75ENIjm8
-GnMInxYKvFfupNO4oA7DI9WVrm0rD8EDQ9WddQSPD8LMCm1PBGizAcfL178kIrz+
-0qMV+MCJsP4BgzcxztgxMqmZ8VugjnOoe/bHrDCQkskT3dyyZ20tYJMPz5RvtK1F
-AQDRhIWZQmxkF3/ZDA==
+MIIEATCCAukCAhLRMA0GCSqGSIb3DQEBCwUAMHsxCzAJBgNVBAYTAkRFMRswGQYD
+VQQIDBJCYWRlbi1XdWVydHRlbWJlcmcxFzAVBgNVBAoMDk5leHRjbG91ZCBHbWJI
+MTYwNAYDVQQDDC1OZXh0Y2xvdWQgQ29kZSBTaWduaW5nIEludGVybWVkaWF0ZSBB
+dXRob3JpdHkwHhcNMjUxMTE4MDg0OTI0WhcNMzYwMjI0MDg0OTI0WjARMQ8wDQYD
+VQQDDAZzY29yZXMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDByzP9
+0oepGnXcjSCbzr+7m42cy2mF20fct3Dl7o7O5TsXZKsmwxmXMMl1iE9yWyV/epxa
+Cf2gou/YqrgaEpsJYCMwiMY7lE99jqSvCXtEZ511NTSa+ye/JXnz0sCqpKtn5PBj
+4uEx45Me8OAMMpe+QNJHvgrcZrqn4LCjvok7mNIf1BGovrczTvbL1eT6FVSKixlp
+tts9wBPHaMQ4KH19Blo/f1n9HnCFof6L3c0gnVh3legMuLwHd/e0qOjSGm8YItS6
+QzHfcfkl6ixqtBlKjKFTJRzB8Xjoz6P5NQWcYBArlPCAMoNoCWXBrv8696QlbQlu
+dHgEXgwx1g+ZCRtM5GHCe+K3QOYDXzsxBri6nB7230+r0UfygOT/Z8zQWHoPBCuY
+vtEp9KP10pTI7LLeSV2ffav1XhO7/dS90s8NJqE+qOWfG5yjAFqSHg95tNsjV3lT
+yBSijgyZ/uOuo4JOcVlyZiIniG+0ULnyIQlAjN1/Xgne2ioY7aX0eglE64zpaVCF
+VnGItQqvxkdPNQJ+kRxq357fTXnNiovyfXR1v7d7Z6yraub2TxvS0tyWpbjooA8a
++nkx1Ar5lynE4sBoFFHysEI1VFQwu/L9z6FwMC1qSXEq5p8f5p9a70XI/HkqkaID
+v0oS4s3sVdyD1yKSTdZlSbkbCb83LMGVZ2lEQwIDAQABMA0GCSqGSIb3DQEBCwUA
+A4IBAQBPl0T7Fx0pBaIirGqu7Mwya18wKOQfgKcEL7iW2Hp6IBpZdMXZcNzgvSQv
+IT5vd3bLVMq0oysBst0T9GRy1AHsUZv3LuuvBAl4Fx6EA8jmRffCfPCO3MLVVDVI
+NhThDHq6m9yhJDSZzdaWpwoA1kPLlOw3n8fEE1u2Ok2kwxSST88PwHW325TriFwt
+SfqSty6BBtuhwSr/ogrL9LaARcgl8bFpj914XtjTQIcqcMYt68vpiR+gQKlo8uXh
+hXLdPAB5NoGPaYIOksCtVoZVq/7RmpiymRf/Sp1S8udFoTASo4f541FSrWZ1FKW5
+ejk31OiPu7xJXNbYB4bEn8ICth5T
 -----END CERTIFICATE-----
 ```
+
+**Certificate Details:**
+- **Issuer:** Nextcloud Code Signing Intermediate Authority
+- **Subject:** CN=scores
+- **Valid From:** 2025-11-18 08:49:24 UTC
+- **Valid Until:** 2036-02-24 08:49:24 UTC
+- **Serial Number:** 4817 (0x12D1)
+
+**Certificate Request Process:**
+1. Generated CSR on 2025-11-12 using `openssl req`
+2. Submitted PR #856 to nextcloud/app-certificate-requests
+3. Received feedback on 2025-11-13 (needed DCO sign-off and subdirectory structure)
+4. Updated PR with corrections
+5. Approved and certificate issued on 2025-11-18 (commit 56243c6)
 
 ### App ID Signature (proof of private key ownership)
 ```
@@ -49,17 +60,20 @@ c5XzwKcNcsxE6YJDQvgqhmmwNk5/Z1f47jgrXQZrroUoGF/37RSWyd9EnqrnhEqBn3pcF/0rpiSMRDfS
 
 ---
 
-## 📦 Release v0.9.5 Information
+## 📦 Release v0.9.8 Information (Signed with Official Certificate)
+
+### Package Information
+- **Local Path:** `/Users/Michele/Sites/scores/project-files/dist/scores-0.9.8.tar.gz`
+- **Size:** 904K
+- **MD5:** `3e10eec3a041a940795ef68bfbc12b9d`
+- **Signed:** ✅ Yes (with official Nextcloud certificate)
+- **Signature File:** Included in package at `appinfo/signature.json`
 
 ### Download URL
 ```
-https://github.com/micheledimeo/scores/releases/download/v0.9.5/scores-0.9.5.tar.gz
+https://github.com/micheledimeo/scores/releases/download/v0.9.8/scores-0.9.8.tar.gz
 ```
-
-### Archive Signature
-```
-XBB7uQNR+jh8UZAZfdv/aaytju9XnRtfjF4PryTIALAr+vXHn2k3njcfwoN36tvsIXj0+USYarTvuF0q4uwwbPFaO+kemuTDtg1Hif16t5SjrvykkheKU6ZlPl0racC4UPzeyQ28ilWGSGEyBBlyls03fpyrVz4YOpPe8cPvAh/I2JrDdO6ZurIxA51D3WpyHit3UpZ6A6PnW4ugKzEbC+K62VWJo1chmspLXnZKYixa8f5GLDk9H80s77gI6qoO7dDplox7P5LB+MouICE7zmcY5lvCViZiWjBjU1U5nDFWE0Lmt+LYWMx6AkJj+Soo7ChIky+VRcjkRY/m7C6kurzOIhTNd5uPWYUUHnaad9nk15V9B39HzG903VonuYkQqaFKuqOWLwUuBj0KMstx0tfH52i7Yq8OX1JPWbaCHl7GEI1zCgkqd5TFhNWMsqDVlJZ53+EzBflQcxGxRH2lvNDLUhbS3/e2LC7FlV67NnQck95uy+jca28IfK6Oj7/PzBOp1oMm3VffDIB4dM2B9UEWtiDK/w5IQmdv3rF0p6zZ9XWTBO5OURnvEe0w9hTGIys/Nb8sun71HQl1X4sRkhWJrzct0MKQOLy/A0RNZ/x0LeLJUG5jzHlsxXfWnwgDB7v3y3DO46vXtQX56vAgRgnclk53r+/HBYd0FC/qBak=
-```
+(To be created after GitHub release is published)
 
 ### Nightly Build
 ```
@@ -170,13 +184,42 @@ AGPL v3
 
 ---
 
-## 📁 Files Location
+## 🔐 App Signing Process
 
-- **Private Key:** `~/.nextcloud/certificates/scores.key` (KEEP SECRET!)
-- **Certificate:** `~/.nextcloud/certificates/scores.crt`
-- **Release Package:** `/Users/Michele/Sites/scores/dist/scores-0.9.5.tar.gz`
+### Files Location
+
+- **Private Key:** `~/.nextcloud/certificates/scores.key` (KEEP SECRET! Never commit!)
+- **Official Certificate:** `~/.nextcloud/certificates/scores.crt` (from Nextcloud)
+- **CSR (Archive):** `project-files/app-certificate-requests/scores/scores.csr`
+- **Release Package:** `project-files/dist/scores-0.9.8.tar.gz`
+- **Signature:** `appinfo/signature.json` (auto-generated, gitignored)
+
+### Signing Commands
+
+```bash
+# 1. Build and sign the app
+./project-files/scripts/sign-app.sh
+
+# 2. Create distributable package
+./project-files/scripts/package-app.sh
+
+# 3. The package now contains appinfo/signature.json
+```
+
+### Signature Verification
+
+The `signature.json` file includes:
+- SHA512 hashes of all app files
+- RSA signature of the hashes (signed with private key)
+- Official Nextcloud certificate (for verification)
+
+Nextcloud App Store will verify:
+1. Certificate is signed by Nextcloud CA
+2. Signature matches the hashes
+3. Hashes match the actual files
 
 ---
 
-Generated: 2025-11-10
-App Version: 0.9.5
+**Last Updated:** 2025-11-18
+**App Version:** 0.9.8
+**Certificate Status:** ✅ Official Nextcloud Certificate Installed
