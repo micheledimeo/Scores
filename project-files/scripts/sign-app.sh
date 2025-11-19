@@ -17,7 +17,7 @@ NC='\033[0m'
 # Configuration
 APP_NAME="scores"
 APP_DIR="/Users/Michele/Sites/scores"
-CERT_DIR="$HOME/.nextcloud/certificates"
+CERT_DIR="$APP_DIR/.certificates"
 PRIVATE_KEY="$CERT_DIR/${APP_NAME}.key"
 PUBLIC_CERT="$CERT_DIR/${APP_NAME}.crt"
 SIGNATURE_FILE="$APP_DIR/appinfo/signature.json"

@@ -10,7 +10,7 @@ scores
 ### Official Certificate (Received from Nextcloud - 2025-11-18)
 **Status:** ✅ **APPROVED** by Nextcloud App Store Team
 
-**Location:** `~/.nextcloud/certificates/scores.crt`
+**Location:** `.certificates/scores.crt` (in project root)
 
 ```
 -----BEGIN CERTIFICATE-----
@@ -193,9 +193,9 @@ AGPL v3
 
 ### Files Location
 
-- **Private Key:** `~/.nextcloud/certificates/scores.key` (KEEP SECRET! Never commit!)
-- **Official Certificate:** `~/.nextcloud/certificates/scores.crt` (from Nextcloud)
-- **CSR (Archive):** `project-files/app-certificate-requests/scores/scores.csr`
+- **Private Key:** `.certificates/scores.key` (KEEP SECRET! Never commit! In .gitignore)
+- **Official Certificate:** `.certificates/scores.crt` (from Nextcloud)
+- **CSR (Archive):** `.certificates/scores.csr`
 - **Release Package:** `project-files/dist/scores-0.9.8.tar.gz`
 - **Signature:** `appinfo/signature.json` (auto-generated, gitignored)
 
