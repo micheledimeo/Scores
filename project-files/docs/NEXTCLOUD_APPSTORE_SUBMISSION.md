@@ -71,9 +71,9 @@ ZIrYGSynvsOJe1A2yIUHx1urNNcRXxKSdrl9/L+Z7JB59ffQXQGtGS3q3B4tSp5RFVVv2L0kU98rUoZj
 
 ### Download URL
 ```
-https://github.com/micheledimeo/scores/releases/download/v0.9.8/scores-0.9.8.tar.gz
+https://github.com/micheledimeo/Scores/releases/download/v0.9.8/scores-0.9.8.tar.gz
 ```
-✅ **Published:** https://github.com/micheledimeo/scores/releases/tag/v0.9.8
+✅ **Published:** https://github.com/micheledimeo/Scores/releases/tag/v0.9.8
 
 ### Archive Signature (for Nextcloud App Store submission)
 ```
@@ -122,24 +122,24 @@ Features:
 
 ### Repository URL
 ```
-https://github.com/micheledimeo/scores
+https://github.com/micheledimeo/Scores
 ```
 
 ### Issue Tracker
 ```
-https://github.com/micheledimeo/scores/issues
+https://github.com/micheledimeo/Scores/issues
 ```
 
 ### Homepage
 ```
-https://github.com/micheledimeo/scores
+https://github.com/micheledimeo/Scores
 ```
 
 ### Screenshots
 ```
-https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%200.png
-https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%201.png
-https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/Scores%20-%202.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%200.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%201.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%202.png
 ```
 
 ### Author
