@@ -1,4 +1,4 @@
-# Nextcloud App Store Submission - scores v0.9.8
+# Nextcloud App Store Submission - scores v0.9.9
 
 ## 📋 Registration Information
 
@@ -60,24 +60,24 @@ ZIrYGSynvsOJe1A2yIUHx1urNNcRXxKSdrl9/L+Z7JB59ffQXQGtGS3q3B4tSp5RFVVv2L0kU98rUoZj
 
 ---
 
-## 📦 Release v0.9.8 Information (Signed with Official Certificate)
+## 📦 Release v0.9.9 Information (Signed with Official Certificate)
 
 ### Package Information
-- **Local Path:** `/Users/Michele/Sites/scores/project-files/dist/scores-0.9.8.tar.gz`
-- **Size:** 904K
-- **MD5:** `3e10eec3a041a940795ef68bfbc12b9d`
+- **Local Path:** `/Users/Michele/Sites/scores/project-files/dist/scores-0.9.9.tar.gz`
+- **Size:** 864K
+- **MD5:** `111570566eef3d61dd229daeadab4199`
 - **Signed:** ✅ Yes (with official Nextcloud certificate)
 - **Signature File:** Included in package at `appinfo/signature.json`
 
 ### Download URL
 ```
-https://github.com/micheledimeo/Scores/releases/download/v0.9.8/scores-0.9.8.tar.gz
+https://github.com/micheledimeo/Scores/releases/download/v0.9.9/scores-0.9.9.tar.gz
 ```
-✅ **Published:** https://github.com/micheledimeo/Scores/releases/tag/v0.9.8
+✅ **Published:** https://github.com/micheledimeo/Scores/releases/tag/v0.9.9
 
 ### Archive Signature (for Nextcloud App Store submission)
 ```
-H/qh/5XZCYxApMSntegEwGUWmp9f2qr1ch8xmUKEY3iwjUVmg9LwJxrdbUBJwR+xO6TVuGPvWYwMXCV5f6LG8wDwi9u4Q34KB7u05HlJg7XGaDRjAIdZVnlqLt4Q1v1hZwFZQiIkaXB+S9mzCncs3YBF8Fsr7T8RZZu2/q/UZsnfif4aGxx6IXwXDOxpDgKlZUksaeHUzJiuowSSIqQ1iFE0tkf9vf3Ib+6li1kTAXoE7cKJu6rEtezeTpW3odppxuacd/vJepngYLEudus2Tmvz0G7MbSuYeq47KhE9ojWmBazLpxIz52MELz4tWMTJCVgiWNc3OkxVRk6LMtqdvC48nacRh4HUuqYgeHs/W/f+WgDd+YSGnq5Jo04MCHTef2tobCbrX/GjGRqMh//A4SsrhTLYgdYQCWboxz0g0SnG4TF4QaOQqoQqcV8YWhTPDy9vTVlpLtP145UX0FmbrOzMDhWb0p4gpm0m6MniTiqlk1Kozu2nYY+lxu8SLPlYWQ+U5W/a1E6RAgsftjIWIsPipHro0xMY+xehjiVw7HgqCM1VwO83pvJfzmR2ZA/h03z7e5yWCziVS7QeUlC4WDVWGKJto7Ke7+ZIpNeO4GQVxX4W45OA5WBXo32S5kd/SOaqfrc4E047JgM0bGLTPMoulIU0M9dOix3JznLq0UU=
+sHHyoOzfeb58uAHxDbjiNOjOHLyMASonx437danerC3GRQWqsRMQ6EY8Id/6y6OwAZZsWhAdskwGUy0YFtEK36wmIiJGQ3cP9VyTCAD4UBWb4ewCJaQS99FnQdUtI4VpyjyN6BBZ/YiIJ7G4Ozhx33n5LaYU/jYx4qC78pBZUKBwstQk+wwTfJBaFXBCgYPyK/er/3DDX8GZsux8DePYIOcgx6+HXoh7BjC3c2pEPY6xa15WULc020+1Xw94ozc0wvMwu7y7AVxSde07y1lXiyHRN7UyIjyZ/YMAQlhV0wrqusKbO0IIOBZLiroA+oVi09/PBQPJOZWWWT2JwE5yPjKVJiDmM/o28HUv8Mx14Ka5NRez7AMKwcp80AMDDd/O15CdQ2N/2kQE5JBh+ZzgUULmbtbSK/vB2WgtB1Zbpnhsea/d4324SU9yzKZv9v4Eb6SA1d4rlxgOI9HsvrND/J5SeRgO5cqdA+t2VNQqSgAL2WVqn+7Bu4QMm4NoQWVAUXgZmpB/Zq3P4sZ2i8u/E6Y5625guI6kIgd+uJXBqDWs57GL/QLuYRglww6L/0ahcVw28oY6eNEq/Nmai+jciyQTvg3o9fa5HjYO+VtNJDii2QzW8uzE7/JbsU/mVIk8W3ZFEesgY+c8SZuS7bysQeHuFhxGB5GNkyF7FPlp7F8=
 ```
 
 ### Nightly Build
@@ -227,6 +227,6 @@ Nextcloud App Store will verify:
 
 ---
 
-**Last Updated:** 2025-11-18
-**App Version:** 0.9.8
+**Last Updated:** 2025-12-02
+**App Version:** 0.9.9
 **Certificate Status:** ✅ Official Nextcloud Certificate Installed
