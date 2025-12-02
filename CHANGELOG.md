@@ -5,6 +5,12 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.9] - 2025-12-02
+
+### Changed
+- Updated app screenshots to reflect v0.9.8 interface improvements
+- Updated repository URLs to match renamed GitHub repository (Scores with capital S)
+
 ## [0.9.8] - 2025-11-15
 
 ### Added
@@ -224,7 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[0.9.8]: https://github.com/micheledimeo/scores/releases/tag/v0.9.8
+[0.9.9]: https://github.com/micheledimeo/Scores/releases/tag/v0.9.9
+[0.9.8]: https://github.com/micheledimeo/Scores/releases/tag/v0.9.8
 [0.9.7]: https://github.com/micheledimeo/scores/releases/tag/v0.9.7
 [0.9.6]: https://github.com/micheledimeo/scores/releases/tag/v0.9.6
 [0.9.5]: https://github.com/micheledimeo/scores/releases/tag/v0.9.5

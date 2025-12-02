@@ -22,7 +22,7 @@ Features:
 - 📱 Responsive Design: Adaptive layout with collapsible sidebar
 ]]></description>
 
-  <version>0.9.8</version>
+  <version>0.9.9</version>
   <licence>agpl</licence>
   <author mail="micheledimeo@gmail.com">Michele</author>
   <namespace>Scores</namespace>
@@ -30,11 +30,13 @@ Features:
   <category>multimedia</category>
   <category>tools</category>
 
-  <website>https://github.com/micheledimeo/scores</website>
-  <bugs>https://github.com/micheledimeo/scores/issues</bugs>
-  <repository type="git">https://github.com/micheledimeo/scores.git</repository>
+  <website>https://github.com/micheledimeo/Scores</website>
+  <bugs>https://github.com/micheledimeo/Scores/issues</bugs>
+  <repository type="git">https://github.com/micheledimeo/Scores.git</repository>
 
-  <screenshot>https://raw.githubusercontent.com/micheledimeo/scores/main/screenshots/player-view.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%200.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%201.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%202.png</screenshot>
 
   <dependencies>
     <nextcloud min-version="28" max-version="33" />
