@@ -137,10 +137,12 @@ https://github.com/micheledimeo/Scores
 
 ### Screenshots
 ```
-https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%200.png
-https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%201.png
-https://raw.githubusercontent.com/micheledimeo/Scores/main/screenshots/Scores%20-%202.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%200.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%201.png
+https://raw.githubusercontent.com/micheledimeo/Scores/main/project-files/screenshots/Scores%20-%202.png
 ```
+
+**Updated:** 2025-12-02 - Screenshots reflect v0.9.8 interface changes
 
 ### Author
 ```
