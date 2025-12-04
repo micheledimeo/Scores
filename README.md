@@ -2,14 +2,16 @@
 
 ![App Name](https://img.shields.io/badge/App%20Name-Scores-blue?style=for-the-badge)
 ![App ID](https://img.shields.io/badge/App%20ID-scores-lightgrey?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.9.8-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.9.13-green?style=flat-square)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-orange?style=flat-square)
 
-Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMusicDisplay.
+Display, play, and manage MusicXML and MuseScore files directly in Nextcloud using OpenSheetMusicDisplay.
 
 ## Features
 
-- 🎼 **Sheet Music Display**: Render MusicXML, MusicXML compressed (.mxl), and other music notation formats
+- 🎼 **Sheet Music Display**: Render MusicXML, MusicXML compressed (.mxl), MuseScore (.mscz, .mscx), and other music notation formats
+- 🎹 **MuseScore Integration**: Native support for MuseScore files with automatic client-side conversion to MusicXML
+- 🎨 **File Type Icons**: Visual differentiation between MuseScore files (FileMusic icon) and MusicXML files (MusicNote icon)
 - ▶️ **Advanced Playback Controls**: Play, pause, stop, and loop with real-time cursor tracking
 - 🎚️ **Instrument Mixer**: Individual volume control for each instrument/channel with solo/mute capabilities
 - 🎵 **Tempo & Volume Control**: Precise BPM adjustment (40-240) and master volume with numeric inputs
@@ -19,17 +21,17 @@ Display, play, and manage MusicXML files directly in Nextcloud using OpenSheetMu
 - 📁 **Folder Navigation**: Organized folder tree with expandable/collapsible folders and file counts
 - 📝 **Smart File Display**: Automatic left truncation for files in folders to show instrument names
 - 🌍 **Internationalization**: Full i18n support with translation system for settings and UI
-- 🎨 **Custom Icons**: Material Design icons integration (library_music app icon)
 - 📱 **Responsive Design**: Adaptive layout with collapsible sidebar and optimized spacing
 - 🔄 **Files App Integration**: Upload and share scores using Nextcloud Files app
 - 🎯 **Admin Settings**: Configure multiple scores folder paths for all users with folder browser
 
 ## Supported Formats
 
-- MusicXML (.xml, .musicxml, .mxml)
-- MusicXML Compressed (.mxl)
-- MEI (Music Encoding Initiative)
-- Guitar Pro files (.gp, .gp3, .gp4, .gp5, .gpx)
+- **MuseScore** (.mscz, .mscx) - Native support with automatic conversion
+- **MusicXML** (.xml, .musicxml, .mxml)
+- **MusicXML Compressed** (.mxl)
+- **MEI** (Music Encoding Initiative)
+- **Guitar Pro** files (.gp, .gp3, .gp4, .gp5, .gpx)
 
 ## Compatibility
 
@@ -112,7 +114,8 @@ scores/
 │   │   ├── App.vue       # Main app with navigation
 │   │   └── MusicViewer.vue  # Score viewer with playback
 │   ├── utils/            # Utility classes
-│   │   └── MixerInstrumentPlayer.js  # Mixer implementation
+│   │   ├── MixerInstrumentPlayer.js  # Mixer implementation
+│   │   └── MuseScoreConverter.js     # MuseScore to MusicXML converter
 │   └── css/
 │       └── main.scss     # Global styles
 ├── templates/
@@ -153,12 +156,30 @@ scores/
 ## Technologies Used
 
 - **OpenSheetMusicDisplay**: Music notation rendering
+- **webmscore**: MuseScore to MusicXML conversion (WASM)
 - **Vue 3**: Frontend framework
 - **Vite**: Build tool
 - **Nextcloud Vue Components**: UI components
 - **PHP 8.1+**: Backend API
 
 ## Version History
+
+### v0.9.13 (2024-12-04)
+
+- **MuseScore Integration**: Full support for MuseScore files (.mscz, .mscx) with client-side conversion
+  - Automatic detection and conversion using webmscore library
+  - Lazy-loading of WASM module (~8-10 MB) only when needed
+  - WASM support with proper Content Security Policy configuration
+- **Visual Differentiation**: File type icons (FileMusic for MuseScore, MusicNote for MusicXML)
+- **Playback Improvements**: Fixed cursor scrolling speed for MuseScore files
+  - Implemented cursor throttling mechanism (100ms minimum interval)
+  - Prevents double-advancing on files with high iteration frequency
+- **Technical Enhancements**:
+  - Created MuseScoreConverter utility module with proper error handling
+  - Enhanced MusicViewer to handle both standard MusicXML and MuseScore files
+  - Updated Content Security Policy for Web Workers and jsdelivr CDN
+  - Backend now recognizes .mscz and .mscx extensions
+  - Vite configuration updated for proper WASM handling
 
 ### v0.9.8 (2025-11-15)
 - **Mobile Optimization**: Complete mobile UX overhaul

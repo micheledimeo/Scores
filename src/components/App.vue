@@ -60,6 +60,10 @@
 									class="file-in-folder"
 									:title="getFileNameWithoutExtension(file.name)"
 									@click.stop="loadFile(file.id)">
+									<template #icon>
+										<FileMusic v-if="isMuseScoreFile(file.name)" :size="20" />
+										<MusicNote v-else :size="20" />
+									</template>
 								</NcAppNavigationItem>
 							
 						</NcAppNavigationItem>
@@ -72,6 +76,10 @@
 							:active="currentFile && currentFile.id === file.id"
 							class="file-item"
 							@click="loadFile(file.id)">
+							<template #icon>
+								<FileMusic v-if="isMuseScoreFile(file.name)" :size="20" />
+								<MusicNote v-else :size="20" />
+							</template>
 						</NcAppNavigationItem>
 					</ul>
 				</template>
@@ -371,6 +379,8 @@ import {
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
+import MusicNote from 'vue-material-design-icons/MusicNote.vue'
+import FileMusic from 'vue-material-design-icons/FileMusic.vue'
 
 import MusicViewer from './MusicViewer.vue'
 
@@ -391,6 +401,8 @@ export default {
 		Magnify,
 		Cog,
 		FolderIcon,
+		MusicNote,
+		FileMusic,
 	},
 	setup() {
 		const folderStructure = ref({ folders: [], files: [] })
@@ -558,7 +570,13 @@ export default {
 			// Remove common music file extensions
 			// IMPORTANTE: mxml è l'estensione principale per MusicXML non compresso
 			if (!filename) return ''
-			return filename.toString().replace(/\.(mxml|xml|musicxml|mxl|mei|gp|gpx|gp3|gp4|gp5)$/i, '')
+			return filename.toString().replace(/\.(mxml|xml|musicxml|mxl|mei|gp|gpx|gp3|gp4|gp5|mscz|mscx)$/i, '')
+		}
+
+		// Check if file is a MuseScore file
+		const isMuseScoreFile = (filename) => {
+			if (!filename) return false
+			return /\.(mscz|mscx)$/i.test(filename)
 		}
 
 		// Format filename for display in sidebar
@@ -830,6 +848,7 @@ export default {
 			confirmFolderSelection,
 			getBreadcrumbPath,
 			getFileNameWithoutExtension,
+			isMuseScoreFile,
 			formatFileNameForDisplay,
 			getFolderFileCount,
 			getTotalFileCount,
@@ -936,18 +955,15 @@ export default {
 	text-align: left;
 }
 
-/* Hide icon space for file items - multiple selectors to ensure it works */
+/* Show file type icons - MuseScore files get FileMusic icon, others get MusicNote icon */
 :deep(.file-in-folder .app-navigation-entry-icon),
 :deep(.file-in-folder .app-navigation-entry__icon),
 :deep(.file-in-folder div.app-navigation-entry-icon),
 :deep(.file-in-folder div.app-navigation-entry__icon) {
-	display: none !important;
-	width: 0 !important;
-	min-width: 0 !important;
-	max-width: 0 !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	flex: 0 0 0 !important;
+	/* Icons are now visible to differentiate MuseScore files from MusicXML files */
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
 }
 
 /* For files in folders: make span take full width, no CSS ellipsis (handled by JS) */
@@ -2182,7 +2198,8 @@ ul li.folder-item .app-navigation-entry__children {
 	padding-right: 0 !important;
 }
 
-/* HIDE ICON SPACE FOR ALL FILE ITEMS (both in folders and root) */
+/* SHOW FILE TYPE ICONS FOR ALL FILE ITEMS (both in folders and root) */
+/* MuseScore files (.mscz, .mscx) show FileMusic icon, others show MusicNote icon */
 li.file-in-folder .app-navigation-entry-icon,
 li.file-in-folder div.app-navigation-entry-icon,
 li.file-in-folder .app-navigation-entry__icon,
@@ -2191,14 +2208,10 @@ li.file-item .app-navigation-entry-icon,
 li.file-item div.app-navigation-entry-icon,
 li.file-item .app-navigation-entry__icon,
 li.file-item div.app-navigation-entry__icon {
-	display: none !important;
-	width: 0 !important;
-	min-width: 0 !important;
-	max-width: 0 !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	flex: 0 0 0 !important;
-	visibility: hidden !important;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	visibility: visible !important;
 }
 
 /* Add minimal left padding to root level files */
@@ -2208,14 +2221,13 @@ li.file-item .app-navigation-entry-link {
 	padding-left: 5px !important;
 }
 
-/* Align file names in folders with folder name (after folder icon) */
+/* Files in folders now show icons, so use default Nextcloud spacing */
 li.file-in-folder,
 li.file-in-folder > a,
 li.file-in-folder .app-navigation-entry-link {
-	padding-left: 36px !important; /* Align with folder name (icon width + spacing) */
+	/* Nextcloud will automatically handle icon spacing */
 	padding-right: 0 !important;
 	padding-inline-end: 0 !important;
-	padding-inline-start: 36px !important;
 	margin-right: 0 !important;
 	margin-inline-end: 0 !important;
 }
@@ -2238,14 +2250,13 @@ li[class*="file-in-folder"] span {
 	margin-inline-end: 0 !important;
 }
 
-/* ULTRA SPECIFIC override for the link inside file items in folders - maximum CSS specificity */
+/* ULTRA SPECIFIC override for the link inside file items in folders - use default icon spacing */
 .app-navigation ul.app-navigation-list li.file-in-folder.app-navigation-entry:not(.app-navigation-entry--editing) > a.app-navigation-entry-link,
 .app-navigation .app-navigation-list li.file-in-folder.app-navigation-entry > a.app-navigation-entry-link,
 ul.app-navigation-list > li.file-in-folder.app-navigation-entry:not(.app-navigation-entry--editing) .app-navigation-entry-link {
 	padding-inline-end: 0 !important;
 	padding-right: 0 !important;
-	padding-left: 36px !important;
-	padding-inline-start: 36px !important;
+	/* Removed custom left padding - Nextcloud handles icon spacing automatically */
 }
 
 /* Extra specific targeting for Nextcloud's component structure */

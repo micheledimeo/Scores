@@ -5,7 +5,36 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.9] - 2025-12-02
+## [0.9.13] - 2024-12-04
+
+### Added
+- **MuseScore Integration**: Full support for MuseScore files (.mscz, .mscx) with client-side conversion to MusicXML
+- **Smart File Detection**: Automatic detection and conversion of MuseScore files using webmscore library
+- **Icon Differentiation**: Distinct icons for MuseScore files (FileMusic) vs other formats (MusicNote) in sidebar
+- Lazy-loading of webmscore module (~8-10 MB) only when MuseScore files are detected
+- WASM support for MuseScore conversion with proper Content Security Policy configuration
+
+### Changed
+- Updated Content Security Policy to allow Web Workers and jsdelivr CDN for webmscore
+- Added webmscore@1.2.1 as dependency for MuseScore file support
+- Backend now recognizes .mscz and .mscx extensions in file listing
+- Vite configuration updated to exclude webmscore from pre-bundling for proper WASM handling
+
+### Fixed
+- Fixed `isMuseScoreFile` function not being exposed to Vue template (caused render errors)
+- Resolved CSP violations for Web Workers used by webmscore
+- Resolved CSP violations for fetching WASM files from jsdelivr CDN
+- Fixed playback controls CSS not being deployed to production
+- **Fixed cursor scrolling speed**: MuseScore files now have correct cursor speed during playback (was double speed due to higher iteration event frequency)
+
+### Technical Improvements
+- Created MuseScoreConverter utility module with proper error handling
+- Enhanced MusicViewer to handle both standard MusicXML and MuseScore files
+- Added comprehensive logging for MuseScore conversion process
+- Improved build process to handle WASM modules correctly
+- Implemented cursor throttling mechanism (100ms minimum interval) to prevent double-advancing on files with high iteration frequency
+
+## [0.9.9] - 2024-12-02
 
 ### Changed
 - Updated app screenshots to reflect v0.9.8 interface improvements

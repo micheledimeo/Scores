@@ -271,6 +271,7 @@ import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay'
 import PlaybackEngine from 'osmd-audio-player'
 import { SoundfontPlayer } from 'osmd-audio-player/dist/players/SoundfontPlayer'
 import { MixerInstrumentPlayer, InstrumentState } from '../utils/MixerInstrumentPlayer'
+import { isMuseScoreFile, convertToMusicXML } from '../utils/MuseScoreConverter'
 
 import Play from 'vue-material-design-icons/Play.vue'
 import Pause from 'vue-material-design-icons/Pause.vue'
@@ -451,7 +452,27 @@ export default {
 
 				osmd.value = markRaw(osmdInstance)
 
-				const xmlContent = atob(props.fileContent)
+				// Handle MuseScore files (.mscz, .mscx) - convert to MusicXML first
+				let xmlContent
+
+				if (isMuseScoreFile(props.fileName)) {
+					console.log('[MusicViewer] MuseScore file detected, converting to MusicXML...')
+
+					// Decode base64 to binary
+					const binaryString = atob(props.fileContent)
+					const bytes = new Uint8Array(binaryString.length)
+					for (let i = 0; i < binaryString.length; i++) {
+						bytes[i] = binaryString.charCodeAt(i)
+					}
+
+					// Convert to MusicXML using webmscore
+					xmlContent = await convertToMusicXML(bytes, props.fileName)
+					console.log('[MusicViewer] Conversion complete, loading into OSMD...')
+				} else {
+					// Standard MusicXML - decode directly
+					console.log('[MusicViewer] Standard MusicXML file, loading directly...')
+					xmlContent = atob(props.fileContent)
+				}
 
 				await osmd.value.load(xmlContent)
 
@@ -687,6 +708,10 @@ export default {
 						}
 					}
 				})
+				// Track last cursor update timestamp to prevent double-advancing on MuseScore files
+				let lastCursorUpdateTime = 0
+				const minCursorUpdateInterval = 100 // Minimum 100ms between cursor advances
+
 				playbackManager.value.on('iteration', (notes) => {
 					updateProgress()
 
@@ -697,6 +722,14 @@ export default {
 							// PlaybackManager schedules notes slightly ahead, so we delay cursor movement
 							setTimeout(() => {
 								if (!isPlaying.value || !osmd.value?.cursor) return
+
+								// THROTTLE: Only advance cursor if enough time has passed
+								// This prevents double-advancing on MuseScore files where iteration events fire more frequently
+								const now = Date.now()
+								if (now - lastCursorUpdateTime < minCursorUpdateInterval) {
+									return // Skip this iteration to prevent double-advancing
+								}
+								lastCursorUpdateTime = now
 
 								// CRITICAL: Manually advance cursor position
 								osmd.value.cursor.next()
