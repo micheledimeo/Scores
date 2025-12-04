@@ -712,9 +712,10 @@ export default {
 				let lastCursorUpdateTime = 0
 				let lastCursorTimestamp = null
 				let iterationCounter = 0
-				// MuseScore files: skip more iterations (advance every 3rd or 4th event)
-				// MusicXML files: advance more frequently (every 2nd event)
-				const skipIterations = isMuseScoreFile(props.fileName) ? 3 : 1
+				// AGGRESSIVE THROTTLING: MuseScore files generate 6-8x more iteration events than MusicXML
+				// Skip many more iterations for MuseScore to match actual note durations
+				const skipIterations = isMuseScoreFile(props.fileName) ? 8 : 1
+				const minTimeInterval = isMuseScoreFile(props.fileName) ? 400 : 150 // ms between cursor moves
 
 				playbackManager.value.on('iteration', (notes) => {
 					updateProgress()
@@ -727,7 +728,15 @@ export default {
 							setTimeout(() => {
 								if (!isPlaying.value || !osmd.value?.cursor) return
 
-								// SMART THROTTLE: Skip iterations for MuseScore files
+								// FIRST CHECK: Time-based throttling
+								const now = Date.now()
+								const timeSinceLastUpdate = now - lastCursorUpdateTime
+								if (timeSinceLastUpdate < minTimeInterval) {
+									// Too soon - skip this iteration entirely
+									return
+								}
+
+								// SECOND CHECK: Iteration-based throttling for MuseScore files
 								// MuseScore generates many more iteration events per musical note
 								iterationCounter++
 								if (iterationCounter % skipIterations !== 0) {
@@ -735,7 +744,7 @@ export default {
 									return
 								}
 
-								// Get current cursor timestamp to detect if it actually moved
+								// THIRD CHECK: Timestamp verification - has cursor position actually changed?
 								const iterator = osmd.value.cursor.iterator
 								const currentTimestamp = iterator?.currentTimeStamp
 
@@ -744,8 +753,9 @@ export default {
 									return
 								}
 
+								// All checks passed - safe to advance cursor
 								lastCursorTimestamp = currentTimestamp
-								lastCursorUpdateTime = Date.now()
+								lastCursorUpdateTime = now
 
 								// CRITICAL: Manually advance cursor position
 								osmd.value.cursor.next()
