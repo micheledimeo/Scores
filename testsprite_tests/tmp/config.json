@@ -1,6 +1,0 @@
-{
-  "status": "commited",
-  "type": "frontend",
-  "scope": "codebase",
-  "localEndpoint": "http://localhost:443/index.php/apps/scores"
-}

@@ -25,16 +25,32 @@ Thumbs.db
 # Nextcloud
 /vendor/
 
-# Project files directory (NOT ignored in utils branch - contains development files)
-# In main branch, this entire directory is gitignored
-# project-files/
+# Development files - not needed for app functionality
+project-files/
+docs/
+scripts/
+tests/
+testsprite_tests/
+playwright-report/
+test-results/
+public/
+
+# Development configuration files
+vite.config.js
+playwright.config.js
+.eslintrc.js
+.stylelintrc.js
+package.json
+package-lock.json
+create-app-icons.py
 
 # Temporary files
 *.log
 *.tmp
-
-# NOTE: This is the utils branch - utility scripts and docs ARE tracked here
-# In main branch, scripts/ and docs/ folders are gitignored
+*.backup
+*.backup-*
+*.bak
+*.bak.*
 
 # Code signing
 appinfo/signature.json
