@@ -292,7 +292,13 @@ AGPL-3.0-or-later
 
 ## Credits
 
-- Built with [OpenSheetMusicDisplay](https://opensheetmusicdisplay.org/)
+This app uses:
+
+- **OpenSheetMusicDisplay (OSMD)** for music notation rendering
+  Copyright © 2019 PhonicScore - [BSD-3-Clause License](https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/blob/develop/LICENSE)
+
+- **webmscore** for MuseScore file conversion to MusicXML
+  Copyright © Musescore - [GPL-3.0 License](https://github.com/musescore/webmscore/blob/master/LICENSE)
 
 ## Support
 

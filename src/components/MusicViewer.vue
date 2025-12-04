@@ -708,9 +708,13 @@ export default {
 						}
 					}
 				})
-				// Track last cursor update timestamp to prevent double-advancing on MuseScore files
+				// Track cursor position to prevent duplicate advances on MuseScore files
 				let lastCursorUpdateTime = 0
-				const minCursorUpdateInterval = 100 // Minimum 100ms between cursor advances
+				let lastCursorTimestamp = null
+				let iterationCounter = 0
+				// MuseScore files: skip more iterations (advance every 3rd or 4th event)
+				// MusicXML files: advance more frequently (every 2nd event)
+				const skipIterations = isMuseScoreFile(props.fileName) ? 3 : 1
 
 				playbackManager.value.on('iteration', (notes) => {
 					updateProgress()
@@ -723,21 +727,31 @@ export default {
 							setTimeout(() => {
 								if (!isPlaying.value || !osmd.value?.cursor) return
 
-								// THROTTLE: Only advance cursor if enough time has passed
-								// This prevents double-advancing on MuseScore files where iteration events fire more frequently
-								const now = Date.now()
-								if (now - lastCursorUpdateTime < minCursorUpdateInterval) {
-									return // Skip this iteration to prevent double-advancing
+								// SMART THROTTLE: Skip iterations for MuseScore files
+								// MuseScore generates many more iteration events per musical note
+								iterationCounter++
+								if (iterationCounter % skipIterations !== 0) {
+									// Skip this iteration - waiting for every Nth event
+									return
 								}
-								lastCursorUpdateTime = now
+
+								// Get current cursor timestamp to detect if it actually moved
+								const iterator = osmd.value.cursor.iterator
+								const currentTimestamp = iterator?.currentTimeStamp
+
+								// If timestamp hasn't changed since last advance, skip
+								if (currentTimestamp !== null && currentTimestamp === lastCursorTimestamp) {
+									return
+								}
+
+								lastCursorTimestamp = currentTimestamp
+								lastCursorUpdateTime = Date.now()
 
 								// CRITICAL: Manually advance cursor position
 								osmd.value.cursor.next()
 
-							const iterator = osmd.value.cursor.iterator
-
-							// Update current measure based on cursor position
-							const currentVoiceEntry = iterator.currentVoiceEntries
+								// Update current measure based on cursor position (iterator already declared above)
+								const currentVoiceEntry = iterator.currentVoiceEntries
 							if (currentVoiceEntry && currentVoiceEntry[0]) {
 								const measureNum = currentVoiceEntry[0].parentSourceStaffEntry?.verticalContainerParent?.parentMeasure?.measureNumber
 								if (measureNum !== undefined) {

@@ -138,6 +138,12 @@
 									<br>
 									<small>Copyright © 2019 PhonicScore - BSD-3-Clause License</small>
 								</p>
+								<p class="license-credits">
+									<a href="https://github.com/musescore/webmscore" target="_blank" rel="noopener noreferrer" class="osmd-link">webmscore</a>
+									{{ t('scores', 'for MuseScore file conversion') }}
+									<br>
+									<small>Copyright © Musescore - GPL-3.0 License</small>
+								</p>
 							</div>
 						</div>
 					</template>
