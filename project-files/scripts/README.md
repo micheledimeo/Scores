@@ -47,7 +47,46 @@ sudo -u www-data php occ app:enable scores
 
 ---
 
-### 🚀 deploy-production.sh
+### 🧹 deploy-clean.sh
+
+**Purpose**: Clean deployment to production server - deploys ONLY production-ready files (no development files).
+
+**What it does**:
+
+1. Builds the app using `npm run build`
+2. Removes old app directory on server
+3. Creates fresh directory structure
+4. Copies ONLY necessary production files:
+   - Built JavaScript and CSS (`js/`, `css/`)
+   - PHP backend (`lib/`)
+   - App metadata (`appinfo/info.xml`, `appinfo/routes.php`)
+   - Templates (`templates/`)
+   - Icons (`img/`)
+5. Sets correct ownership (`www-data:www-data`) and permissions (755)
+6. Touches `info.xml` to force Nextcloud to reload the app
+
+**What is NOT deployed** (development files):
+
+- `node_modules/`
+- `src/` (source files)
+- `tests/`, `docs/`, `scripts/`
+- `.git/`, `.github/`
+- `package.json`, `vite.config.js`, etc.
+- `README.md`, `CHANGELOG.md`, `LICENSE`
+
+**Usage**:
+
+```bash
+cd /Users/Michele/Sites/scores
+./project-files/scripts/deploy-clean.sh
+```
+
+**Server**: ottoniascoppio (`/var/www/nextcloud/apps/scores`)
+
+---
+
+### 🚀 deploy-production.sh (DEPRECATED - use deploy-clean.sh)
+
 **Purpose**: Builds and deploys the app to production server via SSH.
 
 **What it does**:

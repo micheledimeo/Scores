@@ -38,23 +38,13 @@ jobs:
         # Create build directory
         mkdir -p build_package/scores
 
-        # Copy necessary files
+        # Copy ONLY production-ready files (no development files)
         cp -r js build_package/scores/
         cp -r css build_package/scores/
         cp -r lib build_package/scores/
         cp -r appinfo build_package/scores/
         cp -r templates build_package/scores/
         cp -r img build_package/scores/
-
-        # Copy documentation
-        [ -f README.md ] && cp README.md build_package/scores/
-        [ -f LICENSE ] && cp LICENSE build_package/scores/
-        [ -f CHANGELOG.md ] && cp CHANGELOG.md build_package/scores/
-
-        # Copy public folder if exists
-        if [ -d "public" ]; then
-          cp -r public build_package/scores/
-        fi
 
         # Clean up development files
         find build_package -name ".DS_Store" -delete
