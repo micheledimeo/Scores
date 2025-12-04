@@ -2,7 +2,7 @@
 
 ![App Name](https://img.shields.io/badge/App%20Name-Scores-blue?style=for-the-badge)
 ![App ID](https://img.shields.io/badge/App%20ID-scores-lightgrey?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.9.13-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.9.14-green?style=flat-square)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-orange?style=flat-square)
 
 Display, play, and manage MusicXML and MuseScore files directly in Nextcloud using OpenSheetMusicDisplay.

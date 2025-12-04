@@ -1,6 +1,6 @@
 {
   "name": "scores",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "description": "Scores for Nextcloud",
   "main": "src/main.js",
   "scripts": {

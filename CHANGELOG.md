@@ -5,6 +5,23 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.14] - 2024-12-04
+
+### Added
+- **Clean Deployment Script**: New `deploy-clean.sh` script for production-only deployments
+- Documentation for clean deployment workflow in scripts README
+
+### Changed
+- **Production Deployments**: Server and GitHub releases now contain ONLY production-ready files
+- Removed development files from production: source files (src/), configs, tests, docs, README/CHANGELOG
+- GitHub release workflow updated to create cleaner packages
+- Deployment now includes only: built JS/CSS, PHP backend, templates, app metadata, and icons
+
+### Technical Improvements
+- Created dedicated clean deployment script with detailed documentation
+- Updated release workflow to exclude all non-essential files
+- Server deployment reduced to 18 essential files only
+
 ## [0.9.13] - 2024-12-04
 
 ### Added
