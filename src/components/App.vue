@@ -121,7 +121,7 @@
 									<li><kbd>←</kbd> <kbd>→</kbd> {{ t('scores', 'Navigate between measures') }}</li>
 									<li><kbd>↑</kbd> <kbd>↓</kbd> {{ t('scores', 'Zoom in / out') }}</li>
 									<li>{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
-									<li>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</li>
+									<li><strong>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</strong></li>
 									<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
 								</ul>
 							</div>

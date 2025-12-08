@@ -176,6 +176,7 @@ scores/
   - 🇪🇸 **Spanish** (Español) - Full UI translation
   - 🇫🇷 **French** (Français) - Full UI translation
   - 🇩🇪 **German** (Deutsch) - Full UI translation
+  - 🇳🇱 **Dutch** (Nederlands) - Full UI translation
   - Automatic language detection based on Nextcloud user preferences
   - Translation files for all UI elements including settings, tooltips, and messages
 - **Mobile Layout Enhancements**: Improved responsive design for mobile devices
