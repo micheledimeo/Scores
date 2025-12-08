@@ -12,6 +12,7 @@ OC.L10N.register(
     "Navigate between measures" : "Zwischen Takten navigieren",
     "Zoom in / out" : "Vergrößern / Verkleinern",
     "Adjust tempo and volume in the playback bar" : "Tempo und Lautstärke in der Wiedergabeleiste anpassen",
+    "MuseScore files (.mscz, .mscx) are view-only without playback" : "MuseScore-Dateien (.mscz, .mscx) sind nur zur Ansicht ohne Wiedergabe",
     "Use the Files app to upload new scores and manage sharing" : "Verwenden Sie die Dateien-App, um neue Noten hochzuladen und die Freigabe zu verwalten",
     "Credits & License" : "Danksagungen & Lizenz",
     "This app is licensed under" : "Diese App ist lizenziert unter",

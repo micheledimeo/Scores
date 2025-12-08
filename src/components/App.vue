@@ -61,8 +61,7 @@
 									:title="getFileNameWithoutExtension(file.name)"
 									@click.stop="loadFile(file.id)">
 									<template #icon>
-										<FileMusic v-if="isMuseScoreFile(file.name)" :size="20" />
-										<MusicNote v-else :size="20" />
+										<MusicNote :size="20" :class="{ 'musescore-icon': isMuseScoreFile(file.name) }" />
 									</template>
 								</NcAppNavigationItem>
 							
@@ -77,8 +76,7 @@
 							class="file-item"
 							@click="loadFile(file.id)">
 							<template #icon>
-								<FileMusic v-if="isMuseScoreFile(file.name)" :size="20" />
-								<MusicNote v-else :size="20" />
+								<MusicNote :size="20" :class="{ 'musescore-icon': isMuseScoreFile(file.name) }" />
 							</template>
 						</NcAppNavigationItem>
 					</ul>
@@ -123,6 +121,7 @@
 									<li><kbd>←</kbd> <kbd>→</kbd> {{ t('scores', 'Navigate between measures') }}</li>
 									<li><kbd>↑</kbd> <kbd>↓</kbd> {{ t('scores', 'Zoom in / out') }}</li>
 									<li>{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
+									<li>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</li>
 									<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
 								</ul>
 							</div>
@@ -130,10 +129,12 @@
 								<h4>{{ t('scores', 'Credits & License') }}</h4>
 								<p class="license-credits">
 									{{ t('scores', 'This app is licensed under') }}
-									<span class="license-link" @click="showLicenseModal = true">AGPL-3.0-or-later</span>
+									<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" class="osmd-link">AGPL-3.0-or-later</a>
 								</p>
 								<p class="license-credits">
-									{{ t('scores', 'This app uses') }}
+									{{ t('scores', 'This app uses') }}:
+								</p>
+								<p class="license-credits">
 									<a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay" target="_blank" rel="noopener noreferrer" class="osmd-link">OpenSheetMusicDisplay (OSMD)</a>
 									<br>
 									<small>Copyright © 2019 PhonicScore - BSD-3-Clause License</small>
@@ -219,48 +220,6 @@
 									<span v-else class="icon-checkmark"></span>
 								</template>
 								{{ t('scores', 'Save') }}
-							</NcButton>
-						</div>
-					</div>
-				</NcModal>
-
-				<!-- License Modal -->
-				<NcModal v-if="showLicenseModal"
-					:name="t('scores', 'License Information')"
-					@close="showLicenseModal = false"
-					size="normal">
-					<div class="license-modal-content">
-						<div class="license-modal-header">
-							<h3>GNU Affero General Public License</h3>
-							<p class="license-version">Version 3.0 or later</p>
-						</div>
-
-						<div class="license-modal-body">
-							<div class="license-section">
-								<p>This program is free software: you can redistribute it and/or modify it under the terms of the <strong>GNU Affero General Public License</strong> as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
-							</div>
-
-							<div class="license-section">
-								<p>This program is distributed in the hope that it will be useful, but <strong>WITHOUT ANY WARRANTY</strong>; without even the implied warranty of <strong>MERCHANTABILITY</strong> or <strong>FITNESS FOR A PARTICULAR PURPOSE</strong>.</p>
-							</div>
-
-							<div class="license-section">
-								<p>See the GNU Affero General Public License for more details.</p>
-							</div>
-
-							<div class="license-link-section">
-								<a href="https://www.gnu.org/licenses/agpl-3.0.html"
-								   target="_blank"
-								   rel="noopener noreferrer"
-								   class="license-external-link">
-									{{ t('scores', 'Read full license text at gnu.org') }} ↗
-								</a>
-							</div>
-						</div>
-
-						<div class="license-modal-footer">
-							<NcButton type="primary" @click="showLicenseModal = false">
-								{{ t('scores', 'Close') }}
 							</NcButton>
 						</div>
 					</div>
@@ -386,7 +345,6 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
 import MusicNote from 'vue-material-design-icons/MusicNote.vue'
-import FileMusic from 'vue-material-design-icons/FileMusic.vue'
 
 import MusicViewer from './MusicViewer.vue'
 
@@ -408,7 +366,6 @@ export default {
 		Cog,
 		FolderIcon,
 		MusicNote,
-		FileMusic,
 	},
 	setup() {
 		const folderStructure = ref({ folders: [], files: [] })
@@ -430,13 +387,9 @@ export default {
 		const settingsError = ref('')
 		const showSettingsModal = ref(false)
 		const showBrowserModal = ref(false)
-		const showLicenseModal = ref(false)
 		const browserFolders = ref([])
 		const currentBrowserPath = ref('')
 		const loadingFolders = ref(false)
-
-		// DEV: Version check for cache busting
-		console.log('[DEV] App.vue loaded - version 2.2.6')
 
 		// Check if this is a public share using Nextcloud InitialState API
 		try {
@@ -458,38 +411,6 @@ export default {
 			console.log('ℹ️ Not a public share - normal app mode')
 		}
 
-		// DEV-ONLY: Auto-load test sample if URL contains ?testSample=1
-		console.log('[DEV] Checking testSample conditions:', {
-			hasWindow: typeof window !== 'undefined',
-			searchParams: typeof window !== 'undefined' ? window.location.search : 'N/A',
-			hasTestSample: typeof window !== 'undefined' ? window.location.search.includes('testSample=1') : false,
-			isPublicShare: isPublicShare.value
-		})
-		if (typeof window !== 'undefined' && window.location.search.includes('testSample=1') && !isPublicShare.value) {
-			console.warn('[DEV] Auto-loading test sample from URL parameter')
-			console.log('[DEV] Fetching: /apps/scores/public/test-scores/sample.musicxml')
-			fetch('/apps/scores/public/test-scores/sample.musicxml')
-				.then(response => {
-					if (!response.ok) {
-						throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-					}
-					return response.text()
-				})
-				.then(xmlText => {
-					currentFile.value = {
-						id: -1,
-						name: 'Test Sample (DEV)',
-						content: btoa(xmlText),
-						mimeType: 'application/vnd.recordare.musicxml+xml',
-						size: xmlText.length
-					}
-					console.log('[DEV] Test sample loaded successfully')
-				})
-				.catch(err => {
-					console.error('[DEV] Failed to load test sample:', err)
-				})
-		}
-		// END DEV-ONLY
 
 		const loadFiles = async () => {
 			// Skip loading file list in public share view
@@ -613,6 +534,15 @@ export default {
 					content: response.data.content,
 					mimeType: response.data.mimeType,
 					size: response.data.size
+				}
+
+				// Close sidebar on mobile after selecting a file
+				if (window.innerWidth <= 1024) {
+					// Trigger Nextcloud's sidebar close by clicking the toggle button
+					const toggleButton = document.querySelector('.app-navigation-toggle')
+					if (toggleButton) {
+						toggleButton.click()
+					}
 				}
 			} catch (error) {
 				showError('Failed to load file')
@@ -831,7 +761,6 @@ export default {
 			settingsError,
 			showSettingsModal,
 			showBrowserModal,
-			showLicenseModal,
 			browserFolders,
 			currentBrowserPath,
 			loadingFolders,
@@ -875,6 +804,8 @@ export default {
 :deep(.app-content-wrapper) {
 	position: relative;
 	z-index: 1;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
 }
 
 /* Search box wrapper - with right padding to leave space for counter */
@@ -882,27 +813,16 @@ export default {
 	position: relative;
 	width: 100%;
 	padding: 0 8px;
-	padding-right: 44px; /* Space for counter bubble */
 }
 
-/* Reduce search input width to accommodate counter */
-.search-box-wrapper :deep(.input-field__input) {
-	padding-right: 8px !important;
-}
-
-/* Counter overlay - positioned outside search box, aligned with folder counters */
+/* Counter overlay - centered in the space between search box and hamburger menu */
 .search-counter-overlay {
 	position: absolute;
-	right: 0px; /* Aligned with folder counter position */
+	right: 22px; /* Centered between search box end and hamburger icon (44px / 2) */
 	top: 50%;
 	transform: translateY(-50%);
 	pointer-events: none;
 	z-index: 1;
-}
-
-/* When close button is shown, no adjustment needed as counter is outside */
-.search-box-wrapper:has(.app-navigation-search :deep(.input-field__clear-button)) .search-counter-overlay {
-	right: 0px; /* Keep aligned with folder counters */
 }
 
 /* Folder icons - keep transparent (default Nextcloud style) */
@@ -2099,7 +2019,7 @@ export default {
 		display: flex !important;
 		align-items: flex-start !important;
 		justify-content: flex-start !important;
-		padding-top: 16px !important;
+		padding-top: 0 !important;
 	}
 
 	/* Allow NcEmptyContent to scroll on mobile */
@@ -2190,6 +2110,11 @@ export default {
 .app-content-vue {
 	overflow: hidden !important;
 	height: 100vh;
+	padding-bottom: 0 !important;
+}
+
+.app-content-vue :deep(.app-content) {
+	padding-bottom: 0 !important;
 }
 
 /* Override the CSS variable that controls child item indentation for folder contents */
@@ -2224,7 +2149,7 @@ li.file-item div.app-navigation-entry__icon {
 li.file-item,
 li.file-item > a,
 li.file-item .app-navigation-entry-link {
-	padding-left: 5px !important;
+	padding-left: 0px !important;
 }
 
 /* Files in folders now show icons, so use default Nextcloud spacing */
@@ -2395,5 +2320,10 @@ li.file-in-folder [class*="entry"] {
 .osmd-link:hover {
 	color: var(--color-primary-element-hover);
 	text-decoration: underline;
+}
+
+/* MuseScore file icon color */
+.musescore-icon {
+	color: var(--color-primary-element) !important;
 }
 </style>

@@ -7,10 +7,10 @@
 				<NcButton
 					v-if="!isPlaying"
 					type="primary"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@click="play"
 					:aria-label="'Play'"
-					:title="'Play (Space)'">
+					:title="isMuseScoreFile(fileName) ? 'Playback not available for MuseScore files' : 'Play (Space)'">
 					<template #icon>
 						<Play :size="20" />
 					</template>
@@ -19,10 +19,10 @@
 				<!-- Pause button -->
 				<NcButton
 					v-if="isPlaying"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@click="pause"
 					:aria-label="'Pause'"
-					:title="'Pause (Space)'">
+					:title="isMuseScoreFile(fileName) ? 'Playback not available for MuseScore files' : 'Pause (Space)'">
 					<template #icon>
 						<Pause :size="20" />
 					</template>
@@ -30,10 +30,10 @@
 
 				<!-- Stop button -->
 				<NcButton
-					:disabled="!isLoaded || isInitializing || (!isPlaying && currentTime === 0)"
+					:disabled="!isLoaded || isInitializing || (!isPlaying && currentTime === 0) || isMuseScoreFile(fileName)"
 					@click="stop"
 					:aria-label="'Stop'"
-					:title="'Stop'">
+					:title="isMuseScoreFile(fileName) ? 'Playback not available for MuseScore files' : 'Stop'">
 					<template #icon>
 						<Stop :size="20" />
 					</template>
@@ -41,32 +41,31 @@
 
 				<!-- Loop button -->
 				<NcButton
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@click="toggleLoop"
 					:class="{ 'loop-active': loopEnabled }"
 					:aria-label="loopEnabled ? 'Loop enabled' : 'Loop disabled'"
-					:title="loopEnabled ? 'Loop enabled (L)' : 'Loop disabled (L)'">
+					:title="isMuseScoreFile(fileName) ? 'Playback not available for MuseScore files' : (loopEnabled ? 'Loop enabled (L)' : 'Loop disabled (L)')">
 					<template #icon>
 						<Repeat :size="20" />
 					</template>
 				</NcButton>
 
-			<!-- Mixer toggle button -->
-			<NcButton
-				v-if="mixerChannels.length > 0"
-				:disabled="!isLoaded || isInitializing"
-				@click="toggleMixer"
-				:class="{ 'mixer-active': showMixer }"
-				:aria-label="showMixer ? 'Hide mixer' : 'Show mixer'"
-				:title="showMixer ? 'Hide mixer (M)' : 'Show mixer (M)'">
-				<template #icon>
-					<Tune :size="20" />
-				</template>
-			</NcButton>
-		</div>
+				<!-- Mixer toggle button -->
+				<NcButton
+					:disabled="!isLoaded || isInitializing || mixerChannels.length === 0 || isMuseScoreFile(fileName)"
+					@click="toggleMixer"
+					:class="{ 'mixer-active': showMixer }"
+					:aria-label="showMixer ? 'Hide mixer' : 'Show mixer'"
+					:title="isMuseScoreFile(fileName) ? 'Playback not available for MuseScore files' : (showMixer ? 'Hide mixer (M)' : 'Show mixer (M)')">
+					<template #icon>
+						<Tune :size="20" />
+					</template>
+				</NcButton>
+			</div>
 
 		<!-- Progress bar -->
-		<div class="progress-section">
+		<div class="progress-section" :class="{ 'disabled-controls': isMuseScoreFile(fileName) }">
 			<div class="progress-bar">
 				<div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
 			</div>
@@ -80,7 +79,7 @@
 		</div>
 
 		<!-- Tempo and Volume controls grouped -->
-		<div class="tempo-volume-group">
+		<div class="tempo-volume-group" :class="{ 'disabled-controls': isMuseScoreFile(fileName) }">
 			<!-- Tempo control -->
 			<div class="tempo-control">
 				<span class="unit-label">BPM</span>
@@ -92,7 +91,7 @@
 					max="240"
 					step="1"
 					class="tempo-input"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@change="updateTempo"
 					@keyup.enter="updateTempo">
 				<input
@@ -103,7 +102,7 @@
 					max="240"
 					step="1"
 					class="tempo-slider"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@input="updateTempo">
 			</div>
 
@@ -118,7 +117,7 @@
 					max="100"
 					step="1"
 					class="volume-input"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@change="updateVolume"
 					@keyup.enter="updateVolume">
 				<input
@@ -129,7 +128,7 @@
 					max="100"
 					step="1"
 					class="volume-slider"
-					:disabled="!isLoaded || isInitializing"
+					:disabled="!isLoaded || isInitializing || isMuseScoreFile(fileName)"
 					@input="updateVolume">
 			</div>
 		</div>
@@ -481,6 +480,19 @@ export default {
 
 				await osmd.value.render()
 
+				// For MuseScore files, force a re-render after a short delay to ensure correct dimensions
+				if (isMuseScoreFile(props.fileName)) {
+					await nextTick()
+					setTimeout(async () => {
+						try {
+							await osmd.value.render()
+							console.log('[MusicViewer] MuseScore file re-rendered with correct dimensions')
+						} catch (e) {
+							console.error('[MusicViewer] Error re-rendering MuseScore file:', e)
+						}
+					}, 100)
+				}
+
 				// Enable and show the cursor
 				if (osmd.value.cursor) {
 					osmd.value.cursor.show()
@@ -714,8 +726,8 @@ export default {
 				let iterationCounter = 0
 				// AGGRESSIVE THROTTLING: MuseScore files generate 6-8x more iteration events than MusicXML
 				// Skip many more iterations for MuseScore to match actual note durations
-				const skipIterations = isMuseScoreFile(props.fileName) ? 8 : 1
-				const minTimeInterval = isMuseScoreFile(props.fileName) ? 400 : 150 // ms between cursor moves
+				const skipIterations = isMuseScoreFile(props.fileName) ? 12 : 1
+				const minTimeInterval = isMuseScoreFile(props.fileName) ? 500 : 150 // ms between cursor moves
 
 				playbackManager.value.on('iteration', (notes) => {
 					updateProgress()
@@ -1632,6 +1644,7 @@ export default {
 			zoomOut,
 			toggleFullscreen,
 			formatTime,
+			isMuseScoreFile,
 		}
 	},
 }
@@ -1645,6 +1658,8 @@ export default {
 	min-height: 100vh;
 	background-color: var(--color-main-background);
 	overflow: hidden;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 /* Compact playback controls */
@@ -1656,7 +1671,7 @@ export default {
 	align-items: center;
 	justify-content: flex-end;
 	gap: 4px;
-	padding: 3px 12px;
+	padding: 0 12px 3px 12px;
 	background-color: rgba(var(--color-main-background-rgb), 0.98);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
@@ -1694,8 +1709,11 @@ export default {
 	max-width: 200px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
 	margin-right: 16px;
+	justify-content: center;
+	align-items: stretch;
+	height: 44px;
 }
 
 .progress-bar {
@@ -2186,21 +2204,20 @@ input[type="range"]:disabled {
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 6px;
-		padding: 6px 8px;
+		justify-content: flex-end;
+		gap: 8px;
+		padding: 8px;
 		max-height: none;
 	}
 
-	/* Row 1: Control group + Progress section (inline) - always on same row */
+	/* Control buttons - fit to content */
 	.control-group {
 		order: 1;
 		flex: 0 0 auto;
-		justify-content: flex-start;
+		justify-content: flex-end;
 		margin: 0;
-		padding-left: 40px;
 		gap: 6px;
-		flex-shrink: 1;
-		min-width: 0;
+		max-width: fit-content;
 	}
 
 	/* Ensure buttons are tappable on mobile (min 44x44px) */
@@ -2210,31 +2227,38 @@ input[type="range"]:disabled {
 		min-height: 44px;
 	}
 
-	/* Row 1: Progress section - always on same row as control group */
+	/* Progress section - fit to content */
 	.progress-section {
 		order: 2;
-		flex: 1 1 0;
-		max-width: none;
-		min-width: 100px;
+		flex: 0 0 auto;
+		max-width: 162px;
+		min-width: 162px;
 		margin: 0;
+		margin-right: 0 !important;
 	}
 
-	/* Row 2: Tempo/Volume group - inline */
+	/* Tempo/Volume controls - fit to content */
 	.tempo-volume-group {
 		order: 3;
-		flex: 1 1 auto;
-		justify-content: flex-start;
+		flex: 0 0 auto;
+		justify-content: flex-end;
 		margin: 0;
-		gap: 8px;
+		margin-right: 0 !important;
+		gap: 4px;
+		padding-right: 0 !important;
+		max-width: 154px;
+		min-width: 154px;
+		width: 154px;
 	}
 
 	.tempo-control,
 	.volume-control {
 		flex: 0 0 auto;
 		justify-content: center;
+		gap: 4px;
 	}
 
-	/* Row 2: Zoom controls - inline with tempo/volume */
+	/* Zoom controls - fit to content */
 	.zoom-controls {
 		order: 4;
 		flex: 0 0 auto;
@@ -2262,8 +2286,9 @@ input[type="range"]:disabled {
 	/* Make input fields more compact on mobile */
 	.tempo-input,
 	.volume-input {
-		width: 60px !important;
-		font-size: 14px !important;
+		width: 50px !important;
+		font-size: 13px !important;
+		padding: 2px 4px !important;
 	}
 
 	/* Reduce tempo/volume group spacing */
@@ -2276,10 +2301,17 @@ input[type="range"]:disabled {
 		gap: 4px !important;
 	}
 
-	/* Remove top padding from sheet viewer on mobile */
+	/* Remove padding from sheet viewer on mobile */
 	.sheet-viewer {
-		padding-top: 0 !important;
+		padding: 8px !important;
 	}
+}
+
+/* Disabled controls for MuseScore files */
+.disabled-controls {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
 }
 
 </style>

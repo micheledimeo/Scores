@@ -2,7 +2,7 @@
 
 ![App Name](https://img.shields.io/badge/App%20Name-Scores-blue?style=for-the-badge)
 ![App ID](https://img.shields.io/badge/App%20ID-scores-lightgrey?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.9.14-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.9.15-green?style=flat-square)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-orange?style=flat-square)
 
 Display, play, and manage MusicXML and MuseScore files directly in Nextcloud using OpenSheetMusicDisplay.
@@ -10,7 +10,7 @@ Display, play, and manage MusicXML and MuseScore files directly in Nextcloud usi
 ## Features
 
 - 🎼 **Sheet Music Display**: Render MusicXML, MusicXML compressed (.mxl), MuseScore (.mscz, .mscx), and other music notation formats
-- 🎹 **MuseScore Integration**: Native support for MuseScore files with automatic client-side conversion to MusicXML
+- 🎹 **MuseScore Integration**: Native support for MuseScore files with automatic client-side conversion to MusicXML (view-only, no playback)
 - 🎨 **File Type Icons**: Visual differentiation between MuseScore files (FileMusic icon) and MusicXML files (MusicNote icon)
 - ▶️ **Advanced Playback Controls**: Play, pause, stop, and loop with real-time cursor tracking
 - 🎚️ **Instrument Mixer**: Individual volume control for each instrument/channel with solo/mute capabilities
@@ -27,11 +27,11 @@ Display, play, and manage MusicXML and MuseScore files directly in Nextcloud usi
 
 ## Supported Formats
 
-- **MuseScore** (.mscz, .mscx) - Native support with automatic conversion
-- **MusicXML** (.xml, .musicxml, .mxml)
-- **MusicXML Compressed** (.mxl)
-- **MEI** (Music Encoding Initiative)
-- **Guitar Pro** files (.gp, .gp3, .gp4, .gp5, .gpx)
+- **MuseScore** (.mscz, .mscx) - View-only with automatic conversion (no playback)
+- **MusicXML** (.xml, .musicxml, .mxml) - Full playback support
+- **MusicXML Compressed** (.mxl) - Full playback support
+- **MEI** (Music Encoding Initiative) - Full playback support
+- **Guitar Pro** files (.gp, .gp3, .gp4, .gp5, .gpx) - Full playback support
 
 ## Compatibility
 
@@ -163,6 +163,31 @@ scores/
 - **PHP 8.1+**: Backend API
 
 ## Version History
+
+### v0.9.15 (2024-12-08)
+
+- **MuseScore View-Only Mode**: MuseScore files (.mscz, .mscx) are now displayed with playback controls disabled
+  - Visible but inactive controls provide clear visual feedback
+  - Tooltips explain that playback is not available for MuseScore format
+  - Full rendering and display functionality maintained
+  - Quick Tips section updated to inform users about view-only limitation
+- **Internationalization (i18n)**: Complete translation support for multiple languages
+  - 🇮🇹 **Italian** (Italiano) - Full UI translation
+  - 🇪🇸 **Spanish** (Español) - Full UI translation
+  - 🇫🇷 **French** (Français) - Full UI translation
+  - 🇩🇪 **German** (Deutsch) - Full UI translation
+  - Automatic language detection based on Nextcloud user preferences
+  - Translation files for all UI elements including settings, tooltips, and messages
+- **Mobile Layout Enhancements**: Improved responsive design for mobile devices
+  - Fixed width controls: progress bar (162px), tempo/volume group (154px)
+  - Optimized control group layout with better spacing
+  - Reduced sheet viewer padding on mobile (8px) for maximum viewing area
+  - Mixer button integrated into control group
+- **User Experience Improvements**:
+  - Enhanced Quick Tips with MuseScore file information
+  - Better visual hierarchy in welcome screen
+  - Improved disabled state styling for inactive controls
+  - Consistent behavior across different file formats
 
 ### v0.9.13 (2024-12-04)
 
