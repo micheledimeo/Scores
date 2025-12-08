@@ -12,7 +12,7 @@ OC.L10N.register(
     "Navigate between measures" : "Navigeren tussen maten",
     "Zoom in / out" : "Inzoomen / Uitzoomen",
     "Adjust tempo and volume in the playback bar" : "Tempo en volume aanpassen in de afspeelbalk",
-    "MuseScore files (.mscz, .mscx) are view-only without playback" : "MuseScore-bestanden (.mscz, .mscx) zijn alleen voor weergave zonder afspelen",
+    "MuseScore files (.mscz, .mscx) are view-only without playback" : "MuseScore-bestanden (.mscz, .mscx) zijn alleen voor weergave",
     "Use the Files app to upload new scores and manage sharing" : "Gebruik de Bestanden-app om nieuwe partituren te uploaden en delen te beheren",
     "Credits & License" : "Credits & Licentie",
     "This app is licensed under" : "Deze app is gelicenseerd onder",

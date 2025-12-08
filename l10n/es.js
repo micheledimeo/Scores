@@ -12,7 +12,7 @@ OC.L10N.register(
     "Navigate between measures" : "Navegar entre compases",
     "Zoom in / out" : "Aumentar / Reducir zoom",
     "Adjust tempo and volume in the playback bar" : "Ajustar tempo y volumen en la barra de reproducción",
-    "MuseScore files (.mscz, .mscx) are view-only without playback" : "Los archivos MuseScore (.mscz, .mscx) son solo para visualización sin reproducción",
+    "MuseScore files (.mscz, .mscx) are view-only without playback" : "Los archivos MuseScore (.mscz, .mscx) son solo para visualización",
     "Use the Files app to upload new scores and manage sharing" : "Usa la aplicación Archivos para subir nuevas partituras y gestionar el compartir",
     "Credits & License" : "Créditos y licencia",
     "This app is licensed under" : "Esta aplicación está licenciada bajo",
