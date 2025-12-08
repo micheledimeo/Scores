@@ -109,8 +109,19 @@
 			<NcAppContent class="app-content-vue">
 				<!-- Empty state when no file selected -->
 				<NcEmptyContent v-if="!currentFile && !loading"
-					:name="t('scores', 'Welcome to Scores')"
 					:description="t('scores', 'Select a music score from the sidebar to begin')">
+					<template #name>
+						<div class="welcome-title-with-icon">
+							<span>Scores</span>
+							<NcButton type="tertiary"
+								:aria-label="t('scores', 'Help')"
+								@click="openReadmeModal">
+								<template #icon>
+									<InformationOutline :size="20" />
+								</template>
+							</NcButton>
+						</div>
+					</template>
 					<template #action>
 						<div class="welcome-info-container">
 							<div class="quick-tips">
@@ -120,7 +131,7 @@
 									<li><kbd>F</kbd> {{ t('scores', 'Return to start') }}</li>
 									<li><kbd>←</kbd> <kbd>→</kbd> {{ t('scores', 'Navigate between measures') }}</li>
 									<li><kbd>↑</kbd> <kbd>↓</kbd> {{ t('scores', 'Zoom in / out') }}</li>
-									<li>{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
+									<li style="margin-top: 12px;">{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
 									<li><strong>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</strong></li>
 									<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
 								</ul>
@@ -128,22 +139,10 @@
 							<div class="license-info">
 								<h4>{{ t('scores', 'Credits & License') }}</h4>
 								<p class="license-credits">
-									{{ t('scores', 'This app is licensed under') }}
-									<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" class="osmd-link">AGPL-3.0-or-later</a>
-								</p>
-								<p class="license-credits">
-									{{ t('scores', 'This app uses') }}:
-								</p>
-								<p class="license-credits">
-									<a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay" target="_blank" rel="noopener noreferrer" class="osmd-link">OpenSheetMusicDisplay (OSMD)</a>
-									<br>
-									<small>Copyright © 2019 PhonicScore - BSD-3-Clause License</small>
-								</p>
-								<p class="license-credits">
-									<a href="https://github.com/musescore/webmscore" target="_blank" rel="noopener noreferrer" class="osmd-link">webmscore</a>
-									{{ t('scores', 'for MuseScore file conversion') }}
-									<br>
-									<small>Copyright © Musescore - GPL-3.0 License</small>
+									Scores is licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" class="osmd-link">AGPL-3.0-or-later</a><br>
+									Scores uses: <a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay" target="_blank" rel="noopener noreferrer" class="osmd-link">OpenSheetMusicDisplay (OSMD)</a><br>
+									Copyright © 2019 PhonicScore - BSD-3-Clause License, <a href="https://github.com/musescore/webmscore" target="_blank" rel="noopener noreferrer" class="osmd-link">webmscore</a> for MuseScore file conversion<br>
+									Copyright © Musescore - GPL-3.0 License
 								</p>
 							</div>
 						</div>
@@ -156,7 +155,16 @@
 					@close="closeSettingsModal">
 					<div class="settings-modal-content">
 						<div class="settings-section">
-							<label>{{ t('scores', 'Scores Folders') }}</label>
+							<div class="settings-header">
+								<label>{{ t('scores', 'Scores Folders') }}</label>
+								<NcButton type="tertiary"
+									:aria-label="t('scores', 'Help')"
+									@click="openReadmeModal">
+									<template #icon>
+										<InformationOutline :size="20" />
+									</template>
+								</NcButton>
+							</div>
 
 							<!-- Lista percorsi esistenti -->
 							<div class="folder-paths-list">
@@ -288,6 +296,70 @@
 					</div>
 				</NcModal>
 
+				<!-- README/Help Modal -->
+				<NcModal v-if="showReadmeModal"
+					:name="t('scores', 'Help')"
+					size="large"
+					@close="closeReadmeModal">
+					<div class="readme-modal-content">
+						<div class="readme-section">
+							<h3>{{ t('scores', 'Welcome to Scores') }}</h3>
+							<p>Display, play, and manage MusicXML and MuseScore files directly in Nextcloud using OpenSheetMusicDisplay.</p>
+						</div>
+
+						<div class="readme-section">
+							<h3>{{ t('scores', 'Quick Tips') }}</h3>
+							<ul>
+								<li><kbd>Space</kbd>{{ t('scores', 'Play / Pause playback') }}</li>
+								<li><kbd>F</kbd>{{ t('scores', 'Return to start') }}</li>
+								<li><kbd>←</kbd><kbd>→</kbd>{{ t('scores', 'Navigate between measures') }}</li>
+								<li><kbd>↑</kbd><kbd>↓</kbd>{{ t('scores', 'Zoom in / out') }}</li>
+								<li>{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
+								<li>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only') }}</li>
+								<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
+							</ul>
+						</div>
+
+						<div class="readme-section">
+							<h4>Supported Formats</h4>
+							<ul>
+								<li><strong>MuseScore</strong> (.mscz, .mscx) - View-only with automatic conversion (no playback)</li>
+								<li><strong>MusicXML</strong> (.xml, .musicxml, .mxml) - Full playback support</li>
+								<li><strong>MusicXML Compressed</strong> (.mxl) - Full playback support</li>
+								<li><strong>MEI</strong> (Music Encoding Initiative) - Full playback support</li>
+								<li><strong>Guitar Pro</strong> (.gp, .gp3, .gp4, .gp5, .gpx) - Full playback support</li>
+							</ul>
+						</div>
+
+						<div class="readme-section">
+							<h4>Features</h4>
+							<ul>
+								<li>🎼 Sheet Music Display with high-quality rendering</li>
+								<li>▶️ Advanced Playback Controls (play, pause, stop, loop)</li>
+								<li>🎚️ Instrument Mixer with individual volume control</li>
+								<li>🎵 Tempo & Volume Control (40-240 BPM)</li>
+								<li>📊 Progress Tracking with visual timeline</li>
+								<li>⌨️ Keyboard Shortcuts for quick navigation</li>
+								<li>🔍 Smart Search across all scores</li>
+								<li>📁 Folder Navigation with expandable tree</li>
+								<li>🌍 Multi-language Support (IT, ES, FR, DE, NL)</li>
+								<li>📱 Responsive Design for mobile and tablet</li>
+							</ul>
+						</div>
+
+						<div class="readme-section">
+							<h4>{{ t('scores', 'Credits & License') }}</h4>
+							<p class="license-credits">
+								This app is licensed under AGPL-3.0-or-later<br><br>
+								This app uses: OpenSheetMusicDisplay (OSMD)<br>
+								Copyright © 2019 PhonicScore - BSD-3-Clause License<br><br>
+								webmscore for MuseScore file conversion<br>
+								Copyright © Musescore - GPL-3.0 License
+							</p>
+						</div>
+					</div>
+				</NcModal>
+
 				<!-- Skeleton screen while loading -->
 				<div v-else-if="loading" class="skeleton-screen">
 					<div class="skeleton-header">
@@ -345,6 +417,7 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
 import MusicNote from 'vue-material-design-icons/MusicNote.vue'
+import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 
 import MusicViewer from './MusicViewer.vue'
 
@@ -366,6 +439,7 @@ export default {
 		Cog,
 		FolderIcon,
 		MusicNote,
+		InformationOutline,
 	},
 	setup() {
 		const folderStructure = ref({ folders: [], files: [] })
@@ -387,6 +461,7 @@ export default {
 		const settingsError = ref('')
 		const showSettingsModal = ref(false)
 		const showBrowserModal = ref(false)
+		const showReadmeModal = ref(false)
 		const browserFolders = ref([])
 		const currentBrowserPath = ref('')
 		const loadingFolders = ref(false)
@@ -723,6 +798,14 @@ export default {
 			closeFolderBrowser()
 		}
 
+		const openReadmeModal = () => {
+			showReadmeModal.value = true
+		}
+
+		const closeReadmeModal = () => {
+			showReadmeModal.value = false
+		}
+
 		// Watch searchQuery to trigger filterFiles automatically
 		watch(searchQuery, () => {
 			filterFiles()
@@ -761,6 +844,7 @@ export default {
 			settingsError,
 			showSettingsModal,
 			showBrowserModal,
+			showReadmeModal,
 			browserFolders,
 			currentBrowserPath,
 			loadingFolders,
@@ -781,6 +865,8 @@ export default {
 			navigateToFolder,
 			selectFolder,
 			confirmFolderSelection,
+			openReadmeModal,
+			closeReadmeModal,
 			getBreadcrumbPath,
 			getFileNameWithoutExtension,
 			isMuseScoreFile,
@@ -967,7 +1053,7 @@ export default {
 
 .quick-tips {
 	background-color: var(--color-background-hover);
-	padding: 20px;
+	padding: 24px;
 	border-radius: 8px;
 	width: 100%;
 	max-width: 400px;
@@ -987,6 +1073,7 @@ export default {
 
 .quick-tips li {
 	padding: 0;
+	line-height: 1.6;
 	color: var(--color-text-maxcontrast);
 }
 
@@ -994,19 +1081,40 @@ export default {
 	background-color: var(--color-main-background);
 	border: 1px solid var(--color-border);
 	border-radius: 3px;
-	padding: 2px 6px;
+	padding: 1px 3px;
 	font-family: 'SF Mono', 'Monaco', monospace;
 	font-size: 12px;
 	font-weight: 600;
 	color: var(--color-primary-element);
-	margin: 0 2px;
+}
+
+/* Welcome title with icon */
+.welcome-title-with-icon {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.welcome-title-with-icon span {
+	flex: 1;
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: 600;
+}
+
+.welcome-title-with-icon button {
+	position: absolute;
+	right: 0;
 }
 
 /* Welcome info container */
 .welcome-info-container {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	align-items: center;
 	max-height: none !important;
 	overflow-y: auto;
@@ -1017,7 +1125,7 @@ export default {
 .license-info {
 	background-color: var(--color-background-hover);
 	border-radius: 8px;
-	padding: 20px;
+	padding: 24px;
 	width: 100%;
 	max-width: 400px;
 	text-align: left;
@@ -1031,16 +1139,22 @@ export default {
 }
 
 .license-credits {
-	margin: 0;
+	margin: 0 0 12px 0;
 	font-size: 14px;
-	line-height: 1.6;
+	line-height: 1.7;
 	color: var(--color-text-maxcontrast);
+}
+
+.license-credits:last-child {
+	margin-bottom: 0;
 }
 
 .license-credits small {
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
 	opacity: 0.8;
+	display: block;
+	margin-top: 4px;
 }
 
 .license-details {
@@ -1818,9 +1932,16 @@ export default {
 	margin-bottom: 20px;
 }
 
+.settings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
 .settings-section label {
 	display: block;
-	margin-bottom: 8px;
+	margin-bottom: 0;
 	font-weight: 600;
 	color: var(--color-main-text);
 }
@@ -1998,6 +2119,63 @@ export default {
 .modal-actions {
 	display: flex;
 	gap: 8px;
+}
+
+/* README/Help Modal Styles */
+.readme-modal-content {
+	padding: 20px;
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.readme-section {
+	margin-bottom: 24px;
+}
+
+.readme-section:last-child {
+	margin-bottom: 0;
+}
+
+.readme-section h3 {
+	margin: 0 0 12px 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--color-main-text);
+}
+
+.readme-section h4 {
+	margin: 0 0 12px 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--color-main-text);
+}
+
+.readme-section p {
+	margin: 0 0 12px 0;
+	line-height: 1.6;
+	color: var(--color-text-maxcontrast);
+}
+
+.readme-section ul {
+	list-style: disc;
+	padding-left: 20px;
+	margin: 0;
+}
+
+.readme-section li {
+	line-height: 1.6;
+	color: var(--color-text-maxcontrast);
+}
+
+.readme-section kbd {
+	background-color: var(--color-background-hover);
+	border: 1px solid var(--color-border);
+	border-radius: 3px;
+	padding: 1px 3px;
+	font-family: 'SF Mono', 'Monaco', monospace;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--color-primary-element);
 }
 
 </style>

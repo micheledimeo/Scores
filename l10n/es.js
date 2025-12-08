@@ -13,10 +13,11 @@ OC.L10N.register(
     "Zoom in / out" : "Aumentar / Reducir zoom",
     "Adjust tempo and volume in the playback bar" : "Ajustar tempo y volumen en la barra de reproducción",
     "MuseScore files (.mscz, .mscx) are view-only without playback" : "Los archivos MuseScore (.mscz, .mscx) son solo para visualización",
+    "MuseScore files (.mscz, .mscx) are view-only" : "Los archivos MuseScore (.mscz, .mscx) son solo para visualización",
     "Use the Files app to upload new scores and manage sharing" : "Usa la aplicación Archivos para subir nuevas partituras y gestionar el compartir",
     "Credits & License" : "Créditos y licencia",
-    "This app is licensed under" : "Esta aplicación está licenciada bajo",
-    "This app uses" : "Esta aplicación utiliza",
+    "This app is licensed under" : "Scores está licenciada bajo",
+    "This app uses" : "Scores utiliza",
     "for MuseScore file conversion" : "para la conversión de archivos MuseScore",
     "No paths configured. All user files will be scanned." : "No hay rutas configuradas. Se escanearán todos los archivos del usuario.",
     "Browse and Add Folder" : "Explorar y agregar carpeta",
@@ -32,6 +33,7 @@ OC.L10N.register(
     "Select" : "Seleccionar",
     "Selected:" : "Seleccionado:",
     "(root)" : "(raíz)",
-    "Confirm" : "Confirmar"
+    "Confirm" : "Confirmar",
+    "Help" : "Ayuda"
 },
 "nplurals=2; plural=(n != 1);");
