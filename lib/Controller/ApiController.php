@@ -103,7 +103,8 @@ class ApiController extends Controller {
 
             // Estensioni supportate per file MusicXML e formati musicali
             // IMPORTANTE: .mxml è l'estensione principale per MusicXML non compresso
-            $supportedExtensions = ['mxml', 'xml', 'musicxml', 'mxl', 'mei', 'gp', 'gpx', 'gp3', 'gp4', 'gp5'];
+            // MuseScore files (.mscz, .mscx) are converted client-side to MusicXML using webmscore
+            $supportedExtensions = ['mxml', 'xml', 'musicxml', 'mxl', 'mei', 'gp', 'gpx', 'gp3', 'gp4', 'gp5', 'mscz', 'mscx'];
 
             $allFolders = [];
             $allFiles = [];

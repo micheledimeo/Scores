@@ -23,10 +23,9 @@ class PageController extends Controller {
      */
     public function index(): TemplateResponse {
         // CRITICAL: Load init-app.js FIRST to set appName before @nextcloud/vue components load
-        // Force cache bust by appending version timestamp
-        Util::addScript($this->appName, 'init-app', 'v0913');
-        Util::addScript($this->appName, 'mxml-scores-main', 'v0913');
-        Util::addStyle($this->appName, 'main', 'v0913');
+        Util::addScript($this->appName, 'init-app');
+        Util::addScript($this->appName, 'mxml-scores-main');
+        Util::addStyle($this->appName, 'main');
         
         $response = new TemplateResponse($this->appName, 'main');
 
