@@ -5,6 +5,22 @@ All notable changes to the Scores app will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.17] - 2024-12-09
+
+### Changed
+- **Welcome Screen**: Updated Quick Tips layout with aligned keyboard shortcut descriptions
+- **Terminology**: Changed "tempo" to "BPM" across all UI elements and translations
+- **Translations**: Updated all language files (IT, DE, ES, FR, NL) to use "BPM" instead of "tempo"
+- **Typography**: Removed bold formatting from MuseScore notice in Quick Tips
+- **Spacing**: Improved vertical spacing in Quick Tips section with better separation between command groups
+- **Layout**: Optimized tip-key column width to 70px for more compact display
+- **Credits**: Consolidated license information with removed line breaks for cleaner presentation
+
+### Technical Improvements
+- Enhanced CSS with box-sizing border-box for responsive containers
+- Implemented flexbox layout for aligned keyboard shortcut descriptions
+- Added targeted margin-bottom for improved visual hierarchy in Quick Tips
+
 ## [0.9.14] - 2024-12-04
 
 ### Added

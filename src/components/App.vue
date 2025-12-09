@@ -127,13 +127,13 @@
 							<div class="quick-tips">
 								<h4>{{ t('scores', 'Quick Tips') }}</h4>
 								<ul>
-									<li><kbd>Space</kbd> {{ t('scores', 'Play / Pause playback') }}</li>
-									<li><kbd>F</kbd> {{ t('scores', 'Return to start') }}</li>
-									<li><kbd>←</kbd> <kbd>→</kbd> {{ t('scores', 'Navigate between measures') }}</li>
-									<li><kbd>↑</kbd> <kbd>↓</kbd> {{ t('scores', 'Zoom in / out') }}</li>
-									<li style="margin-top: 12px;">{{ t('scores', 'Adjust tempo and volume in the playback bar') }}</li>
-									<li><strong>{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</strong></li>
-									<li>{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</li>
+									<li><span class="tip-key"><kbd>Space</kbd></span><span class="tip-desc">{{ t('scores', 'Play / Pause playback') }}</span></li>
+									<li><span class="tip-key"><kbd>F</kbd></span><span class="tip-desc">{{ t('scores', 'Return to start') }}</span></li>
+									<li><span class="tip-key"><kbd>←</kbd> <kbd>→</kbd></span><span class="tip-desc">{{ t('scores', 'Navigate between measures') }}</span></li>
+									<li><span class="tip-key"><kbd>↑</kbd> <kbd>↓</kbd></span><span class="tip-desc">{{ t('scores', 'Zoom in / out') }}</span></li>
+									<li><span class="tip-desc">{{ t('scores', 'Adjust BPM and volume in the playback bar') }}</span></li>
+									<li><span class="tip-desc">{{ t('scores', 'MuseScore files (.mscz, .mscx) are view-only without playback') }}</span></li>
+									<li><span class="tip-desc">{{ t('scores', 'Use the Files app to upload new scores and manage sharing') }}</span></li>
 								</ul>
 							</div>
 							<div class="license-info">
@@ -141,8 +141,7 @@
 								<p class="license-credits">
 									Scores is licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" class="osmd-link">AGPL-3.0-or-later</a><br>
 									Scores uses: <a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay" target="_blank" rel="noopener noreferrer" class="osmd-link">OpenSheetMusicDisplay (OSMD)</a><br>
-									Copyright © 2019 PhonicScore - BSD-3-Clause License, <a href="https://github.com/musescore/webmscore" target="_blank" rel="noopener noreferrer" class="osmd-link">webmscore</a> for MuseScore file conversion<br>
-									Copyright © Musescore - GPL-3.0 License
+									Copyright © 2019 PhonicScore - BSD-3-Clause License, <a href="https://github.com/musescore/webmscore" target="_blank" rel="noopener noreferrer" class="osmd-link">webmscore</a> for MuseScore file conversion Copyright © Musescore - GPL-3.0 License
 								</p>
 							</div>
 						</div>
@@ -1058,6 +1057,7 @@ export default {
 	width: 100%;
 	max-width: 400px;
 	text-align: left;
+	box-sizing: border-box;
 }
 
 .quick-tips h4 {
@@ -1075,6 +1075,21 @@ export default {
 	padding: 0;
 	line-height: 1.6;
 	color: var(--color-text-maxcontrast);
+	display: flex;
+}
+
+.quick-tips .tip-key {
+	display: inline-block;
+	min-width: 70px;
+	flex-shrink: 0;
+}
+
+.quick-tips .tip-desc {
+	flex: 1;
+}
+
+.quick-tips li:nth-child(4) {
+	margin-bottom: 8px;
 }
 
 .quick-tips kbd {
@@ -1119,6 +1134,8 @@ export default {
 	max-height: none !important;
 	overflow-y: auto;
 	padding-bottom: 40px;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 /* License info - matches other sections style */
@@ -1129,6 +1146,7 @@ export default {
 	width: 100%;
 	max-width: 400px;
 	text-align: left;
+	box-sizing: border-box;
 }
 
 .license-info h4 {
